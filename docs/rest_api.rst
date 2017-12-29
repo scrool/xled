@@ -528,6 +528,7 @@ Parameters as JSON object.
 	(string) mode of operation.
 
 Mode can be one of:
+
 * `off` - turns off lights
 * `demo` - starts predefined sequence of effects that are changed after few seconds
 * `movie` - plays predefined or uploaded effect
@@ -789,7 +790,7 @@ Item of networks array is object:
 	(integer)
 
 `enc`
-	One of numbers 3, 4, 5.
+	One of numbers 3 (WPA2-PSK), 4 (WPA-PSK + WPA2-PSK), 5 (WPA2-EAP).
 
 
 Set LED driver parameters

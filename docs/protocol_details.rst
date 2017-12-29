@@ -38,14 +38,16 @@ Modes of network operation
 --------------------------
 
 Hardware works in two network modes:
-- AP mode
-- client mode
+- Access Point (AP)
+- Station (STA)
 
-AP mode is default - after factory reset. Announces SSID made from `device name`_. Server uses static IP address 192.168.4.1 and operates in network 192.168.4.0/24. Provides DHCP server for any device it joins the network.
+AP mode is default - after factory reset. Broadcasts SSID made from `device name`_. Server uses static IP address 192.168.4.1 and operates in network 192.168.4.0/24. Provides DHCP server for any device it joins the network.
 
-To switch to client mode hardware needs to be configured with SSID network to connect to and encrypted password. Rest is simple API call through TCP port 80 (HTTP).
+To switch to STA mode hardware needs to be configured with SSID network to connect to and encrypted password. Rest is simple API call through TCP port 80 (HTTP).
 
-Switch from client mode back to AP mode is as easy as another API call.
+Switch from STA mode back to AP mode is as easy as another API call.
+
+http://41j.com/blog/2015/01/esp8266-access-mode-notes/
 
 
 WiFi password encryption
