@@ -2,13 +2,13 @@
 XLED - unofficial control Twinkly - Smart Decoration LED lights
 ===============================================================
 
-XLED is python library to control Twinkly. Creators describe Twinkly
-`project page of Kickstarter`_:
+XLED is python library and command line interface (CLI) to control Twinkly.
+Creators describe Twinkly `project page of Kickstarter`_:
 
     Twinkly is a Christmas tree light string, controlled via smartphone:
     "internet of things" meets extraordinary light effects! Created by ledworks
 
-Library is free software available under MIT license.
+Library and CLI are free software available under MIT license.
 
 Documentation for library can be found on https://xled.readthedocs.io.
 

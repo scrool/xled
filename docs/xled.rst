@@ -20,6 +20,14 @@ xled\.compat module
     :undoc-members:
     :show-inheritance:
 
+xled\.cli module
+----------------
+
+.. automodule:: xled.cli
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 xled\.control module
 --------------------
 

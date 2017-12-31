@@ -13,7 +13,16 @@ with open("README.rst") as readme_file:
 with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
-requirements = ["arpreq", "cryptography", "netaddr", "pyzmq", "requests", "tornado"]
+requirements = [
+    "arpreq",
+    "click-log",
+    "Click>=6.0",
+    "cryptography",
+    "netaddr",
+    "pyzmq",
+    "requests",
+    "tornado",
+]
 tests_requirements = ["vcrpy-unittest"]
 
 if sys.version_info < (3, 3):
@@ -34,6 +43,7 @@ setup(
     author_email="scroolik@gmail.com",
     url="https://github.com/scrool/xled",
     packages=find_packages(include=["xled"]),
+    entry_points={"console_scripts": ["xled=xled.cli:main"]},
     include_package_data=True,
     install_requires=requirements,
     tests_require=tests_requirements,
