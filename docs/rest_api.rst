@@ -790,7 +790,10 @@ Item of networks array is object:
 	(integer)
 
 `enc`
-	One of numbers 3 (WPA2-PSK), 4 (WPA-PSK + WPA2-PSK), 5 (WPA2-EAP).
+	One of numbers 0 (Open), 1 (WEP), 2 (WPA-PSK), 3 (WPA2-PSK), 4 (WPA-PSK + WPA2-PSK), 5 (WPA2-EAP).
+
+
+Response seems to correspond with `AT command CWLAP <https://github.com/espressif/ESP8266_AT/wiki/CWLAP>`_.
 
 
 Set LED driver parameters

@@ -9,7 +9,12 @@ My hardware
 
 I have model TW105S-EU. That's 105 RGB LED model from 2017.
 
-From hardware point of view it apparently contains microcontroller ESP8266 by Espressif Systems. https://en.wikipedia.org/wiki/ESP8266 . From API call I found more details:
+Hardware consists of two circuit boards:
+
+- Module ESP-01 with microcontroller ESP8266 by Espressif Systems.
+- Custom-made LED driver module
+
+API exposes these details:
 
 - Product version: 2
 - Hardware version: 6
@@ -38,6 +43,7 @@ Modes of network operation
 --------------------------
 
 Hardware works in two network modes:
+
 - Access Point (AP)
 - Station (STA)
 
@@ -54,28 +60,31 @@ WiFi password encryption
 ------------------------
 
 1. Generate encryption key
+
 - use secret key: **supersecretkey!!**
 - get byte representation of MAC adress of a server and repeat it to length of the secret key
 - xor these two values
 
 2. Encrypt
+
 - use password to access WiFi and pad it with zero bytes to length 64 bytes
 - use rc4 to encrypt padded password with the key
 
 3. Encode
+
 - base64 encode encrypted string
 
 
 Discovery
 ---------
 
-This seems to be used to find all Twinkly devices on the network. 
+This seems to be used to find all Twinkly devices on the network.
 
 1. Application sends UDP broadcast to port 5555 with message **\x01discover** (first character is byte with hex representation 0x01).
 2. Server responds back with following message:
 
 - first four bytes are octets of IP address written in reverse - first byte is last octet of the IP adress, second second to last, ...
-  
+
 - fifth and sixth byte forms string "OK"
 
 - rest is string representing `device name`_ padded with zero byte.
@@ -99,17 +108,21 @@ Verification of challenge-response
 As part of login process server sends not only authentication token but also challenge-response. Application may verify if it shares secret with server - maybe if it is genuine Twinkly device with following algorightm:
 
 1. Generate encryption key
+
 - use secret key: **evenmoresecret!!**
 - get byte representation of MAC adress of a server and repeat it to length of the secret key
 - xor these two values
 
 2. Encrypt
+
 - use rc4 to encrypt challenge with the key
 
 3. Generate hash digest
+
 - encrypted data with sha1
 
 4. Compare
+
 - hash digest must be same as challenge-response from server
 
 
@@ -129,6 +142,7 @@ LED effect operating modes
 --------------------------
 
 Hardware can operate in one of following modes:
+
 - off - turns off lights
 - demo - starts predefined sequence of effects that are changed after few seconds
 - movie - plays predefined or uploaded effect
