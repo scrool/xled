@@ -18,6 +18,15 @@ Twinkly private protocol
    rest_api
 
 
+Python API Documentation / Guide
+--------------------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   xled
+
+
 The Contributor Guide
 ---------------------
 
@@ -26,6 +35,7 @@ The Contributor Guide
 
    contributing
    authors
+   history
 
 Indices and tables
 ==================
