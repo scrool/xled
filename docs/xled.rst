@@ -12,10 +12,26 @@ xled\.challenge\_response\_auth module
     :undoc-members:
     :show-inheritance:
 
+xled\.compat module
+-------------------
+
+.. automodule:: xled.compat
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 xled\.control module
 --------------------
 
 .. automodule:: xled.control
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+xled\.discover module
+---------------------
+
+.. automodule:: xled.discover
     :members:
     :undoc-members:
     :show-inheritance:
@@ -40,6 +56,22 @@ xled\.security module
 ---------------------
 
 .. automodule:: xled.security
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+xled\.udplib module
+-------------------
+
+.. automodule:: xled.udplib
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+xled\.udp_client module
+-----------------------
+
+.. automodule:: xled.udp_client
     :members:
     :undoc-members:
     :show-inheritance:

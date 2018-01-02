@@ -23,6 +23,7 @@ from __future__ import absolute_import
 import logging
 
 from xled.control import ControlInterface  # noqa: F401
+from xled.discover import DiscoveryInterface  # noqa: F401
 
 from .__version__ import __title__, __description__, __version__  # noqa: F401
 from .__version__ import __author__, __author_email__  # noqa: F401

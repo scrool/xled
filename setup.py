@@ -3,6 +3,8 @@
 
 """The setup script."""
 
+import sys
+
 from setuptools import find_packages, setup
 
 with open("README.rst") as readme_file:
@@ -11,8 +13,11 @@ with open("README.rst") as readme_file:
 with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
-requirements = ["cryptography", "netaddr", "requests"]
+requirements = ["arpreq", "cryptography", "netaddr", "pyzmq", "requests", "tornado"]
 tests_requirements = ["vcrpy-unittest"]
+
+if sys.version_info < (3, 3):
+    requirements.append("ipaddress")
 
 setup(
     name="xled",
