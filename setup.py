@@ -14,12 +14,12 @@ with open("HISTORY.rst") as history_file:
 requirements = ["cryptography", "netaddr", "requests"]
 
 setup(
-    name="xled",
-    version="0.2.0",
+    name='xled',
+    version='0.2.1',
     description=(
         "Python library for Twinkly - Smart Decoration LED lights for Christmas."
     ),
-    long_description=readme + "\n\n" + history,
+    long_description=readme + '\n\n' + history,
     author="Pavol Babinčák",
     author_email="scroolik@gmail.com",
     url="https://github.com/scrool/xled",
