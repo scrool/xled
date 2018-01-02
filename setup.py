@@ -19,7 +19,7 @@ requirements = [
 
 setup(
     name='xled',
-    version='0.2.0',
+    version='0.2.1',
     description=("Python library and unofficial API documentation for Twinkly "
                  "- Smart Decoration LED lights for Christmas."),
     long_description=readme + '\n\n' + history,
