@@ -145,20 +145,26 @@ Hardware can operate in one of following modes:
 
 - off - turns off lights
 - demo - starts predefined sequence of effects that are changed after few seconds
-- movie - plays predefined or uploaded effect
+- movie - plays last uploaded effect
 - rt - receive effect in real time
 
 First two are set just by API call.
 
 
-Full movie LED operating mode
------------------------------
-
-I haven't yet figured out format of the movie file.
+Upload full movie LED effect
+----------------------------
 
 1. Application calls API to switch mode to movie
 2. Application calls API movie/full with file sent as part of the request
 3. Application calls config movie call with additional parameters of the movie
+
+
+Movie file format
+-----------------
+
+LED effect is called **movie**. It consists of **frames**. Each frame defines colour of each LED.
+
+Movie file format is simple sequence of bytes. Three bytes in a row represent intensity of *red*, *green* and *blue* in this order. Each frame is defined just with number of LEDs times three. Frames don't have any separator. Definition of each frame starts from LED closer to LED driver/adapter.
 
 
 Real time LED operating mode
@@ -167,7 +173,24 @@ Real time LED operating mode
 I haven't figured out format of the effect data send over UDP. It seems that it is processed in real time and depends of the quality of the network.
 
 1. Application calls HTTP API to switch mode to rt
-2. Application sends 325 byte chunks of data to UDP port 7777
+2. Then UDP packets are sent to a port 7777 of device. *Each packet represents single frame* that is immediately displayed.
+3. After some time without any UDP packets device switches back to movie mode.
+
+
+Real time LED UDP packet format
+-------------------------------
+
+Before packages are sent to a device application needs to login and verify authentication token. See above.
+
+Each UDP has header:
+
+* 1 byte *\x01* (byte with hex representation 0x01)
+* 8 bytes Base 64 decoded authentication token
+* 1 byte number of LED definitions in the frame
+
+Then follows body of the frame similarly to movie file format - three bytes for each LED.
+
+For my 105 LED each packet is 325 bytes long.
 
 
 Scan for WiFi networks
