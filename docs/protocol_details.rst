@@ -29,6 +29,7 @@ Firmware info
 Firmware can be upgraded over the network. I have actually used strings from the firmware to find secret keys, ecryption algorithms and some API calls that I haven't seen on the network. It consists of two files. First image format is according to https://github.com/espressif/esptool in version: 1.
 
 I have seen these two versions only so this page describes its behaviour:
+
 - 1.99.20
 - 1.99.24
 
@@ -80,7 +81,7 @@ Discovery
 
 This seems to be used to find all Twinkly devices on the network.
 
-1. Application sends UDP broadcast to port 5555 with message **\x01discover** (first character is byte with hex representation 0x01).
+1. Application sends UDP broadcast to port 5555 with message **\\x01discover** (first character is byte with hex representation 0x01).
 2. Server responds back with following message:
 
 - first four bytes are octets of IP address written in reverse - first byte is last octet of the IP adress, second second to last, ...
@@ -184,7 +185,7 @@ Before packages are sent to a device application needs to login and verify authe
 
 Each UDP has header:
 
-* 1 byte *\x01* (byte with hex representation 0x01)
+* 1 byte *\\x01* (byte with hex representation 0x01)
 * 8 bytes Base 64 decoded authentication token
 * 1 byte number of LED definitions in the frame
 
