@@ -26,7 +26,7 @@ API exposes these details:
 
 Firmware info
 -------------
-Firmware can be upgraded over the network. I have actually used strings from the firmware to find secret keys, ecryption algorithms and some API calls that I haven't seen on the network. It consists of two files. First image format is according to https://github.com/espressif/esptool in version: 1.
+Firmware can be upgraded over the network. I have actually used strings from the firmware to find secret keys, encryption algorithms and some API calls that I haven't seen on the network. It consists of two files. First image format is according to https://github.com/espressif/esptool in version: 1.
 
 I have seen these two versions only so this page describes its behaviour:
 
@@ -62,18 +62,18 @@ WiFi password encryption
 
 1. Generate encryption key
 
-- use secret key: **supersecretkey!!**
-- get byte representation of MAC adress of a server and repeat it to length of the secret key
-- xor these two values
+   1. Use secret key: **supersecretkey!!**
+   2. get byte representation of MAC adress of a server and repeat it to length of the secret key
+   3. xor these two values
 
 2. Encrypt
 
-- use password to access WiFi and pad it with zero bytes to length 64 bytes
-- use rc4 to encrypt padded password with the key
+   1. Use password to access WiFi and pad it with zero bytes to length 64 bytes.
+   2. Use rc4 to encrypt padded password with the *encryption key*
 
 3. Encode
 
-- base64 encode encrypted string
+   Base64 encode encrypted string.
 
 
 Discovery
@@ -84,11 +84,11 @@ This seems to be used to find all Twinkly devices on the network.
 1. Application sends UDP broadcast to port 5555 with message **\\x01discover** (first character is byte with hex representation 0x01).
 2. Server responds back with following message:
 
-- first four bytes are octets of IP address written in reverse - first byte is last octet of the IP adress, second second to last, ...
+   - first four bytes are octets of IP address written in reverse - first byte is last octet of the IP adress, second second to last, ...
 
-- fifth and sixth byte forms string "OK"
+   - fifth and sixth byte forms string "OK"
 
-- rest is string representing `device name`_ padded with zero byte.
+   - rest is string representing `device name`_ padded with zero byte.
 
 
 Get and verify authentication token
@@ -110,21 +110,15 @@ As part of login process server sends not only authentication token but also cha
 
 1. Generate encryption key
 
-- use secret key: **evenmoresecret!!**
-- get byte representation of MAC adress of a server and repeat it to length of the secret key
-- xor these two values
+   1. Use secret key: **evenmoresecret!!**
+   2. get byte representation of MAC adress of a server and repeat it to length of the secret key
+   3. xor these two values
 
-2. Encrypt
+2. Encrypt - use rc4 to encrypt challenge with the key
 
-- use rc4 to encrypt challenge with the key
+3. Generate hash digest - encrypted data with SHA1
 
-3. Generate hash digest
-
-- encrypted data with sha1
-
-4. Compare
-
-- hash digest must be same as challenge-response from server
+4. Compare - hash digest must be same as challenge-response from server
 
 
 Firmware update
@@ -171,17 +165,15 @@ Movie file format is simple sequence of bytes. Three bytes in a row represent in
 Real time LED operating mode
 ----------------------------
 
-I haven't figured out format of the effect data send over UDP. It seems that it is processed in real time and depends of the quality of the network.
-
 1. Application calls HTTP API to switch mode to rt
-2. Then UDP packets are sent to a port 7777 of device. *Each packet represents single frame* that is immediately displayed.
+2. Then UDP packets are sent to a port 7777 of device. *Each packet represents single frame* that is immediately displayed. See bellow for format of the packets.
 3. After some time without any UDP packets device switches back to movie mode.
 
 
 Real time LED UDP packet format
 -------------------------------
 
-Before packages are sent to a device application needs to login and verify authentication token. See above.
+Before packets are sent to a device application needs to login and verify authentication token. See above.
 
 Each UDP has header:
 

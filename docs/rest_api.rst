@@ -7,6 +7,8 @@ Overview
 
 Twinkly API is primary way to get information about the device, configure network and modes of the device. It is a HTTP 1.1 based API sent over TCP port 80.
 
+This API is used by mobile applications. It haven't been made public yet so it may change at any time.
+
 
 HTTP Responses
 --------------
