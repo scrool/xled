@@ -567,6 +567,28 @@ Response::
 	{"code":1000}
 
 
+Upload full movie
+-----------------
+
+Effect is received in body of the request with Content-Type application/octet-stream. If mode is `movie` it starts playing this effect.
+
+HTTP request
+````````````
+
+`POST /xled/v1/led/movie/full`
+
+Response
+````````
+
+The response will be an object.
+
+`code`
+    Application return code.
+`frames_number`
+	(integer) number of received frames
+
+
+
 Set LED movie config
 --------------------
 
