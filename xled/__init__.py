@@ -30,9 +30,12 @@ from .__version__ import __author__, __author_email__  # noqa: F401
 try:
     from logging import NullHandler
 except ImportError:
+
     class NullHandler(logging.Handler):
         """Backport of minimal handler that does nothing for Python < 2.7"""
+
         def emit(self, record):
             pass
+
 
 logging.getLogger(__name__).addHandler(NullHandler())

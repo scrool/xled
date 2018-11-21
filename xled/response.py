@@ -30,8 +30,7 @@ class ApplicationResponse(object):
         if self._dict is False:
             # Read the contents.
             if self._content_consumed:
-                raise RuntimeError(
-                    'The content for this response was already consumed')
+                raise RuntimeError("The content for this response was already consumed")
 
             if self.status_code == 0 or self.response.raw is None:
                 self._dict = {}
@@ -50,14 +49,14 @@ class ApplicationResponse(object):
         :rtype: None
         """
         if self.status_code is None:
-            msg = 'Status code not determined.'
+            msg = "Status code not determined."
             raise ApplicationError(msg, response=self.response)
 
-        msg = ''
+        msg = ""
         if self.status_code == 1000:
             return
         elif isinstance(self.status_code, int):
-            msg = 'Application error code: {}'.format(self.status_code)
+            msg = "Application error code: {}".format(self.status_code)
             raise ApplicationError(msg, response=self.response)
 
     def keys(self):
@@ -73,4 +72,4 @@ class ApplicationResponse(object):
         return len(self.dict)
 
     def __repr__(self):
-        return '<ApplicationResponse [%s]>' % (self.status_code)
+        return "<ApplicationResponse [%s]>" % (self.status_code)

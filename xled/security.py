@@ -23,10 +23,10 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms
 
 
 #: Default key to encrypt challenge in login phase
-SHARED_KEY_CHALLANGE = 'evenmoresecret!!'
+SHARED_KEY_CHALLANGE = "evenmoresecret!!"
 
 #: Default key to encrypt WiFi password
-SHARED_KEY_WIFI = 'supersecretkey!!'
+SHARED_KEY_WIFI = "supersecretkey!!"
 
 
 def xor_chars(char_a, char_b):
@@ -55,7 +55,7 @@ def xor_strings(message, key):
     ciphered = []
     for m_char, k_char in itertools.izip(message, itertools.cycle(key)):
         ciphered.append(xor_chars(m_char, k_char))
-    return ''.join(ciphered)
+    return "".join(ciphered)
 
 
 def derive_key(shared_key, mac_address):
@@ -89,8 +89,7 @@ def rc4(message, key):
     return encryptor.update(message)
 
 
-def make_challenge_response(challenge_message, mac_address,
-                            key=SHARED_KEY_CHALLANGE):
+def make_challenge_response(challenge_message, mac_address, key=SHARED_KEY_CHALLANGE):
     """
     Create challenge response from challenge
 
@@ -129,6 +128,6 @@ def encrypt_wifi_password(password, mac_address, key=SHARED_KEY_WIFI):
     :rtype: str
     """
     secret_key = derive_key(key, mac_address)
-    data = password.ljust(64, '\x00')
+    data = password.ljust(64, "\x00")
     rc4_encoded = rc4(data, secret_key)
     return base64.b64encode(rc4_encoded)

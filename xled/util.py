@@ -25,4 +25,4 @@ def date_from_seconds_after_midnight(seconds):
 
 
 def seconds_after_midnight_from_time(hours, minutes):
-    return hours*60*60 + minutes*60
+    return hours * 60 * 60 + minutes * 60

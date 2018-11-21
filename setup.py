@@ -14,12 +14,16 @@ with open("HISTORY.rst") as history_file:
 requirements = ["cryptography", "netaddr", "requests"]
 
 setup(
-    name='xled',
+    name="xled",
+    # bumpversion v0.5.3 doesn't handle version string in double quotes
+    # correctly so prevent Black to format it:
+    # fmt: off
     version='0.2.1',
+    # fmt: on
     description=(
         "Python library for Twinkly - Smart Decoration LED lights for Christmas."
     ),
-    long_description=readme + '\n\n' + history,
+    long_description=readme + "\n\n" + history,
     author="Pavol Babinčák",
     author_email="scroolik@gmail.com",
     url="https://github.com/scrool/xled",

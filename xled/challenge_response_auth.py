@@ -45,16 +45,21 @@ class ChallengeResponseAuth(AuthBase):
 
     def validate_challenge_response(self):
         if not self.hw_address:
-            msg = ("validate_challenge_response(): Cannot verify "
-                   "challenge-response without HW address.")
+            msg = (
+                "validate_challenge_response(): Cannot verify "
+                "challenge-response without HW address."
+            )
             log.warning(msg)
             return None
 
-        expected = xled.security.make_challenge_response(self.challenge,
-                                                         self.hw_address)
+        expected = xled.security.make_challenge_response(
+            self.challenge, self.hw_address
+        )
         if expected != self.challenge_response:
-            msg = ("validate_challenge_response(): login sent "
-                   "challenge-response: %r. But %r was expected.")
+            msg = (
+                "validate_challenge_response(): login sent "
+                "challenge-response: %r. But %r was expected."
+            )
             log.error(msg, self.challenge_response, expected)
             return False
         msg = "validate_challenge_response(): challenge-response is correct."
@@ -64,10 +69,10 @@ class ChallengeResponseAuth(AuthBase):
     def send_challenge(self, response, challenge):
         host = urlparse(response.url).hostname
         schema = urlparse(response.url).scheme
-        url = '%s://%s%s' % (schema, host, self.login_url)
+        url = "%s://%s%s" % (schema, host, self.login_url)
         b64_challenge = base64.b64encode(challenge)
-        body = {'challenge': b64_challenge}
-        r2 = requests.Request(method='POST', url=url, json=body)
+        body = {"challenge": b64_challenge}
+        r2 = requests.Request(method="POST", url=url, json=body)
         prep = r2.prepare()
         _r = response.connection.send(prep)
         if _r.status_code != 200:
@@ -75,22 +80,21 @@ class ChallengeResponseAuth(AuthBase):
             log.error(msg, _r.status_code)
             return False
         content = _r.json()
-        if content[u'code'] != 1000:
+        if content[u"code"] != 1000:
             msg = "send_challenge(): login return code: %s"
-            log.error(msg, content[u'code'])
+            log.error(msg, content[u"code"])
             return False
-        self.challenge_response = content['challenge-response']
-        self.authentication_token = content['authentication_token']
+        self.challenge_response = content["challenge-response"]
+        self.authentication_token = content["authentication_token"]
         return True
 
     def send_challenge_response(self, response):
         host = urlparse(response.url).hostname
         schema = urlparse(response.url).scheme
-        url = '%s://%s%s' % (schema, host, self.verify_url)
-        headers = {'X-Auth-Token': self.authentication_token}
+        url = "%s://%s%s" % (schema, host, self.verify_url)
+        headers = {"X-Auth-Token": self.authentication_token}
         body = {u"challenge-response": self.challenge_response}
-        r2 = requests.Request(method='POST', url=url, headers=headers,
-                              json=body)
+        r2 = requests.Request(method="POST", url=url, headers=headers, json=body)
         prep = r2.prepare()
         _r = response.connection.send(prep)
         if _r.status_code != 200:
@@ -119,7 +123,7 @@ class ChallengeResponseAuth(AuthBase):
         if not verify_successfull:
             return response
 
-        response.request.headers['X-Auth-Token'] = self.authentication_token
+        response.request.headers["X-Auth-Token"] = self.authentication_token
         _r = response.connection.send(response.request, **kwargs)
         _r.history.append(response)
 
@@ -140,12 +144,14 @@ class ChallengeResponseAuth(AuthBase):
         """
         Takes the given response and tries challenge-auth, as needed.
         """
-        num_401s = kwargs.pop('num_401s', 0)
+        num_401s = kwargs.pop("num_401s", 0)
 
         # If response is not 4xx, do not auth
         if not 400 <= response.status_code < 500:
-            log.debug('handle_response(): Not authenticating request '
-                      'because status is %s', response.status_code)
+            log.debug(
+                "handle_response(): Not authenticating request " "because status is %s",
+                response.status_code,
+            )
             return response
 
         if response.status_code == 401 and num_401s < 2:
@@ -166,14 +172,15 @@ class ChallengeResponseAuth(AuthBase):
         """
         Deregisters the response handler
         """
-        response.request.deregister_hook('response', self.handle_response)
+        response.request.deregister_hook("response", self.handle_response)
 
     def __call__(self, request):
         if self.authentication_token:
-            log.debug('Adding authentication token %s to request',
-                      self.authentication_token)
-            request.headers['X-Auth-Token'] = self.authentication_token
-        request.register_hook('response', self.handle_response)
+            log.debug(
+                "Adding authentication token %s to request", self.authentication_token
+            )
+            request.headers["X-Auth-Token"] = self.authentication_token
+        request.register_hook("response", self.handle_response)
         try:
             self.pos = request.body.tell()
         except AttributeError:

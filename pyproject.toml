@@ -1,0 +1,23 @@
+# vim: set ft=dosini :
+
+[tool.black]
+exclude = '''
+/(
+  # Black defaults
+    build/
+  | buck-out/
+  | dist/
+  | _build/
+  | \.git/
+  | \.hg/
+  | \.mypy_cache/
+  | \.nox/
+  | \.tox/
+  | \.venv/
+
+  # Project specific
+  | tests/casettes
+  | \.eggs/.*
+  | \.tox/.*
+)/
+'''

@@ -36,6 +36,7 @@ class ControlInterface(object):
 
     :param str host: Hostname (or IP address) of a device to control
     """
+
     def __init__(self, host, hw_address=None):
         self.host = host
         self.hw_address = hw_address
@@ -45,7 +46,7 @@ class ControlInterface(object):
     @property
     def base_url(self):
         if not self._base_url:
-            self._base_url = 'http://{}/xled/v1/'.format(self.host)
+            self._base_url = "http://{}/xled/v1/".format(self.host)
             assert self._base_url
         return self._base_url
 
@@ -61,9 +62,9 @@ class ControlInterface(object):
         if not self._session:
             s = requests.Session()
             s.auth = ChallengeResponseAuth(
-                login_url='/xled/v1/login',
-                verify_url='/xled/v1/verify',
-                hw_address=self.hw_address
+                login_url="/xled/v1/login",
+                verify_url="/xled/v1/verify",
+                hw_address=self.hw_address,
             )
             self._session = s
             assert self._session
@@ -72,7 +73,7 @@ class ControlInterface(object):
     def _build_response(self, response):
         app_response = ApplicationResponse()
         app_response.response = response
-        app_response.status_code = getattr(app_response, 'code', None)
+        app_response.status_code = getattr(app_response, "code", None)
         return app_response
 
     def firmware_0_update(self, firmware):
@@ -83,7 +84,7 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        url = urljoin(self.base_url, 'fw/0/update')
+        url = urljoin(self.base_url, "fw/0/update")
         response = self.session.post(url, data=firmware)
         app_response = self._build_response(response)
         return app_response
@@ -96,7 +97,7 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        url = urljoin(self.base_url, 'fw/1/update')
+        url = urljoin(self.base_url, "fw/1/update")
         response = self.session.post(url, data=firmware)
         app_response = self._build_response(response)
         return app_response
@@ -111,10 +112,10 @@ class ControlInterface(object):
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
         json_payload = {
-            'stage0_sha1sum': stage0_sha1sum,
-            'stage1_sha1sum': stage1_sha1sum,
+            "stage0_sha1sum": stage0_sha1sum,
+            "stage1_sha1sum": stage1_sha1sum,
         }
-        url = urljoin(self.base_url, 'fw/update')
+        url = urljoin(self.base_url, "fw/update")
         response = self.session.post(url, json=json_payload)
         app_response = self._build_response(response)
         return app_response
@@ -126,7 +127,7 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        url = urljoin(self.base_url, 'fw/version')
+        url = urljoin(self.base_url, "fw/version")
         response = self.session.get(url)
         app_response = self._build_response(response)
         return app_response
@@ -138,7 +139,7 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        url = urljoin(self.base_url, 'gestalt')
+        url = urljoin(self.base_url, "gestalt")
         response = self.session.get(url)
         app_response = self._build_response(response)
         return app_response
@@ -153,10 +154,10 @@ class ControlInterface(object):
         :return: current device name.
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        url = urljoin(self.base_url, 'device_name')
+        url = urljoin(self.base_url, "device_name")
         response = self.session.get(url)
         app_response = self._build_response(response)
-        assert sorted(app_response.keys()) == [u'code', u'name']
+        assert sorted(app_response.keys()) == [u"code", u"name"]
         return app_response
 
     def get_mode(self):
@@ -170,10 +171,10 @@ class ControlInterface(object):
             possible return values.
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        url = urljoin(self.base_url, 'led/mode')
+        url = urljoin(self.base_url, "led/mode")
         response = self.session.get(url)
         app_response = self._build_response(response)
-        assert sorted(app_response.keys()) == [u'code', u'mode']
+        assert sorted(app_response.keys()) == [u"code", u"mode"]
         return app_response
 
     def get_timer(self):
@@ -186,11 +187,10 @@ class ControlInterface(object):
             explanation of return values.
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        url = urljoin(self.base_url, 'timer')
+        url = urljoin(self.base_url, "timer")
         response = self.session.get(url)
         app_response = self._build_response(response)
-        assert sorted(app_response.keys()) == [u'time_now', u'time_off',
-                                               u'time_on']
+        assert sorted(app_response.keys()) == [u"time_now", u"time_off", u"time_on"]
         return app_response
 
     def led_reset(self):
@@ -200,10 +200,10 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: None
         """
-        url = urljoin(self.base_url, 'led/reset')
+        url = urljoin(self.base_url, "led/reset")
         response = self.session.get(url)
         app_response = self._build_response(response)
-        assert app_response.keys() == [u'code']
+        assert app_response.keys() == [u"code"]
 
     def network_scan(self):
         """
@@ -212,10 +212,10 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: None
         """
-        url = urljoin(self.base_url, 'network/scan')
+        url = urljoin(self.base_url, "network/scan")
         response = self.session.get(url)
         app_response = self._build_response(response)
-        assert app_response.keys() == [u'code']
+        assert app_response.keys() == [u"code"]
 
     def network_scan_results(self):
         """
@@ -224,7 +224,7 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        url = urljoin(self.base_url, 'network/scan_results')
+        url = urljoin(self.base_url, "network/scan_results")
         response = self.session.get(url)
         app_response = self._build_response(response)
         return app_response
@@ -238,11 +238,11 @@ class ControlInterface(object):
         :rtype: None
         """
         assert len(name) <= 32
-        json_payload = {'name': name}
-        url = urljoin(self.base_url, 'device_name')
+        json_payload = {"name": name}
+        url = urljoin(self.base_url, "device_name")
         response = self.session.post(url, json=json_payload)
         app_response = self._build_response(response)
-        assert app_response.keys() == [u'code']
+        assert app_response.keys() == [u"code"]
 
     def set_led_movie_config(self, frame_delay, frames_number, leds_number):
         """
@@ -255,14 +255,14 @@ class ControlInterface(object):
         :rtype: None
         """
         json_payload = {
-            'frame_delay': frame_delay,
-            'frames_number': frames_number,
-            'leds_number': leds_number
+            "frame_delay": frame_delay,
+            "frames_number": frames_number,
+            "leds_number": leds_number,
         }
-        url = urljoin(self.base_url, 'led/movie/config')
+        url = urljoin(self.base_url, "led/movie/config")
         response = self.session.post(url, json=json_payload)
         app_response = self._build_response(response)
-        assert app_response.keys() == [u'code']
+        assert app_response.keys() == [u"code"]
 
     def set_mode(self, mode):
         """
@@ -272,12 +272,12 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: None
         """
-        assert mode in ('movie', 'demo', 'off')
-        json_payload = {'mode': mode}
-        url = urljoin(self.base_url, 'led/mode')
+        assert mode in ("movie", "demo", "off")
+        json_payload = {"mode": mode}
+        url = urljoin(self.base_url, "led/mode")
         response = self.session.post(url, json=json_payload)
         app_response = self._build_response(response)
-        assert app_response.keys() == [u'code']
+        assert app_response.keys() == [u"code"]
 
     def set_network_mode_ap(self):
         """
@@ -286,13 +286,11 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: None
         """
-        json_payload = {
-            'mode': 2
-        }
-        url = urljoin(self.base_url, 'network/status')
+        json_payload = {"mode": 2}
+        url = urljoin(self.base_url, "network/status")
         response = self.session.post(url, json=json_payload)
         app_response = self._build_response(response)
-        assert app_response.keys() == [u'code']
+        assert app_response.keys() == [u"code"]
 
     def set_network_mode_station(self, ssid, password):
         """
@@ -306,17 +304,13 @@ class ControlInterface(object):
         assert self.hw_address
         encpassword = encrypt_wifi_password(password, self.hw_address)
         json_payload = {
-            'mode': 1,
-            'station': {
-                'dhcp': 1,
-                'ssid': ssid,
-                'encpassword': encpassword
-            }
+            "mode": 1,
+            "station": {"dhcp": 1, "ssid": ssid, "encpassword": encpassword},
         }
-        url = urljoin(self.base_url, 'network/status')
+        url = urljoin(self.base_url, "network/status")
         response = self.session.post(url, json=json_payload)
         app_response = self._build_response(response)
-        assert app_response.keys() == [u'code']
+        assert app_response.keys() == [u"code"]
 
     def set_timer(self, time_on, time_off, time_now=None):
         """
@@ -338,15 +332,10 @@ class ControlInterface(object):
         assert time_off >= -1
         if time_now is None:
             time_now = xled.util.seconds_after_midnight()
-            log.debug('Setting time now to %s', time_now)
+            log.debug("Setting time now to %s", time_now)
 
-        json_payload = {
-            'time_on': time_on,
-            'time_off': time_off,
-            'time_now': time_now,
-
-        }
-        url = urljoin(self.base_url, 'timer')
+        json_payload = {"time_on": time_on, "time_off": time_off, "time_now": time_now}
+        url = urljoin(self.base_url, "timer")
         response = self.session.post(url, json=json_payload)
         app_response = self._build_response(response)
-        assert app_response.keys() == [u'code']
+        assert app_response.keys() == [u"code"]
