@@ -69,6 +69,7 @@ Ready to contribute? Here's how to set up `xled` for local development.
     $ mkvirtualenv xled
     $ cd xled/
     $ pip install -r requirements_dev.txt
+    $ pre-commit install
     $ python setup.py develop
 
 4. Create a branch for local development::
