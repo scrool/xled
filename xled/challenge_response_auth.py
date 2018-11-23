@@ -70,7 +70,7 @@ class ChallengeResponseAuth(AuthBase):
         host = urlparse(response.url).hostname
         schema = urlparse(response.url).scheme
         url = "%s://%s%s" % (schema, host, self.login_url)
-        b64_challenge = base64.b64encode(challenge)
+        b64_challenge = base64.b64encode(challenge).decode("utf-8")
         body = {"challenge": b64_challenge}
         r2 = requests.Request(method="POST", url=url, json=body)
         prep = r2.prepare()

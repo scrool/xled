@@ -1,0 +1,82 @@
+interactions:
+- request:
+    body: !!python/unicode '{"mode": "demo"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['16']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.20.1]
+    method: POST
+    uri: http://192.168.1.171/xled/v1/led/mode
+  response:
+    body: {string: !!python/unicode Invalid Token.}
+    headers: {}
+    status: {code: 401, message: Unauthorized}
+- request:
+    body: !!python/unicode '{"challenge": "KIf7aPSJnS4+f63ixshm5tPEotIxpEUQAF3X24vrMBo="}'
+    headers:
+      Content-Length: ['61']
+      Content-Type: [application/json]
+    method: POST
+    uri: http://192.168.1.171/xled/v1/login
+  response:
+    body: {string: !!python/unicode '{"authentication_token":"DlOKfp4OBPw=","authentication_token_expires_in":14400,"challenge-response":"ce6249e9480f50a793c8da65fd0b725254ee6fab","code":1000}'}
+    headers:
+      connection: [close]
+      content-length: ['155']
+      content-type: [application/json]
+    status: {code: 200, message: Ok}
+- request:
+    body: !!python/unicode '{"challenge-response": "ce6249e9480f50a793c8da65fd0b725254ee6fab"}'
+    headers:
+      Content-Length: ['66']
+      Content-Type: [application/json]
+      X-Auth-Token: [!!python/unicode DlOKfp4OBPw=]
+    method: POST
+    uri: http://192.168.1.171/xled/v1/verify
+  response:
+    body: {string: !!python/unicode '{"code":1000}'}
+    headers:
+      connection: [close]
+      content-length: ['13']
+      content-type: [application/json]
+    status: {code: 200, message: Ok}
+- request:
+    body: !!python/unicode '{"mode": "demo"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['16']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.20.1]
+      X-Auth-Token: [!!python/unicode DlOKfp4OBPw=]
+    method: POST
+    uri: http://192.168.1.171/xled/v1/led/mode
+  response:
+    body: {string: !!python/unicode '{"code":1000}'}
+    headers:
+      connection: [close]
+      content-length: ['13']
+      content-type: [application/json]
+    status: {code: 200, message: Ok}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.20.1]
+      X-Auth-Token: [!!python/unicode DlOKfp4OBPw=]
+    method: GET
+    uri: http://192.168.1.171/xled/v1/led/mode
+  response:
+    body: {string: !!python/unicode '{"mode":"demo","code":1000}'}
+    headers:
+      connection: [close]
+      content-length: ['27']
+      content-type: [application/json]
+    status: {code: 200, message: Ok}
+version: 1

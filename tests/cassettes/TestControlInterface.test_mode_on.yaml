@@ -1,0 +1,82 @@
+interactions:
+- request:
+    body: !!python/unicode '{"mode": "movie"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['17']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.20.1]
+    method: POST
+    uri: http://192.168.1.171/xled/v1/led/mode
+  response:
+    body: {string: !!python/unicode Invalid Token.}
+    headers: {}
+    status: {code: 401, message: Unauthorized}
+- request:
+    body: !!python/unicode '{"challenge": "2nF3zRXDoORmLtRsEh0w9x8smi9fzeJx22Pz5xBovNI="}'
+    headers:
+      Content-Length: ['61']
+      Content-Type: [application/json]
+    method: POST
+    uri: http://192.168.1.171/xled/v1/login
+  response:
+    body: {string: !!python/unicode '{"authentication_token":"cg4ZU/D/rkM=","authentication_token_expires_in":14400,"challenge-response":"b99a6305ddb2026bf58051f0f6bf6ac9572e3a79","code":1000}'}
+    headers:
+      connection: [close]
+      content-length: ['155']
+      content-type: [application/json]
+    status: {code: 200, message: Ok}
+- request:
+    body: !!python/unicode '{"challenge-response": "b99a6305ddb2026bf58051f0f6bf6ac9572e3a79"}'
+    headers:
+      Content-Length: ['66']
+      Content-Type: [application/json]
+      X-Auth-Token: [!!python/unicode cg4ZU/D/rkM=]
+    method: POST
+    uri: http://192.168.1.171/xled/v1/verify
+  response:
+    body: {string: !!python/unicode '{"code":1000}'}
+    headers:
+      connection: [close]
+      content-length: ['13']
+      content-type: [application/json]
+    status: {code: 200, message: Ok}
+- request:
+    body: !!python/unicode '{"mode": "movie"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['17']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.20.1]
+      X-Auth-Token: [!!python/unicode cg4ZU/D/rkM=]
+    method: POST
+    uri: http://192.168.1.171/xled/v1/led/mode
+  response:
+    body: {string: !!python/unicode '{"code":1000}'}
+    headers:
+      connection: [close]
+      content-length: ['13']
+      content-type: [application/json]
+    status: {code: 200, message: Ok}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.20.1]
+      X-Auth-Token: [!!python/unicode cg4ZU/D/rkM=]
+    method: GET
+    uri: http://192.168.1.171/xled/v1/led/mode
+  response:
+    body: {string: !!python/unicode '{"mode":"movie","code":1000}'}
+    headers:
+      connection: [close]
+      content-length: ['28']
+      content-type: [application/json]
+    status: {code: 200, message: Ok}
+version: 1

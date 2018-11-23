@@ -12,6 +12,7 @@ with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
 requirements = ["cryptography", "netaddr", "requests"]
+tests_requirements = ["vcrpy-unittest"]
 
 setup(
     name="xled",
@@ -30,6 +31,7 @@ setup(
     packages=find_packages(include=["xled"]),
     include_package_data=True,
     install_requires=requirements,
+    tests_require=tests_requirements,
     license="MIT license",
     zip_safe=False,
     keywords="xled,twinkly",

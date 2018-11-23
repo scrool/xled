@@ -277,7 +277,7 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "led/mode")
         response = self.session.post(url, json=json_payload)
         app_response = self._build_response(response)
-        assert app_response.keys() == [u"code"]
+        assert list(app_response.keys()) == [u"code"]
 
     def set_network_mode_ap(self):
         """
