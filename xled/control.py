@@ -19,11 +19,11 @@ from __future__ import absolute_import
 
 import logging
 
-import requests
 from requests.compat import urljoin
 
 import xled.util
-from xled.auth import ChallengeResponseAuth
+from xled.auth import BaseUrlChallengeResponseAuthSession
+
 from xled.response import ApplicationResponse
 from xled.security import encrypt_wifi_password
 
@@ -56,17 +56,13 @@ class ControlInterface(object):
         Session object to operate on
 
         :return: session object with auth
-            :py:class:`~.auth.ChallengeResponseAuth()`.
+            :py:class:`~.auth.BaseUrlChallengeResponseAuthSession()`.
         :rtype: requests.Session
         """
         if not self._session:
-            s = requests.Session()
-            s.auth = ChallengeResponseAuth(
-                login_url="/xled/v1/login",
-                verify_url="/xled/v1/verify",
-                hw_address=self.hw_address,
+            self._session = BaseUrlChallengeResponseAuthSession(
+                hw_address=self.hw_address, base_url=self.base_url
             )
-            self._session = s
             assert self._session
         return self._session
 
