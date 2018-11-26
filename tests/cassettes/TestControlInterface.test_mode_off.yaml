@@ -1,39 +1,28 @@
 interactions:
 - request:
-    body: !!python/unicode '{"mode": "off"}'
+    body: !!python/unicode '{"challenge": "5sewXsaGSF8fGU0vZ5/3gDaygquGoKYb5yINNm7sY8M="}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['15']
+      Content-Length: ['61']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.20.1]
     method: POST
-    uri: http://192.168.1.171/xled/v1/led/mode
-  response:
-    body: {string: !!python/unicode Invalid Token.}
-    headers: {}
-    status: {code: 401, message: Unauthorized}
-- request:
-    body: !!python/unicode '{"challenge": "pXPTQZ1rL7tbTXgdoe9GR7WuOoPL9bt2cSMD0Rf3VOM="}'
-    headers:
-      Content-Length: ['61']
-      Content-Type: [application/json]
-    method: POST
     uri: http://192.168.1.171/xled/v1/login
   response:
-    body: {string: !!python/unicode '{"authentication_token":"FAsAsORgtvU=","authentication_token_expires_in":14400,"challenge-response":"6d745d7064b8c86d93866c617202390c4055ba75","code":1000}'}
+    body: {string: !!python/unicode '{"authentication_token":"CdMxRrasAP4=","authentication_token_expires_in":14400,"challenge-response":"05c7b49d6f80c26d5cb1139171e82bff8171ce5e","code":1000}'}
     headers:
       connection: [close]
       content-length: ['155']
       content-type: [application/json]
     status: {code: 200, message: Ok}
 - request:
-    body: !!python/unicode '{"challenge-response": "6d745d7064b8c86d93866c617202390c4055ba75"}'
+    body: !!python/unicode '{"challenge_response": "05c7b49d6f80c26d5cb1139171e82bff8171ce5e"}'
     headers:
       Content-Length: ['66']
       Content-Type: [application/json]
-      X-Auth-Token: [!!python/unicode FAsAsORgtvU=]
+      X-Auth-Token: [!!python/unicode CdMxRrasAP4=]
     method: POST
     uri: http://192.168.1.171/xled/v1/verify
   response:
@@ -52,7 +41,7 @@ interactions:
       Content-Length: ['15']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.20.1]
-      X-Auth-Token: [!!python/unicode FAsAsORgtvU=]
+      X-Auth-Token: [!!python/unicode CdMxRrasAP4=]
     method: POST
     uri: http://192.168.1.171/xled/v1/led/mode
   response:
@@ -69,7 +58,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.20.1]
-      X-Auth-Token: [!!python/unicode FAsAsORgtvU=]
+      X-Auth-Token: [!!python/unicode CdMxRrasAP4=]
     method: GET
     uri: http://192.168.1.171/xled/v1/led/mode
   response:

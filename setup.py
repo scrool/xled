@@ -22,6 +22,7 @@ requirements = [
     "pyzmq",
     "requests",
     "tornado",
+    "requests-toolbelt",
 ]
 tests_requirements = ["vcrpy-unittest"]
 

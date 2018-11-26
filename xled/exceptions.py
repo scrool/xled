@@ -8,3 +8,15 @@ class XledException(IOError):
 
 class ApplicationError(XledException):
     """Application didn't return successful status code"""
+
+
+class ValidationError(XledException):
+    """Validation of challenge response wasn't successful"""
+
+
+class AuthenticationError(XledException):
+    """Authentication handshake wasn't successful"""
+
+
+class TokenExpiredError(XledException):
+    """Token is no longer valid"""
