@@ -23,6 +23,11 @@ class ApplicationResponse(collections.Mapping):
         self._content_consumed = False
 
     @property
+    def status_code(self):
+        """Integer Code of responded application status, e.g. 1000 or 1001"""
+        return self.data.get("code", None)
+
+    @property
     def data(self):
         """
         Response content as dict
