@@ -5,6 +5,7 @@ from __future__ import absolute_import
 import collections
 
 from xled.exceptions import ApplicationError
+from xled.compat import JSONDecodeError
 
 
 class ApplicationResponse(collections.Mapping):
@@ -65,7 +66,7 @@ class ApplicationResponse(collections.Mapping):
             else:
                 try:
                     json_data = self.response.json()
-                except ValueError:
+                except JSONDecodeError:
                     msg = "Failed to decode application data: %r" % self.response.text
                     raise ApplicationError(msg, response=self.response)
                 self._data = dict(json_data)

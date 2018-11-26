@@ -24,8 +24,19 @@ is_py2 = _ver[0] == 2
 #: Python 3.x?
 is_py3 = _ver[0] == 3
 
+is_py34 = _ver[:2] == (3, 4)
+
 if is_py2:
     basestring = basestring
 
 elif is_py3:
     basestring = (str, bytes)
+
+try:
+    from json.decoder import JSONDecodeError
+except ImportError:
+    if is_py2 or is_py34:
+        # Python < 3.5
+        JSONDecodeError = ValueError
+    else:
+        raise
