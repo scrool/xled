@@ -10,15 +10,14 @@ from xled.exceptions import ApplicationError
 class ApplicationResponse(collections.Mapping):
     """The :class:`ApplicationResponse <ApplicationResponse>` object, which
     contains a server's response to an HTTP request.
+
+    :param response: to which this is a response. Can be later set as an
+        attribute.
+    :type response: :class:`requests.Response <Response>` or None
     """
 
-    def __init__(self):
-        #: Integer Code of responded application status, e.g. 1000 or 1001
-        self.status_code = None
-
-        #: The :class:`requests.Response <Response>` object to which this
-        #: is a response.
-        self.response = None
+    def __init__(self, response=None):
+        self.response = response
 
         self._data = False
         self._content_consumed = False
