@@ -13,6 +13,7 @@ secret so it can be transferred over unencrypted connection.
         for various operations.
 """
 
+import os
 import base64
 import hashlib
 import itertools
@@ -87,6 +88,15 @@ def rc4(message, key):
     cipher = Cipher(algorithm, mode=None, backend=default_backend())
     encryptor = cipher.encryptor()
     return encryptor.update(message)
+
+
+def generate_challenge():
+    """
+    Generates random challenge string
+
+    :rtype: str
+    """
+    return os.urandom(32)
 
 
 def make_challenge_response(challenge_message, mac_address, key=SHARED_KEY_CHALLANGE):

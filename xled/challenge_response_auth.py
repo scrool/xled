@@ -11,7 +11,6 @@ from __future__ import absolute_import
 
 import base64
 import logging
-import os
 
 import xled.security
 
@@ -33,15 +32,6 @@ class ChallengeResponseAuth(AuthBase):
         self.challenge = None
         self.challenge_response = None
         self.authentication_token = None
-
-    def generate_challenge(self):
-        """
-        Generates random challenge string
-
-        :rtype: str
-        """
-        self.challenge = os.urandom(32)
-        return self.challenge
 
     def validate_challenge_response(self):
         if not self.hw_address:
@@ -109,7 +99,7 @@ class ChallengeResponseAuth(AuthBase):
         response.content
         response.raw.release_conn()
 
-        challenge = self.generate_challenge()
+        challenge = xled.security.generate_challenge()
         log.debug("authenticate(): Challenge: %s", repr(challenge))
         login_successfull = self.send_challenge(response, challenge)
         if not login_successfull:
