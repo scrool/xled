@@ -70,12 +70,6 @@ class ControlInterface(object):
             assert self._session
         return self._session
 
-    def _build_response(self, response):
-        app_response = ApplicationResponse()
-        app_response.response = response
-        app_response.status_code = getattr(app_response, "code", None)
-        return app_response
-
     def firmware_0_update(self, firmware):
         """
         Uploads first stage of the firmware
@@ -86,7 +80,7 @@ class ControlInterface(object):
         """
         url = urljoin(self.base_url, "fw/0/update")
         response = self.session.post(url, data=firmware)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         return app_response
 
     def firmware_1_update(self, firmware):
@@ -99,7 +93,7 @@ class ControlInterface(object):
         """
         url = urljoin(self.base_url, "fw/1/update")
         response = self.session.post(url, data=firmware)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         return app_response
 
     def firmware_update(self, stage0_sha1sum, stage1_sha1sum):
@@ -117,7 +111,7 @@ class ControlInterface(object):
         }
         url = urljoin(self.base_url, "fw/update")
         response = self.session.post(url, json=json_payload)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         return app_response
 
     def firmware_version(self):
@@ -129,7 +123,7 @@ class ControlInterface(object):
         """
         url = urljoin(self.base_url, "fw/version")
         response = self.session.get(url)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         return app_response
 
     def get_device_info(self):
@@ -141,7 +135,7 @@ class ControlInterface(object):
         """
         url = urljoin(self.base_url, "gestalt")
         response = self.session.get(url)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         return app_response
 
     def get_device_name(self):
@@ -156,7 +150,7 @@ class ControlInterface(object):
         """
         url = urljoin(self.base_url, "device_name")
         response = self.session.get(url)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         assert sorted(app_response.keys()) == [u"code", u"name"]
         return app_response
 
@@ -173,7 +167,7 @@ class ControlInterface(object):
         """
         url = urljoin(self.base_url, "led/mode")
         response = self.session.get(url)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         assert sorted(app_response.keys()) == [u"code", u"mode"]
         return app_response
 
@@ -189,7 +183,7 @@ class ControlInterface(object):
         """
         url = urljoin(self.base_url, "timer")
         response = self.session.get(url)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         assert sorted(app_response.keys()) == [u"time_now", u"time_off", u"time_on"]
         return app_response
 
@@ -202,7 +196,7 @@ class ControlInterface(object):
         """
         url = urljoin(self.base_url, "led/reset")
         response = self.session.get(url)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         assert app_response.keys() == [u"code"]
 
     def network_scan(self):
@@ -214,7 +208,7 @@ class ControlInterface(object):
         """
         url = urljoin(self.base_url, "network/scan")
         response = self.session.get(url)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         assert app_response.keys() == [u"code"]
 
     def network_scan_results(self):
@@ -226,7 +220,7 @@ class ControlInterface(object):
         """
         url = urljoin(self.base_url, "network/scan_results")
         response = self.session.get(url)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         return app_response
 
     def set_device_name(self, name):
@@ -241,7 +235,7 @@ class ControlInterface(object):
         json_payload = {"name": name}
         url = urljoin(self.base_url, "device_name")
         response = self.session.post(url, json=json_payload)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         assert app_response.keys() == [u"code"]
 
     def set_led_movie_config(self, frame_delay, frames_number, leds_number):
@@ -261,7 +255,7 @@ class ControlInterface(object):
         }
         url = urljoin(self.base_url, "led/movie/config")
         response = self.session.post(url, json=json_payload)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         assert app_response.keys() == [u"code"]
 
     def set_mode(self, mode):
@@ -276,7 +270,7 @@ class ControlInterface(object):
         json_payload = {"mode": mode}
         url = urljoin(self.base_url, "led/mode")
         response = self.session.post(url, json=json_payload)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         assert list(app_response.keys()) == [u"code"]
 
     def set_network_mode_ap(self):
@@ -289,7 +283,7 @@ class ControlInterface(object):
         json_payload = {"mode": 2}
         url = urljoin(self.base_url, "network/status")
         response = self.session.post(url, json=json_payload)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         assert app_response.keys() == [u"code"]
 
     def set_network_mode_station(self, ssid, password):
@@ -309,7 +303,7 @@ class ControlInterface(object):
         }
         url = urljoin(self.base_url, "network/status")
         response = self.session.post(url, json=json_payload)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         assert app_response.keys() == [u"code"]
 
     def set_timer(self, time_on, time_off, time_now=None):
@@ -337,5 +331,5 @@ class ControlInterface(object):
         json_payload = {"time_on": time_on, "time_off": time_off, "time_now": time_now}
         url = urljoin(self.base_url, "timer")
         response = self.session.post(url, json=json_payload)
-        app_response = self._build_response(response)
+        app_response = ApplicationResponse(response)
         assert app_response.keys() == [u"code"]

@@ -71,3 +71,16 @@ class ApplicationResponse(collections.Mapping):
 
     def __repr__(self):
         return "<ApplicationResponse [%s]>" % (self.status_code)
+
+
+def build_response(response):
+    """Creates ApplicationResponse object out of Requests response
+
+    :param response: to which this is a response. Can be later set as an
+        attribute.
+    :type response: :class:`requests.Response <Response>` or None
+    :rtype: :class:`ApplicationResponse`
+    """
+    app_response = ApplicationResponse()
+    app_response.response = response
+    return app_response
