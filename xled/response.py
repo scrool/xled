@@ -28,6 +28,23 @@ class ApplicationResponse(collections.Mapping):
         return self.data.get("code", None)
 
     @property
+    def ok(self):
+        """
+        Returns True if :attr:`status_code` is 1000, False if not.
+
+        First this attribute checks if parent response is ok. Then it checks if
+        application response can be determined and finally if
+        :attr:`status_code` is 1000.
+        """
+        if not self.response.ok:
+            return False
+        try:
+            self.raise_for_status(propagate=False)
+        except ApplicationError:
+            return False
+        return True
+
+    @property
     def data(self):
         """
         Response content as dict
