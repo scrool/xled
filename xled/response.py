@@ -75,6 +75,7 @@ class ApplicationResponse(collections.Mapping):
         return len(self.data)
 
     def __repr__(self):
+        self.raise_for_status(propagate=False)
         return "<ApplicationResponse [%s]>" % (self.status_code)
 
 
