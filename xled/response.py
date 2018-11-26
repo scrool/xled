@@ -2,10 +2,12 @@
 
 from __future__ import absolute_import
 
+import collections
+
 from xled.exceptions import ApplicationError
 
 
-class ApplicationResponse(object):
+class ApplicationResponse(collections.Mapping):
     """The :class:`ApplicationResponse <ApplicationResponse>` object, which
     contains a server's response to an HTTP request.
     """
@@ -18,27 +20,27 @@ class ApplicationResponse(object):
         #: is a response.
         self.response = None
 
-        self._dict = False
+        self._data = False
         self._content_consumed = False
 
     @property
-    def dict(self):
+    def data(self):
         """
         Response content as dict
         """
 
-        if self._dict is False:
+        if self._data is False:
             # Read the contents.
             if self._content_consumed:
                 raise RuntimeError("The content for this response was already consumed")
 
             if self.status_code == 0 or self.response.raw is None:
-                self._dict = {}
+                self._data = {}
             else:
-                self._dict = dict(self.response.json())
+                self._data = dict(self.response.json())
 
             self._content_consumed = True
-        return self._dict
+        return self._data
 
     def raise_for_status(self):
         """
@@ -59,17 +61,14 @@ class ApplicationResponse(object):
             msg = "Application error code: {}".format(self.status_code)
             raise ApplicationError(msg, response=self.response)
 
-    def keys(self):
-        return self.dict.keys()
-
     def __getitem__(self, key):
-        return self.dict[key]
+        return self.data[key]
 
     def __iter__(self):
-        return iter(self.dict)
+        return iter(self.data)
 
     def __len__(self):
-        return len(self.dict)
+        return len(self.data)
 
     def __repr__(self):
         return "<ApplicationResponse [%s]>" % (self.status_code)
