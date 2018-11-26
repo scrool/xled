@@ -41,14 +41,19 @@ class ApplicationResponse(collections.Mapping):
             self._content_consumed = True
         return self._data
 
-    def raise_for_status(self):
+    def raise_for_status(self, propagate=True):
         """
         Raises :py:exc:`~.exceptions.ApplicationError`, if one occurred.
 
+        :param bool propagate: check status of underlying
+            :class:`requests.Response` as well.
         :raises ApplicationError: if response cannot be parsed
             as JSON or application status code wasn't success (1000).
         :rtype: None
         """
+        if propagate:
+            self.response.raise_for_status()
+
         if self.status_code is None:
             msg = "Status code not determined."
             raise ApplicationError(msg, response=self.response)
