@@ -4,10 +4,10 @@ xled package
 Submodules
 ----------
 
-xled\.challenge\_response\_auth module
---------------------------------------
+xled\.auth module
+-----------------
 
-.. automodule:: xled.challenge_response_auth
+.. automodule:: xled.auth
     :members:
     :undoc-members:
     :show-inheritance:

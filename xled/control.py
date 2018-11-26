@@ -23,7 +23,7 @@ import requests
 from requests.compat import urljoin
 
 import xled.util
-from xled.challenge_response_auth import ChallengeResponseAuth
+from xled.auth import ChallengeResponseAuth
 from xled.response import ApplicationResponse
 from xled.security import encrypt_wifi_password
 
@@ -56,7 +56,7 @@ class ControlInterface(object):
         Session object to operate on
 
         :return: session object with auth
-            :py:class:`~.challenge_response_auth.ChallengeResponseAuth()`.
+            :py:class:`~.auth.ChallengeResponseAuth()`.
         :rtype: requests.Session
         """
         if not self._session:

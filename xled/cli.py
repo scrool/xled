@@ -11,7 +11,7 @@ import time
 import click
 import click_log
 
-import xled.challenge_response_auth
+import xled.auth
 import xled.control
 import xled.discover
 import xled.exceptions
@@ -61,7 +61,7 @@ def validate_time(ctx, param, value):
     help="Sets verbosity of control module. Either CRITICAL, ERROR, WARNING, INFO or DEBUG",
 )
 @click_log.simple_verbosity_option(
-    xled.challenge_response_auth.log,
+    xled.auth.log,
     "--verbosity-auth",
     help="Sets verbosity of auth module. Either CRITICAL, ERROR, WARNING, INFO or DEBUG",
 )

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-xled.challenge_response_auth
+xled.auth
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Custom authentication handler to be used with :class:`requests.Session`
