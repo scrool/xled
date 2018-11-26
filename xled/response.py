@@ -33,10 +33,20 @@ class ApplicationResponse(collections.Mapping):
             if self._content_consumed:
                 raise RuntimeError("The content for this response was already consumed")
 
-            if self.status_code == 0 or self.response.raw is None:
+            if self.response is None:
+                raise RuntimeError(
+                    "No response to create application response data from"
+                )
+
+            if self.response.raw is None:
                 self._data = {}
             else:
-                self._data = dict(self.response.json())
+                try:
+                    json_data = self.response.json()
+                except ValueError:
+                    msg = "Failed to decode application data: %r" % self.response.text
+                    raise ApplicationError(msg, response=self.response)
+                self._data = dict(json_data)
 
             self._content_consumed = True
         return self._data
