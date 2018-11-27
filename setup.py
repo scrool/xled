@@ -37,7 +37,8 @@ setup(
     version='0.3.0',
     # fmt: on
     description=(
-        "Python library for Twinkly - Smart Decoration LED lights for Christmas."
+        "Python library and command line interface to control "
+        "Twinkly - Smart Decoration LED lights for Christmas."
     ),
     long_description=readme + "\n\n" + history,
     author="Pavol Babinčák",
