@@ -269,6 +269,22 @@ class ControlInterface(object):
         app_response = ApplicationResponse(response)
         assert list(app_response.keys()) == [u"code"]
 
+    def set_led_movie_full(self, movie):
+        """
+        Uploads movie
+
+        :param movie: file-like object that points to movie file.
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "led/movie/full")
+        response = self.session.post(
+            url, headers={"Content-Type": "application/octet-stream"}, data=movie
+        )
+        app_response = ApplicationResponse(response)
+        assert app_response.keys() == [u"code", u"frames_number"]
+        return app_response
+
     def set_network_mode_ap(self):
         """
         Sets network mode to Access Point

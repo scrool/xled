@@ -160,3 +160,13 @@ def set_device_name(ctx, name):
     log.debug("Setting device name...")
     control_interface.set_device_name(name)
     click.echo("Set new name to {}".format(name))
+
+
+@main.command(name="upload-movie", help="Uploads movie.")
+@click.argument("movie", type=click.File("rb"))
+@click.pass_context
+def upload_movie(ctx, movie):
+    control_interface = common_preamble(ctx.obj.get("name"))
+    log.debug("Uploading movie...")
+    response = control_interface.set_led_movie_full(movie)
+    click.echo("Uploaded {} frames.".format(response["frames_number"]))
