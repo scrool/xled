@@ -34,7 +34,7 @@ setup(
     # bumpversion v0.5.3 doesn't handle version string in double quotes
     # correctly so prevent Black to format it:
     # fmt: off
-    version='0.2.1',
+    version='0.3.0',
     # fmt: on
     description=(
         "Python library for Twinkly - Smart Decoration LED lights for Christmas."
