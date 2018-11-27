@@ -102,8 +102,10 @@ class ControlInterface(object):
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
         json_payload = {
-            "stage0_sha1sum": stage0_sha1sum,
-            "stage1_sha1sum": stage1_sha1sum,
+            "checksum": {
+                "stage0_sha1sum": stage0_sha1sum,
+                "stage1_sha1sum": stage1_sha1sum,
+            }
         }
         url = urljoin(self.base_url, "fw/update")
         response = self.session.post(url, json=json_payload)
