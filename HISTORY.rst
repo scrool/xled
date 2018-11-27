@@ -2,6 +2,13 @@
 History
 =======
 
+0.3.1 (2018-11-27)
+------------------
+
+* Update changelog for version 0.3.0
+* Update description in setup.py to refer to CLI
+* Fix JSON payload sent to server for firmware update.
+
 0.3.0 (2018-11-27)
 ------------------
 
