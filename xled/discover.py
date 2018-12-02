@@ -306,6 +306,28 @@ class InterfaceAgent(object):
         """
         print("control message: %s", event)
 
+    def _send_to_pipe_multipart(self, msg_parts):
+        """
+        Handle errors while sending message to pipe as ERROR message sent to pipe
+
+        Caller should catch use these messages to stop interface thread and thus
+        agent as well.
+
+        :param iterable msg_parts: A sequence of objects to send as a multipart message.
+        :raises TypeError: after error is caught and ERROR message sent to pipe
+        """
+        log.debug("Going to send %r.", msg_parts)
+        try:
+            self.pipe.send_multipart(msg_parts)
+        except TypeError as err:
+            log.error("Failed to send multipart message to pipe: %s", err)
+            self.pipe.send_multipart(
+                [b"ERROR", b"Failed to send a message to main thread."]
+            )
+            raise
+        finally:
+            self.stop()
+
     def handle_beacon(self, fd, event):
         """
         Reads response from nodes
@@ -328,10 +350,12 @@ class InterfaceAgent(object):
         log.debug("Getting hardware address of %s.", ip_address)
         hw_address = arpreq(ip_address)
         if hw_address is None:
-            self.pipe.send_multipart([b"ERROR", device_name, ip_address])
             log.error("Unable to get HW adress of %s.", ip_address)
-            self.stop()
-            return
+            msg_parts = [b"ERROR", device_name, ip_address]
+            try:
+                self._send_to_pipe_multipart(msg_parts)
+            except Exception:
+                return
         # print("Host {} has MAC address {}".format(ip_address, hw_address))
         if hw_address in self.peers:
             log.debug("Peer %s seen before.", hw_address)
@@ -339,19 +363,27 @@ class InterfaceAgent(object):
             if device_name != self.peers[hw_address].device_name:
                 old_device_name = self.peers[hw_address].device_name
                 self.peers[hw_address].device_name = device_name
-                self.pipe.send_multipart(
-                    [b"RENAMED", hw_address, old_device_name, device_name]
-                )
+                msg_parts = [b"RENAMED", hw_address, old_device_name, device_name]
+                try:
+                    self._send_to_pipe_multipart(msg_parts)
+                except Exception:
+                    return
             if ip_address != self.peers[hw_address].ip_address:
                 old_ip_address = self.peers[hw_address].ip_address
                 self.peers[hw_address].ip_address = ip_address
-                self.pipe.send_multipart(
-                    [b"ADDRESS_CHANGED", hw_address, old_ip_address, ip_address]
-                )
+                msg_parts = [b"ADDRESS_CHANGED", hw_address, old_ip_address, ip_address]
+                try:
+                    self._send_to_pipe_multipart(msg_parts)
+                except Exception:
+                    return
         else:
             log.debug("Never seen %s before.", hw_address)
             self.peers[hw_address] = Peer(hw_address, device_name, ip_address)
-            self.pipe.send_multipart([b"JOINED", hw_address, device_name, ip_address])
+            msg_parts = [b"JOINED", hw_address, device_name, ip_address]
+            try:
+                self._send_to_pipe_multipart(msg_parts)
+            except Exception:
+                return
 
     def reap_peers(self):
         """
@@ -365,4 +397,8 @@ class InterfaceAgent(object):
             if peer.expires_at < now:
                 log.debug("reaping %s", peer.hw_address, peer.expires_at, now)
                 self.peers.pop(peer.hw_address)
-                self.pipe.send_multipart([b"LEFT", peer.hw_address])
+                msg_parts = [b"LEFT", peer.hw_address]
+                try:
+                    self._send_to_pipe_multipart(msg_parts)
+                except Exception:
+                    return
