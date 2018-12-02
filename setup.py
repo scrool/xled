@@ -21,7 +21,7 @@ requirements = [
     "netaddr",
     "pyzmq",
     "requests",
-    "tornado",
+    "tornado<5.0.0",
     "requests-toolbelt",
 ]
 tests_requirements = ["vcrpy-unittest"]
