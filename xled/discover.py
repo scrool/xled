@@ -318,9 +318,10 @@ class InterfaceAgent(object):
         """
         log.debug("Waiting for a beacon.")
         data, host = self.udp.recv(64)
+        if data == PING_MESSAGE:
+            log.debug("Ignoring ping message received from network from %s.", host)
+            return
         log.debug("Received a beacon from %s.", host)
-        # if data == PING_MESSAGE:
-        #    return
         ip_address, device_name = decode_discovery_response(data)
         # if host != ip_address:
         # print("Host {} != ip_address {}".format(host, ip_address))
