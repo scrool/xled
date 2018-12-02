@@ -40,3 +40,12 @@ except ImportError:
         JSONDecodeError = ValueError
     else:
         raise
+
+
+if is_py2:
+    import itertools
+
+    zip = itertools.izip
+
+elif is_py3:
+    zip = zip

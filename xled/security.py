@@ -22,24 +22,13 @@ import netaddr
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms
 
+from xled.compat import zip, is_py2
 
 #: Default key to encrypt challenge in login phase
-SHARED_KEY_CHALLANGE = "evenmoresecret!!"
+SHARED_KEY_CHALLANGE = b"evenmoresecret!!"
 
 #: Default key to encrypt WiFi password
 SHARED_KEY_WIFI = "supersecretkey!!"
-
-
-def xor_chars(char_a, char_b):
-    """
-    Apply XOR operation between input characters
-
-    :param str char_a: one character - string of length 1.
-    :param str char_b: second character - string of length 1.
-    :return: character - string of length 1.
-    :rtype: str
-    """
-    return chr(ord(char_a) ^ ord(char_b))
 
 
 def xor_strings(message, key):
@@ -48,15 +37,18 @@ def xor_strings(message, key):
 
     If key is shorter than message repeats it from the beginning
     until whole message is processed.
-    :param str message: input message to encrypt
-    :param str key: encryption key
+    :param bytes message: input message to encrypt
+    :param bytes key: encryption key
     :return: encrypted cypher
-    :rtype: str
+    :rtype: bytearray
     """
-    ciphered = []
-    for m_char, k_char in itertools.izip(message, itertools.cycle(key)):
-        ciphered.append(xor_chars(m_char, k_char))
-    return "".join(ciphered)
+    if is_py2:
+        message = bytearray(message)
+        key = bytearray(key)
+    ciphered = bytearray()
+    for m_char, k_char in zip(message, itertools.cycle(key)):
+        ciphered.append(m_char ^ k_char)
+    return bytes(ciphered)
 
 
 def derive_key(shared_key, mac_address):
@@ -70,7 +62,7 @@ def derive_key(shared_key, mac_address):
     :param str mac_address: MAC address in any format that netaddr.EUI
         recognizes
     :return: derived key
-    :rtype: str
+    :rtype: bytes
     """
     mac = netaddr.EUI(mac_address)
     return xor_strings(shared_key, mac.packed)
