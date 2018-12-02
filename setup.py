@@ -19,9 +19,9 @@ requirements = [
     "Click>=6.0",
     "cryptography",
     "netaddr",
-    "pyzmq",
+    "pyzmq>=17",
     "requests",
-    "tornado<5.0.0",
+    "tornado>=5.0.0",
     "requests-toolbelt",
 ]
 tests_requirements = ["vcrpy-unittest"]

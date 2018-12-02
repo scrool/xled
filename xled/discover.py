@@ -12,16 +12,22 @@ from __future__ import absolute_import
 import logging
 import time
 import uuid
+
 from threading import Thread
 
 import ipaddress
 import zmq
 from arpreq import arpreq
-from zmq.eventloop.ioloop import IOLoop, PeriodicCallback
+import tornado.log
+from tornado.ioloop import IOLoop, PeriodicCallback
 from zmq.eventloop.zmqstream import ZMQStream
 
 from xled import udp_client
 from xled.compat import basestring, is_py3
+
+if is_py3:
+    import asyncio
+    import tornado.platform.asyncio
 
 
 # Some time in the future improve logging, e.g.
@@ -115,6 +121,11 @@ class DiscoveryInterface(object):
 
     def __init__(self):
         log.debug("DiscoveryInterface(): __init__()")
+        # As of 15.0, pyzmq supports asyncio. Asyncio requries Python 3.
+        if is_py3:
+            asyncio.set_event_loop_policy(
+                tornado.platform.asyncio.AnyThreadEventLoopPolicy()
+            )
         self.ctx = zmq.Context()
         p0, p1 = pipe(self.ctx)
         self.agent = InterfaceAgent(self.ctx, p1)
@@ -285,16 +296,18 @@ class InterfaceAgent(object):
         mark peers offline if they doesn't respond for long time.
         """
         log.debug("Starting Agent")
-        loop = self.loop
-        loop.add_handler(self.udp.handle.fileno(), self.handle_beacon, loop.READ)
-        stream = ZMQStream(self.pipe, loop)
+        self.loop = tornado.ioloop.IOLoop.current()
+        self.loop.add_handler(
+            self.udp.handle.fileno(), self.handle_beacon, self.loop.READ
+        )
+        stream = ZMQStream(self.pipe, self.loop)
         stream.on_recv(self.control_message)
         pc = PeriodicCallback(self.send_ping, PING_INTERVAL * 1000)
         pc.start()
         pc = PeriodicCallback(self.reap_peers, PING_INTERVAL * 1000)
         pc.start()
         log.debug("Starting Loop")
-        loop.start()
+        self.loop.start()
         log.debug("Loop ended")
 
     def send_ping(self, *args, **kwargs):
