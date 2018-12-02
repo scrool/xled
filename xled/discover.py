@@ -30,7 +30,7 @@ log = logging.getLogger(__name__)
 
 
 #: Message to send in ping requests
-PING_MESSAGE = u"\x01discover"
+PING_MESSAGE = b"\x01discover"
 #: Default port number to send pings
 PING_PORT_NUMBER = 5555
 #: Interval in seconds
@@ -289,10 +289,7 @@ class InterfaceAgent(object):
         Runs periodically.
         """
         log.debug("Sending ping")
-        if is_py3:
-            message = bytes(PING_MESSAGE, "utf-8")
-        else:
-            message = PING_MESSAGE
+        message = PING_MESSAGE
         try:
             self.udp.send(message)
         except Exception:
