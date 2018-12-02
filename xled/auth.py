@@ -384,7 +384,7 @@ class ClientApplication(ValidatingClientMixin):
         """Generates a challenge string to be used in authorizations."""
         try:
             self._challenge = self.challenge()
-            log.debug("Generated new state %s.", self._challenge)
+            log.debug("Generated new state %r.", self._challenge)
         except TypeError:
             self._challenge = self.challenge
             log.debug("Re-using previously supplied challenge %s.", self._challenge)
