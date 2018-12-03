@@ -15,6 +15,7 @@ import xled.auth
 import xled.control
 import xled.discover
 import xled.exceptions
+import xled.security
 
 log = logging.getLogger(__name__)
 
@@ -170,3 +171,73 @@ def upload_movie(ctx, movie):
     log.debug("Uploading movie...")
     response = control_interface.set_led_movie_full(movie)
     click.echo("Uploaded {} frames.".format(response["frames_number"]))
+
+
+@main.command(name="update-firmware", help="Updates firmware.")
+@click.argument("stage0", type=click.File("rb"))
+@click.argument("stage1", type=click.File("rb"))
+@click.pass_context
+def update_firmware(ctx, stage0, stage1):
+    control_interface = common_preamble(ctx.obj.get("name"))
+
+    fw_stage_sums = [None, None]
+    for stage in (0, 1):
+        # I don't know how to dynamically construct variable name
+        if stage == 0:
+            fw_stage_sums[stage] = xled.security.sha1sum(stage0)
+        elif stage == 1:
+            fw_stage_sums[stage] = xled.security.sha1sum(stage1)
+        log.debug("Firmware stage %d SHA1SUM: %r", stage, fw_stage_sums[stage])
+        if not fw_stage_sums[stage]:
+            click.echo(
+                "Failed to comupute SHA1SUM for firmware stage %d.".format(stage),
+                err=True,
+            )
+            return 1
+
+    stage0.seek(0)
+    stage1.seek(0)
+    uploaded_stage_sums = [None, None]
+    for stage in (0, 1):
+        log.debug("Uploading firmware stage %d...", stage)
+        # I still don't know how to dynamically construct variable name
+        if stage == 0:
+            response = control_interface.firmware_0_update(stage0)
+        elif stage == 1:
+            response = control_interface.firmware_1_update(stage1)
+        log.debug("Firmware stage %d uploaded.", stage)
+        if not response.ok:
+            click.echo(
+                "Failed to upload stage {}: {}".format(stage, response.status_code),
+                err=True,
+            )
+            return 1
+        uploaded_stage_sums[stage] = response.get("sha1sum")
+        log.debug("Uploaded stage %d SHA1SUM: %r", stage, uploaded_stage_sums[stage])
+        if not uploaded_stage_sums[stage]:
+            click.echo(
+                "Device didn't return SHA1SUM for stage {}.".format(stage), err=True
+            )
+            return 1
+
+    if fw_stage_sums != uploaded_stage_sums:
+        log.error(
+            "Firmware SHA1SUMs: %r != uploaded SHA1SUMs",
+            fw_stage_sums,
+            uploaded_stage_sums,
+        )
+        click.echo(
+            "Firmware SHA1SUMs doesn't match to uploaded SHA1SUMs.".format(stage),
+            err=True,
+        )
+        return 1
+    else:
+        log.debug("Firmware SHA1SUMs matches.")
+
+    response = control_interface.firmware_update(fw_stage_sums[0], fw_stage_sums[1])
+    if not response.ok:
+        click.echo(
+            "Failed to update firmware: {}.".format(response.status_code), err=True
+        )
+        return 1
+    click.echo("Firmware update successful.")

@@ -30,6 +30,9 @@ SHARED_KEY_CHALLANGE = b"evenmoresecret!!"
 #: Default key to encrypt WiFi password
 SHARED_KEY_WIFI = "supersecretkey!!"
 
+#: Read buffer size for sha1sum
+BUFFER_SIZE = 65536
+
 
 def xor_strings(message, key):
     """
@@ -133,3 +136,22 @@ def encrypt_wifi_password(password, mac_address, key=SHARED_KEY_WIFI):
     data = password.ljust(64, "\x00")
     rc4_encoded = rc4(data, secret_key)
     return base64.b64encode(rc4_encoded)
+
+
+def sha1sum(fileobj):
+    """
+    Computes SHA1 from file-like object
+
+    It is up to caller to open file for reading and close it afterwards.
+
+    :param fileobj: file-like object
+    :return: SHA1 digest as hexdecimal digits only
+    :rtype: str
+    """
+    sha1 = hashlib.sha1()
+    while True:
+        data = fileobj.read(BUFFER_SIZE)
+        if not data:
+            break
+        sha1.update(data)
+    return sha1.hexdigest()
