@@ -2,6 +2,26 @@
 History
 =======
 
+0.4.0 (2018-12-03)
+------------------
+
+* Support Python 3.6 and 3.7 including tests and documentation
+* Python 3 support with pyzmq >= 17.0 and Tornado 5
+* Remove redundant udplib
+* Other Python 3 compatibility:
+
+  * In Python 3+ import Mapping from collections.abc
+  * Python 3 compatible encoding of discovered IP and HW address and name
+  * Make xled.security.xor_strings() compatible with Python 2 and 3
+  * Treat PING_MESSAGE as bytes to simplify handling Python 2 and 3
+
+* Other bugfixes and improvements:
+
+  * Remove mention of PyPy from docs as it wasn't ever tested on it
+  * Improve robustness with sending messages from agent to interface
+  * Escape display of binary challenge in debug log of xled.auth
+  * Ignore (usually own) PING_MESSAGE on network when handling responses
+
 0.3.1 (2018-11-27)
 ------------------
 
