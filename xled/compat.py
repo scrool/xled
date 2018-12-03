@@ -49,3 +49,9 @@ if is_py2:
 
 elif is_py3:
     zip = zip
+
+if is_py2:
+    from collections import Mapping  # noqa
+
+elif is_py3:
+    from collections.abc import Mapping  # noqa

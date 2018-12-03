@@ -2,13 +2,11 @@
 
 from __future__ import absolute_import
 
-import collections
-
 from xled.exceptions import ApplicationError
-from xled.compat import JSONDecodeError
+from xled.compat import JSONDecodeError, Mapping
 
 
-class ApplicationResponse(collections.Mapping):
+class ApplicationResponse(Mapping):
     """The :class:`ApplicationResponse <ApplicationResponse>` object, which
     contains a server's response to an HTTP request.
 
