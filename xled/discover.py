@@ -80,6 +80,10 @@ def discover(find_name=None):
             print("Unknown event: {}".format(event))
             print("Parameters: {}".format(response))
     interface.stop()
+    if isinstance(hw_address, bytes):
+        hw_address = hw_address.decode("utf-8")
+    if isinstance(ip_address, bytes):
+        ip_address = ip_address.decode("utf-8")
     return hw_address, device_name, ip_address
 
 
@@ -151,6 +155,8 @@ def decode_discovery_response(data):
     """
     log.debug("Received {0!r}".format(data))
     if is_py3:
+        if isinstance(data, bytes):
+            data = bytearray(data)
         if not isinstance(data, bytearray):
             msg = "Data must be bytearray. Was {} instead".format(type(data))
             raise TypeError(msg)
@@ -195,11 +201,20 @@ def decode_discovery_response(data):
             ip_address_data = bytearray(ip_address_data)
 
     ip_address_obj = ipaddress.ip_address(ip_address_data)
-    ip_address_str = str(ip_address_obj)
+    ip_address_exploded = ip_address_obj.exploded
+    if is_py3:
+        if not isinstance(ip_address_exploded, bytes):
+            ip_address_exploded = bytes(ip_address_exploded, "utf-8")
+    else:
+        ip_address_exploded = ip_address_exploded.encode("utf-8")
 
     device_name = data[6:-1]
+    if is_py3:
+        device_name = bytes(device_name)
+    else:
+        device_name = device_name.encode("utf-8")
 
-    return ip_address_str, device_name
+    return ip_address_exploded, device_name
 
 
 class Peer(object):
@@ -349,6 +364,8 @@ class InterfaceAgent(object):
         # print("Host {} != ip_address {}".format(host, ip_address))
         log.debug("Getting hardware address of %s.", ip_address)
         hw_address = arpreq(ip_address)
+        if is_py3 and not isinstance(hw_address, bytes):
+            hw_address = bytes(hw_address, "utf-8")
         if hw_address is None:
             log.error("Unable to get HW adress of %s.", ip_address)
             msg_parts = [b"ERROR", device_name, ip_address]
