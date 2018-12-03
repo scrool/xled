@@ -190,7 +190,7 @@ def update_firmware(ctx, stage0, stage1):
         log.debug("Firmware stage %d SHA1SUM: %r", stage, fw_stage_sums[stage])
         if not fw_stage_sums[stage]:
             click.echo(
-                "Failed to comupute SHA1SUM for firmware stage %d.".format(stage),
+                "Failed to compute SHA1SUM for firmware stage %d.".format(stage),
                 err=True,
             )
             return 1
