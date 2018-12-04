@@ -31,7 +31,10 @@ def common_preamble(name):
     else:
         click.echo("Looking for any device...")
     hw_address, device_name, ip_address = xled.discover.discover(find_name=name)
-    click.echo("Working on device: {}".format(device_name))
+    if name:
+        click.echo("Working on requested device.".format(device_name))
+    else:
+        click.echo("Working on device: {}".format(device_name))
     log.debug("HW address = %s", hw_address)
     log.debug("IP address = %s", ip_address)
 
