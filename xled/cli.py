@@ -25,12 +25,16 @@ ch.setLevel(logging.ERROR)
 log.addHandler(ch)
 
 
-def common_preamble(name):
+def common_preamble(name=None, host_address=None):
     if name:
-        click.echo("Looking for a device: {}...".format(name))
+        click.echo("Looking for a device with name: {}...".format(name))
+    elif host_address:
+        click.echo("Looking for device with address: {}...".format(host_address))
     else:
         click.echo("Looking for any device...")
-    hw_address, device_name, ip_address = xled.discover.discover(find_name=name)
+    hw_address, device_name, ip_address = xled.discover.discover(
+        find_name=name, destination_host=host_address
+    )
     if name:
         click.echo("Working on requested device.".format(device_name))
     else:
@@ -52,7 +56,16 @@ def validate_time(ctx, param, value):
 @click.group()
 @click.version_option()
 @click.pass_context
-@click.option("--name", metavar="DEVICE_NAME", help="Name of the device to operate on.")
+@click.option(
+    "--name",
+    metavar="DEVICE_NAME",
+    help="Name of the device to operate on. Mutually exclusive with --hostname.",
+)
+@click.option(
+    "--hostname",
+    metavar="ADDRESS",
+    help="Address of the device to operate on. Mutually exclusive with --name.",
+)
 @click_log.simple_verbosity_option(
     log,
     "--verbosity-cli",
@@ -73,14 +86,16 @@ def validate_time(ctx, param, value):
     "--verbosity-auth",
     help="Sets verbosity of auth module. Either CRITICAL, ERROR, WARNING, INFO or DEBUG",
 )
-def main(ctx, name):
-    ctx.obj = {"name": name}
+def main(ctx, name, hostname):
+    if name and hostname:
+        raise click.BadParameter("Either name or hostname can be set not both.")
+    ctx.obj = {"name": name, "hostname": hostname}
 
 
 @main.command(name="get-mode", help="Gets current device mode.")
 @click.pass_context
 def get_mode(ctx):
-    control_interface = common_preamble(ctx.obj.get("name"))
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     mode = control_interface.get_mode()
     click.echo("Device in mode {}.".format(mode["mode"]))
 
@@ -88,7 +103,7 @@ def get_mode(ctx):
 @main.command(name="on", help="Turns device on and starts last used movie.")
 @click.pass_context
 def turn_on(ctx):
-    control_interface = common_preamble(ctx.obj.get("name"))
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Turning on...")
     control_interface.set_mode("movie")
     click.echo("Turned on.")
@@ -97,7 +112,7 @@ def turn_on(ctx):
 @main.command(name="off", help="Turns device off.")
 @click.pass_context
 def turn_off(ctx):
-    control_interface = common_preamble(ctx.obj.get("name"))
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Turning off...")
     control_interface.set_mode("off")
     click.echo("Turned off.")
@@ -106,7 +121,7 @@ def turn_off(ctx):
 @main.command(name="get-timer", help="Gets current timer settings.")
 @click.pass_context
 def get_timer(ctx):
-    control_interface = common_preamble(ctx.obj.get("name"))
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Getting timer...")
     timer = control_interface.get_timer()
 
@@ -134,7 +149,7 @@ def get_timer(ctx):
 @click.argument("time-off", callback=validate_time)
 @click.pass_context
 def set_timer(ctx, time_on, time_off):
-    control_interface = common_preamble(ctx.obj.get("name"))
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     seconds_on = xled.control.seconds_after_midnight_from_time(*time_on)
     seconds_off = xled.control.seconds_after_midnight_from_time(*time_off)
     log.debug("Setting timer...")
@@ -145,7 +160,7 @@ def set_timer(ctx, time_on, time_off):
 @main.command(name="disable-timer", help="Disables timer.")
 @click.pass_context
 def disable_timer(ctx):
-    control_interface = common_preamble(ctx.obj.get("name"))
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Disabling timer...")
     control_interface.set_timer(-1, -1)
     click.echo("Timer disabled.")
@@ -154,7 +169,7 @@ def disable_timer(ctx):
 @main.command(name="get-device-name", help="Gets current device name.")
 @click.pass_context
 def get_device_name(ctx):
-    control_interface = common_preamble(ctx.obj.get("name"))
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Getting device name...")
     name = control_interface.get_device_name()
     click.echo("Device name: {}".format(name["name"]))
@@ -164,7 +179,7 @@ def get_device_name(ctx):
 @click.argument("name")
 @click.pass_context
 def set_device_name(ctx, name):
-    control_interface = common_preamble(ctx.obj.get("name"))
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Setting device name...")
     control_interface.set_device_name(name)
     click.echo("Set new name to {}".format(name))
@@ -174,7 +189,7 @@ def set_device_name(ctx, name):
 @click.argument("movie", type=click.File("rb"))
 @click.pass_context
 def upload_movie(ctx, movie):
-    control_interface = common_preamble(ctx.obj.get("name"))
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Uploading movie...")
     response = control_interface.set_led_movie_full(movie)
     click.echo("Uploaded {} frames.".format(response["frames_number"]))
@@ -185,7 +200,7 @@ def upload_movie(ctx, movie):
 @click.argument("stage1", type=click.File("rb"))
 @click.pass_context
 def update_firmware(ctx, stage0, stage1):
-    control_interface = common_preamble(ctx.obj.get("name"))
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
 
     fw_stage_sums = [None, None]
     for stage in (0, 1):

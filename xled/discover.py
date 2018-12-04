@@ -45,16 +45,19 @@ PING_INTERVAL = 1.0
 PEER_EXPIRY = 5.0
 
 
-def discover(find_name=None):
+def discover(find_name=None, destination_host=None):
     """Wrapper to discover first or specific device
 
-    :param find_name: (optional) Device name to look for. If not set first node
+    Device can be specified either by name or by host.
+
+    :param str find_name: (optional) Device name to look for. If not set first node
         that responded is returned.
+    :param str destination_host: (optional) Ping selected node only.
     :return: tuple of hardware address, device name and host name.
     :rtype: tuple
     """
-    log.debug("discover()")
-    interface = DiscoveryInterface()
+    assert not (find_name and destination_host)
+    interface = DiscoveryInterface(destination_host)
     hw_address = device_name = ip_address = None
     while True:
         try:
@@ -119,7 +122,7 @@ class DiscoveryInterface(object):
     initialisation.
     """
 
-    def __init__(self):
+    def __init__(self, destination_host=None):
         log.debug("DiscoveryInterface(): __init__()")
         # As of 15.0, pyzmq supports asyncio. Asyncio requries Python 3.
         if is_py3:
@@ -128,7 +131,7 @@ class DiscoveryInterface(object):
             )
         self.ctx = zmq.Context()
         p0, p1 = pipe(self.ctx)
-        self.agent = InterfaceAgent(self.ctx, p1)
+        self.agent = InterfaceAgent(self.ctx, p1, destination_host)
         self.agent_thread = Thread(target=self.agent.start)
         self.agent_thread.start()
         self.pipe = p0
@@ -266,13 +269,19 @@ class InterfaceAgent(object):
     :param loop: (optional) loop to use.
     """
 
-    def __init__(self, ctx, pipe, loop=None):
+    def __init__(self, ctx, pipe, loop=None, destination_host=None):
         self.ctx = ctx
         self.pipe = pipe
         if loop is None:
             loop = IOLoop.instance()
         self.loop = loop
-        self.udp = udp_client.UDPClient(PING_PORT_NUMBER, broadcast=True)
+        if destination_host:
+            udp = udp_client.UDPClient(
+                PING_PORT_NUMBER, destination_host=destination_host
+            )
+        else:
+            udp = udp_client.UDPClient(PING_PORT_NUMBER, broadcast=True)
+        self.udp = udp
         #: Hash of known peers, fast lookup
         self.peers = {}
 
