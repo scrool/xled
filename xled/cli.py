@@ -26,6 +26,10 @@ log.addHandler(ch)
 
 
 def common_preamble(name):
+    if name:
+        click.echo("Looking for a device: {}...".format(name))
+    else:
+        click.echo("Looking for any device...")
     hw_address, device_name, ip_address = xled.discover.discover(find_name=name)
     click.echo("Working on device: {}".format(device_name))
     log.debug("HW address = %s", hw_address)
