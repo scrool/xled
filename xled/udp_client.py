@@ -36,9 +36,7 @@ class UDPClient(object):
         elif broadcast:
             self.destination_host = DEFAULT_BROADCAST
         else:
-            raise ValueError(
-                "Destination host cannot be None " "if broadcast is not set."
-            )
+            raise ValueError("Destination host cannot be None if broadcast is not set.")
 
         self._own_addresses = None
         self._handle = None

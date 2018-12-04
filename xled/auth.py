@@ -153,7 +153,7 @@ class ChallengeResponseAuth(AuthBase):
         # If response is not 4xx, do not auth
         if not 400 <= response.status_code < 500:
             log.debug(
-                "handle_response(): Not authenticating request " "because status is %s",
+                "handle_response(): Not authenticating request because status is %s",
                 response.status_code,
             )
             return response

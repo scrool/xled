@@ -176,10 +176,10 @@ def decode_discovery_response(data):
             msg = "Data must be string. Was {} instead".format(type(data))
             raise TypeError(msg)
     if len(data) < 7:
-        msg = "Data must be longer than 7 bytes. " "Was {} instead.".format(len(data))
+        msg = "Data must be longer than 7 bytes. Was {} instead.".format(len(data))
         raise ValueError(msg)
     if data[4:6] != b"OK":
-        msg = "Expected 'OK' in status of data message. " "Was {0!r} instead.".format(
+        msg = "Expected 'OK' in status of data message. Was {0!r} instead.".format(
             data[4:6]
         )
         raise ValueError(msg)
