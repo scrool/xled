@@ -12,7 +12,29 @@ Library and CLI are free software available under MIT license.
 
 Documentation for library can be found on https://xled.readthedocs.io.
 
+Use of library:
+
+.. code-block:: python
+
+    >>> import xled
+    >>> control = xled.ControlInterface('192.168.4.1')
+    >>> control.set_mode('movie')
+    >>> control.get_mode()['mode']
+    u'movie'
+    >>> control.get_device_info()['number_of_led']
+    105
+
+Use of CLI:
+
+.. code-block:: console
+
+    $ xled on
+    Looking for any device...
+    Working on device: Twinkly_33AAFF
+    Turned on.
+
 Unofficial documentation of private protocol and API is `available online`_.
+
 
 Why?
 ----
