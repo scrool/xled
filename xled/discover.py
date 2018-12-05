@@ -12,6 +12,7 @@ from __future__ import absolute_import
 import logging
 import time
 import uuid
+import collections
 
 from threading import Thread
 
@@ -53,8 +54,8 @@ def discover(find_name=None, destination_host=None):
     :param str find_name: (optional) Device name to look for. If not set first node
         that responded is returned.
     :param str destination_host: (optional) Ping selected node only.
-    :return: tuple of hardware address, device name and host name.
-    :rtype: tuple
+    :return: namedtuple of hardware address, device name and host name.
+    :rtype: namedtuple
     """
     assert not (find_name and destination_host)
     interface = DiscoveryInterface(destination_host)
@@ -93,7 +94,10 @@ def discover(find_name=None, destination_host=None):
         hw_address = hw_address.decode("utf-8")
     if isinstance(ip_address, bytes):
         ip_address = ip_address.decode("utf-8")
-    return hw_address, device_name, ip_address
+    DiscoveredDevice = collections.namedtuple(
+        "DiscoveredDevice", ["hw_address", "name", "ip_address"]
+    )
+    return DiscoveredDevice(hw_address, device_name, ip_address)
 
 
 def pipe(ctx):
