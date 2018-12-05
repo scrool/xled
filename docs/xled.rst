@@ -12,18 +12,18 @@ xled\.auth module
     :undoc-members:
     :show-inheritance:
 
-xled\.compat module
--------------------
-
-.. automodule:: xled.compat
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 xled\.cli module
 ----------------
 
 .. automodule:: xled.cli
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+xled\.compat module
+-------------------
+
+.. automodule:: xled.compat
     :members:
     :undoc-members:
     :show-inheritance:
@@ -68,16 +68,8 @@ xled\.security module
     :undoc-members:
     :show-inheritance:
 
-xled\.udplib module
--------------------
-
-.. automodule:: xled.udplib
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-xled\.udp_client module
------------------------
+xled\.udp\_client module
+------------------------
 
 .. automodule:: xled.udp_client
     :members:
