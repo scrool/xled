@@ -169,6 +169,22 @@ class ControlInterface(object):
         assert sorted(app_response.keys()) == [u"code", u"mode"]
         return app_response
 
+    def get_mqtt_config(self):
+        """
+        Gets MQTT configuration
+
+        .. seealso:: :py:meth:`set_mqtt_config()` to set configuration.
+
+        :raises ApplicationError: on application error
+        :return: ?. See :py:meth:`set_mqtt_config()` for
+            possible return values.
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "mqtt/config")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        return app_response
+
     def get_timer(self):
         """
         Gets current timer
@@ -285,6 +301,42 @@ class ControlInterface(object):
         )
         app_response = ApplicationResponse(response)
         assert app_response.keys() == [u"code", u"frames_number"]
+        return app_response
+
+    def set_mqtt_config(
+        self,
+        broker_host=None,
+        broker_port=None,
+        client_id=None,
+        encryption_key=None,
+        keep_alive_interval=None,
+        user=None,
+    ):
+        """
+        Sets MQTT configuration
+
+        :raises ApplicationError: on application error
+        :rtype: None
+        """
+        json_payload = {}
+        if broker_host:
+            json_payload["broker_host"] = broker_host
+        if broker_port:
+            json_payload["broker_port"] = broker_port
+        if client_id:
+            json_payload["client_id"] = client_id
+        if encryption_key is not None:
+            json_payload["encryption_key"] = encryption_key
+        if keep_alive_interval is not None:
+            json_payload["keep_alive_interval"] = keep_alive_interval
+        if user:
+            json_payload["user"] = user
+        if not json_payload:
+            msg = "At least some value needs to be set"
+            raise ValueError(msg)
+        url = urljoin(self.base_url, "mqtt/config")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
         return app_response
 
     def set_network_mode_ap(self):

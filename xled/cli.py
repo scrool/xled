@@ -263,3 +263,61 @@ def update_firmware(ctx, stage0, stage1):
         )
         return 1
     click.echo("Firmware update successful.")
+
+
+@main.command(name="get-mqtt-config")
+@click.pass_context
+def get_mqtt_config(ctx):
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
+    log.debug("Getting MQTT configuration...")
+    result = control_interface.get_mqtt_config()
+    keys_labels = (
+        ("broker_host", "Broker Host"),
+        ("broker_port", "Broker Port"),
+        ("keep_alive_interval", "Keep Alive Interval"),
+        ("user", "User"),
+        ("client_id", "Client ID"),
+        ("encryption_key_set", "Encription Key Set"),
+    )
+    click.echo()
+    for key, label in keys_labels:
+        value = result.get(key)
+        if not value:
+            continue
+        click.echo("{}: {}".format(label, value))
+
+
+@main.command(name="set-mqtt-config")
+@click.option("--broker-host", metavar="HOST", help="Sets broker host")
+@click.option("--broker-port", metavar="HOST", help="Sets broker port")
+@click.option("--client-id", metavar="CLIENT_ID", help="Sets client ID")
+@click.option("--encryption-key", metavar="KEY", help="Sets encryption key")
+@click.option(
+    "--keep-alive-interval", metavar="INTERVAL", help="Sets keep alive interval"
+)
+@click.option("--user", metavar="USER", help="Sets user")
+@click.pass_context
+def set_mqtt_config(
+    ctx, broker_host, broker_port, client_id, encryption_key, keep_alive_interval, user
+):
+    if not (
+        broker_host
+        or broker_port
+        or client_id
+        or encryption_key
+        or keep_alive_interval
+        or user
+    ):
+        raise click.BadOptionUsage(
+            "At least one option has to be specified to set configuration."
+        )
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
+    log.debug("Setting MQTT configuration...")
+    control_interface.set_mqtt_config(
+        broker_host=broker_host,
+        broker_port=broker_port,
+        client_id=client_id,
+        encryption_key=encryption_key,
+        keep_alive_interval=keep_alive_interval,
+        user=user,
+    )
