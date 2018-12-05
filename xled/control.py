@@ -260,7 +260,7 @@ class ControlInterface(object):
         """
         Sets new LED operation mode.
 
-        :param str mode: Mode to set. One of 'move', 'demo', 'off'.
+        :param str mode: Mode to set. One of 'movie', 'demo', 'off'.
         :raises ApplicationError: on application error
         :rtype: None
         """
