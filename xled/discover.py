@@ -127,7 +127,6 @@ class DiscoveryInterface(object):
     """
 
     def __init__(self, destination_host=None):
-        log.debug("DiscoveryInterface(): __init__()")
         # As of 15.0, pyzmq supports asyncio. Asyncio requries Python 3.
         if is_py3:
             asyncio.set_event_loop_policy(
