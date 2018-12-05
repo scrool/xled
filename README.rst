@@ -17,7 +17,10 @@ Use of library:
 .. code-block:: python
 
     >>> import xled
-    >>> control = xled.ControlInterface('192.168.4.1')
+    >>> discovered_device = xled.discover.discover()
+    >>> discovered_device.name
+    'Twinkly_33AAFF'
+    >>> control = xled.ControlInterface(discovered_device.ip_address, discovered_device.hw_address)
     >>> control.set_mode('movie')
     >>> control.get_mode()['mode']
     u'movie'
