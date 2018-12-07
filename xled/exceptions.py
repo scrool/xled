@@ -20,3 +20,7 @@ class AuthenticationError(XledException):
 
 class TokenExpiredError(XledException):
     """Token is no longer valid"""
+
+
+class HighInterfaceError(XledException):
+    """High level interface error"""

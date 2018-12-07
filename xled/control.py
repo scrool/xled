@@ -17,13 +17,16 @@ This module contains interface to control specific device
 
 from __future__ import absolute_import
 
+import collections
+import locale
 import logging
+from operator import xor
 
 from requests.compat import urljoin
 
 import xled.util
 from xled.auth import BaseUrlChallengeResponseAuthSession
-
+from xled.exceptions import HighInterfaceError
 from xled.response import ApplicationResponse
 from xled.security import encrypt_wifi_password
 
@@ -347,3 +350,132 @@ class ControlInterface(object):
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
         assert app_response.keys() == [u"code"]
+
+
+class HighControlInterface(ControlInterface):
+    """
+    High level interface to control specific device
+    """
+
+    def update_firmware(self, stage0, stage1):
+        """
+        Uploads firmware and runs update
+
+        :param stage0: file-like object pointing to stage0 of firmware. Must support seek().
+        :param stage1: file-like object pointing to stage1 of firmware. Must support seek().
+        :raises ApplicationError: on application error
+        :raises HighInterfaceError: on error during update
+        """
+        fw_stage_sums = [None, None]
+        for stage in (0, 1):
+            # I don't know how to dynamically construct variable name
+            if stage == 0:
+                fw_stage_sums[stage] = xled.security.sha1sum(stage0)
+            elif stage == 1:
+                fw_stage_sums[stage] = xled.security.sha1sum(stage1)
+            log.debug("Firmware stage %d SHA1SUM: %r", stage, fw_stage_sums[stage])
+            if not fw_stage_sums[stage]:
+                msg = "Failed to compute SHA1SUM for firmware stage %d.".format(stage)
+                raise HighInterfaceError(msg)
+                assert False
+
+        stage0.seek(0)
+        stage1.seek(0)
+        uploaded_stage_sums = [None, None]
+        for stage in (0, 1):
+            log.debug("Uploading firmware stage %d...", stage)
+            # I still don't know how to dynamically construct variable name
+            if stage == 0:
+                response = self.firmware_0_update(stage0)
+            elif stage == 1:
+                response = self.firmware_1_update(stage1)
+            log.debug("Firmware stage %d uploaded.", stage)
+            if not response.ok:
+                msg = "Failed to upload stage {}: {}".format(
+                    stage, response.status_code
+                )
+                raise HighInterfaceError(msg)
+                assert False
+
+            uploaded_stage_sums[stage] = response.get("sha1sum")
+            log.debug(
+                "Uploaded stage %d SHA1SUM: %r", stage, uploaded_stage_sums[stage]
+            )
+            if not uploaded_stage_sums[stage]:
+                msg = "Device didn't return SHA1SUM for stage {}.".format(stage)
+                raise HighInterfaceError(msg)
+                assert False
+
+        if fw_stage_sums != uploaded_stage_sums:
+            log.error(
+                "Firmware SHA1SUMs: %r != uploaded SHA1SUMs",
+                fw_stage_sums,
+                uploaded_stage_sums,
+            )
+            msg = "Firmware SHA1SUMs doesn't match to uploaded SHA1SUMs.".format(stage)
+            raise HighInterfaceError(msg)
+            assert False
+        else:
+            log.debug("Firmware SHA1SUMs matches.")
+
+        response = self.firmware_update(fw_stage_sums[0], fw_stage_sums[1])
+        if not response.ok:
+            msg = "Failed to update firmware: {}.".format(response.status_code)
+            assert False
+
+    def disable_timer(self):
+        """
+        Disables timer
+        """
+        return self.set_timer(-1, -1)
+
+    def get_formatted_timer(self):
+        """
+        Gets current time and timer
+
+        :return: namedtuple of formatted entries: current time, turn on time,
+            turn off time.
+        :rtype: namedtuple
+        """
+        Timer = collections.namedtuple("Timer", ["now", "on", "off"])
+
+        device_response = self.get_timer()
+
+        if xor(device_response["time_on"] == -1, device_response["time_off"] == -1):
+            msg = "Inconsistent timer configuration. On: {timer_on}, off: {timer_off}".format(
+                **device_response
+            )
+            raise HighInterfaceError(msg)
+
+        now = device_response["time_now"]
+        format = locale.nl_langinfo(locale.T_FMT)
+        now_formatted = xled.util.date_from_seconds_after_midnight(now).strftime(format)
+
+        if device_response["time_on"] == -1 and device_response["time_off"] == -1:
+            return Timer(now_formatted, False, False)
+
+        on = device_response["time_on"]
+        on_formatted = xled.util.date_from_seconds_after_midnight(on).strftime(format)
+
+        off = device_response["time_on"]
+        off_formatted = xled.util.date_from_seconds_after_midnight(off).strftime(format)
+
+        return Timer(now_formatted, on_formatted, off_formatted)
+
+    def turn_on(self):
+        """
+        Turns on the device.
+        """
+        return self.set_mode("movie")
+
+    def turn_off(self):
+        """
+        Turns off the device.
+        """
+        return self.set_mode("off")
+
+    def is_on(self):
+        """
+        Returns True if device is on
+        """
+        return self.get_mode()["mode"] != "off"

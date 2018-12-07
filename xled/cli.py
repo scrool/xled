@@ -4,7 +4,6 @@
 
 from __future__ import absolute_import
 
-import locale
 import logging
 import time
 
@@ -42,7 +41,7 @@ def common_preamble(name=None, host_address=None):
     log.debug("HW address = %s", hw_address)
     log.debug("IP address = %s", ip_address)
 
-    return xled.control.ControlInterface(ip_address, hw_address)
+    return xled.control.HighControlInterface(ip_address, hw_address)
 
 
 def validate_time(ctx, param, value):
@@ -105,7 +104,7 @@ def get_mode(ctx):
 def turn_on(ctx):
     control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Turning on...")
-    control_interface.set_mode("movie")
+    control_interface.turn_on()
     click.echo("Turned on.")
 
 
@@ -114,7 +113,7 @@ def turn_on(ctx):
 def turn_off(ctx):
     control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Turning off...")
-    control_interface.set_mode("off")
+    control_interface.turn_off()
     click.echo("Turned off.")
 
 
@@ -123,25 +122,16 @@ def turn_off(ctx):
 def get_timer(ctx):
     control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Getting timer...")
-    timer = control_interface.get_timer()
-
-    format = locale.nl_langinfo(locale.T_FMT)
-    t = xled.util.date_from_seconds_after_midnight(timer["time_now"]).strftime(format)
-    click.echo("Time now: {}.".format(t))
-    if timer["time_on"] == -1:
+    timer = control_interface.get_formatted_timer()
+    click.echo("Time now: {}.".format(timer.now))
+    if timer.on is False:
         click.echo("Time to turn on not set.")
     else:
-        t = xled.util.date_from_seconds_after_midnight(timer["time_on"]).strftime(
-            format
-        )
-        click.echo("Turn on {}.".format(t))
-    if timer["time_off"] == -1:
+        click.echo("Turn on {}.".format(timer.on))
+    if timer.off is False:
         click.echo("Time to turn off not set.")
     else:
-        t = xled.util.date_from_seconds_after_midnight(timer["time_off"]).strftime(
-            format
-        )
-        click.echo("Turn off {}.".format(t))
+        click.echo("Turn off {}.".format(timer.off))
 
 
 @main.command(name="set-timer", help="Sets timer.")
@@ -150,8 +140,8 @@ def get_timer(ctx):
 @click.pass_context
 def set_timer(ctx, time_on, time_off):
     control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
-    seconds_on = xled.control.seconds_after_midnight_from_time(*time_on)
-    seconds_off = xled.control.seconds_after_midnight_from_time(*time_off)
+    seconds_on = xled.util.seconds_after_midnight_from_time(*time_on)
+    seconds_off = xled.util.seconds_after_midnight_from_time(*time_off)
     log.debug("Setting timer...")
     control_interface.set_timer(seconds_on, seconds_off)
     click.echo("Timer set.")
@@ -162,7 +152,7 @@ def set_timer(ctx, time_on, time_off):
 def disable_timer(ctx):
     control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Disabling timer...")
-    control_interface.set_timer(-1, -1)
+    control_interface.disable_timer()
     click.echo("Timer disabled.")
 
 
@@ -201,65 +191,9 @@ def upload_movie(ctx, movie):
 @click.pass_context
 def update_firmware(ctx, stage0, stage1):
     control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
-
-    fw_stage_sums = [None, None]
-    for stage in (0, 1):
-        # I don't know how to dynamically construct variable name
-        if stage == 0:
-            fw_stage_sums[stage] = xled.security.sha1sum(stage0)
-        elif stage == 1:
-            fw_stage_sums[stage] = xled.security.sha1sum(stage1)
-        log.debug("Firmware stage %d SHA1SUM: %r", stage, fw_stage_sums[stage])
-        if not fw_stage_sums[stage]:
-            click.echo(
-                "Failed to compute SHA1SUM for firmware stage %d.".format(stage),
-                err=True,
-            )
-            return 1
-
-    stage0.seek(0)
-    stage1.seek(0)
-    uploaded_stage_sums = [None, None]
-    for stage in (0, 1):
-        log.debug("Uploading firmware stage %d...", stage)
-        # I still don't know how to dynamically construct variable name
-        if stage == 0:
-            response = control_interface.firmware_0_update(stage0)
-        elif stage == 1:
-            response = control_interface.firmware_1_update(stage1)
-        log.debug("Firmware stage %d uploaded.", stage)
-        if not response.ok:
-            click.echo(
-                "Failed to upload stage {}: {}".format(stage, response.status_code),
-                err=True,
-            )
-            return 1
-        uploaded_stage_sums[stage] = response.get("sha1sum")
-        log.debug("Uploaded stage %d SHA1SUM: %r", stage, uploaded_stage_sums[stage])
-        if not uploaded_stage_sums[stage]:
-            click.echo(
-                "Device didn't return SHA1SUM for stage {}.".format(stage), err=True
-            )
-            return 1
-
-    if fw_stage_sums != uploaded_stage_sums:
-        log.error(
-            "Firmware SHA1SUMs: %r != uploaded SHA1SUMs",
-            fw_stage_sums,
-            uploaded_stage_sums,
-        )
-        click.echo(
-            "Firmware SHA1SUMs doesn't match to uploaded SHA1SUMs.".format(stage),
-            err=True,
-        )
-        return 1
+    try:
+        control_interface.update_firmware(stage0, stage1)
+    except xled.exceptions.HighInterfaceError as hci_err:
+        click.echo(hci_err, err=True)
     else:
-        log.debug("Firmware SHA1SUMs matches.")
-
-    response = control_interface.firmware_update(fw_stage_sums[0], fw_stage_sums[1])
-    if not response.ok:
-        click.echo(
-            "Failed to update firmware: {}.".format(response.status_code), err=True
-        )
-        return 1
-    click.echo("Firmware update successful.")
+        click.echo("Firmware update successful.")
