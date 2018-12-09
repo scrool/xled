@@ -284,9 +284,7 @@ class ControlInterface(object):
         response = self.session.post(
             url, headers={"Content-Type": "application/octet-stream"}, data=movie
         )
-        app_response = ApplicationResponse(response)
-        assert app_response.keys() == [u"code", u"frames_number"]
-        return app_response
+        return ApplicationResponse(response)
 
     def set_network_mode_ap(self):
         """
