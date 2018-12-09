@@ -193,12 +193,11 @@ class ControlInterface(object):
         Resets LED
 
         :raises ApplicationError: on application error
-        :rtype: None
+        :rtype: :class:`~xled.response.ApplicationResponse`
         """
         url = urljoin(self.base_url, "led/reset")
         response = self.session.get(url)
-        app_response = ApplicationResponse(response)
-        assert app_response.keys() == [u"code"]
+        return ApplicationResponse(response)
 
     def network_scan(self):
         """
