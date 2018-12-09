@@ -55,3 +55,10 @@ if is_py2:
 
 elif is_py3:
     from collections.abc import Mapping  # noqa
+
+
+if is_py2:
+    xrange = xrange
+
+elif is_py3:
+    xrange = range

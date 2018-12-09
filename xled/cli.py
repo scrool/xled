@@ -185,6 +185,18 @@ def upload_movie(ctx, movie):
     click.echo("Uploaded {} frames.".format(response["frames_number"]))
 
 
+@main.command(name="set-color", help="Sets static color.")
+@click.argument("red", type=click.IntRange(0, 256))
+@click.argument("green", type=click.IntRange(0, 256))
+@click.argument("blue", type=click.IntRange(0, 256))
+@click.pass_context
+def set_color(ctx, red, green, blue):
+    control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
+    log.debug("Setting color")
+    control_interface.set_static_color(red, green, blue)
+    click.echo("Color set")
+
+
 @main.command(name="update-firmware", help="Updates firmware.")
 @click.argument("stage0", type=click.File("rb"))
 @click.argument("stage1", type=click.File("rb"))

@@ -18,14 +18,17 @@ This module contains interface to control specific device
 from __future__ import absolute_import
 
 import collections
+import io
 import locale
 import logging
+import struct
 from operator import xor
 
 from requests.compat import urljoin
 
 import xled.util
 from xled.auth import BaseUrlChallengeResponseAuthSession
+from xled.compat import xrange
 from xled.exceptions import HighInterfaceError
 from xled.response import ApplicationResponse
 from xled.security import encrypt_wifi_password
@@ -457,6 +460,44 @@ class HighControlInterface(ControlInterface):
         off_formatted = xled.util.date_from_seconds_after_midnight(off).strftime(format)
 
         return Timer(now_formatted, on_formatted, off_formatted)
+
+    @staticmethod
+    def write_static_movie(file_obj, size, red, green, blue):
+        """
+        Writes movie of single color
+
+        :param file_obj: file-like object to write movie to.
+        :param int size: numbers of triples (RGB) to write to.
+        :param red: integer between 0-255 representing red color
+        :param green: integer between 0-255 representing green color
+        :param blue: integer between 0-255 representing blue color
+        """
+        assert red in range(0, 256)
+        assert green in range(0, 256)
+        assert blue in range(0, 256)
+        bytes_str = struct.pack(">BBB", red, green, blue)
+        for position in xrange(size):
+            file_obj.write(bytes_str)
+
+    def set_static_color(self, red, green, blue):
+        """
+        Sets static color for all leds
+
+        :param red: integer between 0-255 representing red color
+        :param green: integer between 0-255 representing green color
+        :param blue: integer between 0-255 representing blue color
+        """
+        assert red in range(0, 256)
+        assert green in range(0, 256)
+        assert blue in range(0, 256)
+        response = self.get_device_info()
+        number_of_led = response["number_of_led"]
+        with io.BytesIO() as output:
+            self.write_static_movie(output, number_of_led, red, green, blue)
+            self.led_reset()
+            output.seek(0)
+            self.set_led_movie_full(output)
+            self.set_led_movie_config(1, 1, number_of_led)
 
     def turn_on(self):
         """
