@@ -2,6 +2,29 @@
 History
 =======
 
+0.5.0 (2018-12-09)
+------------------
+
+* CLI to update firmware
+* Example of library call and CLI usage
+* Option to select device by hostname in CLI and ping in discovery
+* New HighControlInterface() to aggregate and abstract low-level calls
+* CLI and HighControlInterface way to set static single color
+* Other bugfixes and improvements:
+
+  * Fix typo in CLI error message
+  * Print message before discovery on CLI
+  * Refactor: join consecutive strings on same line
+  * Print better message after device has been discovered over CLI
+  * Regenerate documentation index of a package
+  * Fix typo in control.set_mode() documentation
+  * Return named tuple in discover.discover()
+  * Use discovery and named tuple in example of library use
+  * Do not assert return value in ControlInterface.set_led_movie_full()
+  * Return ApplicationResponse for ControlInterface.set_led_movie_config()
+  * Return ApplicationResponse for control.ControlInterface.led_reset()
+  * Remove unneeded debug message from DiscoveryInterface.__init__()
+
 0.4.0 (2018-12-03)
 ------------------
 
