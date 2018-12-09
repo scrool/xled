@@ -246,7 +246,7 @@ class ControlInterface(object):
         :param int leds_number: total number of LEDs
         :param int frames_number: total number of frames
         :raises ApplicationError: on application error
-        :rtype: None
+        :rtype: :class:`~xled.response.ApplicationResponse`
         """
         json_payload = {
             "frame_delay": frame_delay,
@@ -255,8 +255,7 @@ class ControlInterface(object):
         }
         url = urljoin(self.base_url, "led/movie/config")
         response = self.session.post(url, json=json_payload)
-        app_response = ApplicationResponse(response)
-        assert app_response.keys() == [u"code"]
+        return ApplicationResponse(response)
 
     def set_mode(self, mode):
         """
