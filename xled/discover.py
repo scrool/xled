@@ -47,8 +47,8 @@ PING_INTERVAL = 1.0
 PEER_EXPIRY = 5.0
 
 
-def discover(find_name=None, destination_host=None, timeout=None):
-    """Wrapper to discover first or specific device
+def xdiscover(find_name=None, destination_host=None, timeout=None):
+    """Generator discover all devices or device of specific name
 
     Device can be specified either by name or by host.
 
@@ -64,54 +64,60 @@ def discover(find_name=None, destination_host=None, timeout=None):
     receive_timeout = None
     if timeout:
         receive_timeout = timeout / 2
-    interface = DiscoveryInterface(destination_host, receive_timeout=receive_timeout)
     hw_address = device_name = ip_address = None
     start = monotonic()
-    while True:
-        try:
-            response = interface.recv()
-        except KeyboardInterrupt:
-            interface.stop()
-            raise
-        assert len(response) > 0
-        event = response.pop(0)
-        if event == b"JOINED":
-            assert len(response) == 3
-            hw_address, device_name, ip_address = response
-            if find_name is None:
-                break
-            elif find_name == device_name:
-                break
-            else:
-                print(
-                    "Device name {} ({}) joined: {}".format(
-                        device_name, hw_address, ip_address
+    with DiscoveryInterface(
+        destination_host, receive_timeout=receive_timeout
+    ) as interface:
+        while True:
+            try:
+                response = interface.recv()
+            except KeyboardInterrupt:
+                raise
+            assert len(response) > 0
+            event = response.pop(0)
+            if event == b"JOINED":
+                assert len(response) == 3
+                hw_address, device_name, ip_address = response
+                if find_name is None or find_name == device_name:
+                    if isinstance(hw_address, bytes):
+                        hw_address = hw_address.decode("utf-8")
+                    if isinstance(ip_address, bytes):
+                        ip_address = ip_address.decode("utf-8")
+                    DiscoveredDevice = collections.namedtuple(
+                        "DiscoveredDevice", ["hw_address", "name", "ip_address"]
                     )
-                )
-        elif event == b"ERROR":
-            print("Error")
-            print("Parameters: {}".format(response))
-            interface.stop()
-            raise Exception("Error")
-        elif event == b"RECEIVE_TIMEOUT":
-            assert timeout
-            if monotonic() - start > timeout:
-                interface.stop()
-                raise DiscoverTimeout()
+                    yield DiscoveredDevice(hw_address, device_name, ip_address)
+                    if find_name == device_name:
+                        return
+                else:
+                    print(
+                        "Device name {} ({}) joined: {}".format(
+                            device_name, hw_address, ip_address
+                        )
+                    )
+            elif event == b"ERROR":
+                print("Error")
+                print("Parameters: {}".format(response))
+                raise Exception("Error")
+            elif event == b"RECEIVE_TIMEOUT":
+                assert timeout
+                if monotonic() - start > timeout:
+                    raise DiscoverTimeout()
+                else:
+                    continue
             else:
-                continue
-        else:
-            print("Unknown event: {}".format(event))
-            print("Parameters: {}".format(response))
-    interface.stop()
-    if isinstance(hw_address, bytes):
-        hw_address = hw_address.decode("utf-8")
-    if isinstance(ip_address, bytes):
-        ip_address = ip_address.decode("utf-8")
-    DiscoveredDevice = collections.namedtuple(
-        "DiscoveredDevice", ["hw_address", "name", "ip_address"]
+                print("Unknown event: {}".format(event))
+                print("Parameters: {}".format(response))
+
+
+def discover(find_name=None, destination_host=None, timeout=None):
+    """Wrapper of :py:func:`xdiscover` to return first entry"""
+    return next(
+        xdiscover(
+            find_name=find_name, destination_host=destination_host, timeout=timeout
+        )
     )
-    return DiscoveredDevice(hw_address, device_name, ip_address)
 
 
 def pipe(ctx):
@@ -155,6 +161,18 @@ class DiscoveryInterface(object):
         self.agent_thread.start()
         self.pipe = p0
         self._agent_pipe = p1
+
+    def __del__(self):
+        try:
+            self.stop()
+        except Exception:
+            pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        self.stop()
 
     def stop(self):
         """
