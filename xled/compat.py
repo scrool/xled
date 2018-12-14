@@ -62,3 +62,10 @@ if is_py2:
 
 elif is_py3:
     xrange = range
+
+
+if is_py2:
+    from monotonic import monotonic
+
+elif is_py3:
+    from time import monotonic  # noqa

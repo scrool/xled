@@ -8,6 +8,7 @@ A Simple UDP class
 """
 
 import socket
+from xled.exceptions import ReceiveTimeout
 
 
 DEFAULT_BROADCAST = "255.255.255.255"
@@ -28,9 +29,12 @@ class UDPClient(object):
     :param bool broadcast: use broadcast for a socket
     """
 
-    def __init__(self, port, destination_host=None, broadcast=False):
+    def __init__(
+        self, port, destination_host=None, broadcast=False, receive_timeout=None
+    ):
         self.port = port
         self.broadcast = broadcast
+        self.receive_timeout = receive_timeout
         if destination_host:
             self.destination_host = destination_host
         elif broadcast:
@@ -53,6 +57,8 @@ class UDPClient(object):
             if self.broadcast:
                 _handle.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             _handle.bind(("", self.port))
+            if self.receive_timeout:
+                _handle.settimeout(self.receive_timeout)
             self._handle = _handle
             assert self._handle is not None
         return self._handle
@@ -100,7 +106,11 @@ class UDPClient(object):
         :rtype: tuple
         """
         while True:
-            buf, addrinfo = self.handle.recvfrom(bufsize)
+            try:
+                buf, addrinfo = self.handle.recvfrom(bufsize)
+            except socket.timeout:
+                raise ReceiveTimeout
+                continue
             assert len(addrinfo) == 2
             host, port = addrinfo
             if host in self.own_addresses:

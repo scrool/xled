@@ -28,6 +28,7 @@ tests_requirements = ["vcrpy-unittest"]
 
 if sys.version_info < (3, 3):
     requirements.append("ipaddress")
+    requirements.append("monotonic")
 
 setup(
     name="xled",

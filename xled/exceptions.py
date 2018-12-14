@@ -24,3 +24,11 @@ class TokenExpiredError(XledException):
 
 class HighInterfaceError(XledException):
     """High level interface error"""
+
+
+class ReceiveTimeout(XledException):
+    """Signal that timeout occurred while waiting for data"""
+
+
+class DiscoverTimeout(XledException):
+    """Signal that timeout occurred while discover is looking for a device"""

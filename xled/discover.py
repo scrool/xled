@@ -24,7 +24,8 @@ from tornado.ioloop import IOLoop, PeriodicCallback
 from zmq.eventloop.zmqstream import ZMQStream
 
 from xled import udp_client
-from xled.compat import basestring, is_py3
+from xled.compat import basestring, is_py3, monotonic
+from xled.exceptions import ReceiveTimeout, DiscoverTimeout
 
 if is_py3:
     import asyncio
@@ -46,7 +47,7 @@ PING_INTERVAL = 1.0
 PEER_EXPIRY = 5.0
 
 
-def discover(find_name=None, destination_host=None):
+def discover(find_name=None, destination_host=None, timeout=None):
     """Wrapper to discover first or specific device
 
     Device can be specified either by name or by host.
@@ -54,19 +55,25 @@ def discover(find_name=None, destination_host=None):
     :param str find_name: (optional) Device name to look for. If not set first node
         that responded is returned.
     :param str destination_host: (optional) Ping selected node only.
+    :param float timeout: (optional) Number of seconds until discovery timeouts.
     :return: namedtuple of hardware address, device name and host name.
     :rtype: namedtuple
+    :raises DiscoverTimeout: timeout exceeded while waiting for a device
     """
     assert not (find_name and destination_host)
-    interface = DiscoveryInterface(destination_host)
+    receive_timeout = None
+    if timeout:
+        receive_timeout = timeout / 2
+    interface = DiscoveryInterface(destination_host, receive_timeout=receive_timeout)
     hw_address = device_name = ip_address = None
+    start = monotonic()
     while True:
         try:
             response = interface.recv()
         except KeyboardInterrupt:
             interface.stop()
             raise
-        assert len(response) > 1
+        assert len(response) > 0
         event = response.pop(0)
         if event == b"JOINED":
             assert len(response) == 3
@@ -86,6 +93,13 @@ def discover(find_name=None, destination_host=None):
             print("Parameters: {}".format(response))
             interface.stop()
             raise Exception("Error")
+        elif event == b"RECEIVE_TIMEOUT":
+            assert timeout
+            if monotonic() - start > timeout:
+                interface.stop()
+                raise DiscoverTimeout()
+            else:
+                continue
         else:
             print("Unknown event: {}".format(event))
             print("Parameters: {}".format(response))
@@ -126,7 +140,7 @@ class DiscoveryInterface(object):
     initialisation.
     """
 
-    def __init__(self, destination_host=None):
+    def __init__(self, destination_host=None, receive_timeout=None):
         # As of 15.0, pyzmq supports asyncio. Asyncio requries Python 3.
         if is_py3:
             asyncio.set_event_loop_policy(
@@ -134,7 +148,9 @@ class DiscoveryInterface(object):
             )
         self.ctx = zmq.Context()
         p0, p1 = pipe(self.ctx)
-        self.agent = InterfaceAgent(self.ctx, p1, destination_host)
+        self.agent = InterfaceAgent(
+            self.ctx, p1, destination_host, receive_timeout=receive_timeout
+        )
         self.agent_thread = Thread(target=self.agent.start)
         self.agent_thread.start()
         self.pipe = p0
@@ -272,7 +288,9 @@ class InterfaceAgent(object):
     :param loop: (optional) loop to use.
     """
 
-    def __init__(self, ctx, pipe, loop=None, destination_host=None):
+    def __init__(
+        self, ctx, pipe, loop=None, destination_host=None, receive_timeout=None
+    ):
         self.ctx = ctx
         self.pipe = pipe
         if loop is None:
@@ -280,10 +298,14 @@ class InterfaceAgent(object):
         self.loop = loop
         if destination_host:
             udp = udp_client.UDPClient(
-                PING_PORT_NUMBER, destination_host=destination_host
+                PING_PORT_NUMBER,
+                destination_host=destination_host,
+                receive_timeout=receive_timeout,
             )
         else:
-            udp = udp_client.UDPClient(PING_PORT_NUMBER, broadcast=True)
+            udp = udp_client.UDPClient(
+                PING_PORT_NUMBER, broadcast=True, receive_timeout=receive_timeout
+            )
         self.udp = udp
         #: Hash of known peers, fast lookup
         self.peers = {}
@@ -370,6 +392,24 @@ class InterfaceAgent(object):
         finally:
             self.stop()
 
+    def _next_packet(self):
+        """
+        Reads packet from nodes
+
+        :return: tuple received data, hostname
+        """
+        while True:
+            try:
+                data, host = self.udp.recv(64)
+            except ReceiveTimeout:
+                msg_parts = [b"RECEIVE_TIMEOUT"]
+                try:
+                    self._send_to_pipe_multipart(msg_parts)
+                except Exception:
+                    return
+                continue
+            return data, host
+
     def handle_beacon(self, fd, event):
         """
         Reads response from nodes
@@ -381,7 +421,7 @@ class InterfaceAgent(object):
         :param event: not used
         """
         log.debug("Waiting for a beacon.")
-        data, host = self.udp.recv(64)
+        data, host = self._next_packet()
         if data == PING_MESSAGE:
             log.debug("Ignoring ping message received from network from %s.", host)
             return
