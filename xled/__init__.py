@@ -7,8 +7,9 @@ xled package
 xled is a library to control Twinkly LED lights. Basic usage:
 
    >>> import xled
-   >>> control = xled.ControlInterface('192.168.4.1')
+   >>> control = xled.HighControlInterface('192.168.4.1')
    >>> control.set_mode('demo')
+   >>> control.turn_off()
 
 The other API calls are supported - see `xled.control`. Full documentation
 is at <http://xled.readthedocs.io/>.
@@ -22,7 +23,7 @@ from __future__ import absolute_import
 # Set default logging handler to avoid "No handler found" warnings.
 import logging
 
-from xled.control import ControlInterface  # noqa: F401
+from xled.control import ControlInterface, HighControlInterface  # noqa: F401
 from xled.discover import DiscoveryInterface  # noqa: F401
 
 from .__version__ import __title__, __description__, __version__  # noqa: F401
