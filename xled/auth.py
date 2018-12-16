@@ -203,18 +203,21 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
     Authentication token can be fetched even separately.
     """
 
-    def __init__(self, hw_address=None, client=None, **kwargs):
+    def __init__(self, hw_address=None, client=None, auto_refresh_token=True, **kwargs):
         """Construct a new client session.
 
         :param str hw_address: Hardware address of server. Used to validation during
                                login phase.
         :param client: Object with :class:`ClientApplication` interface.
                        login phase.
+        :param bool auto_refresh_token: (optional) if token is found expired
+                                        automatically request new one.
         :param kwargs: Arguments to pass to the BaseUrlSession initializer.
                        Most useful is `base_url`.
         """
         self.hw_address = hw_address
         self.client = client or ClientApplication()
+        self.auto_refresh_token = auto_refresh_token
         super(BaseUrlChallengeResponseAuthSession, self).__init__(**kwargs)
 
     def prepare_request_challenge(self):
@@ -280,6 +283,7 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
         :param dict headers: Optional initial dictionary with headers.
         :return: Dict with added authentication header.
         :rtype: dict
+        :raises TokenExpiredError: If token is expected to be expired.
         """
         assert self.client.authentication_token
         if self.client.token_expired:
@@ -313,7 +317,8 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
         """Main request method of the session
 
         Adds authentication to method from
-        :class:`requests_toolbelt.BaseUrlSession`.
+        :class:`requests_toolbelt.BaseUrlSession`. Takes auto_refresh_token in
+        mind.
 
         :param dict withhold_token: If boolean is True authentication token
                                     isn't added to the request.
@@ -324,7 +329,23 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
                 self.fetch_token()
 
             if self.access_token:
-                headers = self.add_token(headers)
+                for attempt in range(2):
+                    try:
+                        headers = self.add_token(headers)
+                    except TokenExpiredError:
+                        if not self.auto_refresh_token:
+                            raise
+                        log.debug("Auto refresh token is set, attempting to refresh.")
+                        self.fetch_token()
+                        if not self.access_token:
+                            log.error("Failed to refresh token.")
+                            raise AuthenticationError()
+                    else:
+                        break
+                else:
+                    log.error("Failed to add token.")
+                    raise AuthenticationError()
+
         log.debug("Requesting url %s using method %s.", url, method)
         log.debug("Supplying headers %s", headers)
         log.debug("Passing through key word arguments %s.", kwargs)
