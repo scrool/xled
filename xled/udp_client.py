@@ -74,6 +74,10 @@ class UDPClient(object):
             assert self._own_addresses is not None
         return self._own_addresses
 
+    def close(self):
+        """Closes socket handler"""
+        self.handle.close()
+
     def send(self, message):
         """
         Send a message

@@ -292,10 +292,12 @@ class InterfaceAgent(object):
         """
         Stop the loop of agent
         """
+        self.loop.add_callback(self.udp.close)
         self.loop.add_callback(self.loop.stop)
 
     def __del__(self):
         try:
+            self.loop.add_callback(self.udp.close)
             self.loop.add_callback(self.loop.stop)
         except Exception:
             pass
