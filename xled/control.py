@@ -158,6 +158,18 @@ class ControlInterface(object):
         assert sorted(app_response.keys()) == [u"code", u"name"]
         return app_response
 
+    def get_network_status(self):
+        """
+        Gets network status
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "network/status")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        return app_response
+
     def get_mode(self):
         """
         Gets current LED operation mode.
