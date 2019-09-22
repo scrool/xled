@@ -96,6 +96,8 @@ def xdiscover(find_id=None, destination_host=None, timeout=None):
                             device_id, hw_address, ip_address
                         )
                     )
+                if timeout and (monotonic() - start) > timeout:
+                    raise DiscoverTimeout()
             elif event == b"ERROR":
                 print("Error")
                 print("Parameters: {}".format(response))
@@ -106,6 +108,9 @@ def xdiscover(find_id=None, destination_host=None, timeout=None):
                     raise DiscoverTimeout()
                 else:
                     continue
+            elif event == b"ALIVE":
+                if timeout and (monotonic() - start) > timeout:
+                    raise DiscoverTimeout()
             else:
                 print("Unknown event: {}".format(event))
                 print("Parameters: {}".format(response))
@@ -485,6 +490,11 @@ class InterfaceAgent(object):
                     self._send_to_pipe_multipart(msg_parts)
                 except Exception:
                     return
+            msg_parts = [b"ALIVE", hw_address, device_id, ip_address]
+            try:
+                self._send_to_pipe_multipart(msg_parts)
+            except Exception:
+                return
         else:
             log.debug("Never seen %s before.", hw_address)
             self.peers[hw_address] = Peer(hw_address, device_id, ip_address)
