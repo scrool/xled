@@ -424,15 +424,7 @@ class InterfaceAgent(object):
         :return: tuple received data, hostname
         """
         while True:
-            try:
-                data, host = self.udp.recv(64)
-            except ReceiveTimeout:
-                msg_parts = [b"RECEIVE_TIMEOUT"]
-                try:
-                    self._send_to_pipe_multipart(msg_parts)
-                except Exception:
-                    return
-                continue
+            data, host = self.udp.recv(64)
             return data, host
 
     def handle_beacon(self, fd, event):
@@ -446,7 +438,15 @@ class InterfaceAgent(object):
         :param event: not used
         """
         log.debug("Waiting for a beacon.")
-        data, host = self._next_packet()
+        try:
+            data, host = self._next_packet()
+        except ReceiveTimeout:
+            msg_parts = [b"RECEIVE_TIMEOUT"]
+            try:
+                self._send_to_pipe_multipart(msg_parts)
+            except Exception:
+                return
+            return
         if data == PING_MESSAGE:
             log.debug("Ignoring ping message received from network from %s.", host)
             return
