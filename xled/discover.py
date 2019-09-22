@@ -326,17 +326,25 @@ class InterfaceAgent(object):
         #: Hash of known peers, fast lookup
         self.peers = {}
 
+    def _close(self):
+        log.debug("Stopping periodic ping.")
+        self.periodic_ping.stop()
+        log.debug("Removing beacon handler.")
+        self.loop.remove_handler(self.udp.handle.fileno())
+        log.debug("Closing UDP client.")
+        self.loop.add_callback(self.udp.close)
+        log.debug("Stopping loop from agent")
+        self.loop.add_callback(self.loop.stop)
+
     def stop(self):
         """
         Stop the loop of agent
         """
-        self.loop.add_callback(self.udp.close)
-        self.loop.add_callback(self.loop.stop)
+        self._close()
 
     def __del__(self):
         try:
-            self.loop.add_callback(self.udp.close)
-            self.loop.add_callback(self.loop.stop)
+            self._close()
         except Exception:
             pass
 
@@ -354,10 +362,12 @@ class InterfaceAgent(object):
         )
         stream = ZMQStream(self.pipe, self.loop)
         stream.on_recv(self.control_message)
-        pc = PeriodicCallback(self.send_ping, PING_INTERVAL * 1000)
-        pc.start()
-        pc = PeriodicCallback(self.reap_peers, PING_INTERVAL * 1000)
-        pc.start()
+        self.periodic_ping = PeriodicCallback(self.send_ping, PING_INTERVAL * 1000)
+        self.periodic_ping.start()
+        self.periodic_reap_peers = PeriodicCallback(
+            self.reap_peers, PING_INTERVAL * 1000
+        )
+        self.periodic_reap_peers.start()
         log.debug("Starting Loop")
         self.loop.start()
         log.debug("Loop ended")
@@ -404,9 +414,8 @@ class InterfaceAgent(object):
             self.pipe.send_multipart(
                 [b"ERROR", b"Failed to send a message to main thread."]
             )
-            raise
-        finally:
             self.stop()
+            raise
 
     def _next_packet(self):
         """
