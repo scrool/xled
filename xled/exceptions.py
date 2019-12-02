@@ -9,6 +9,12 @@ class XledException(IOError):
 class ApplicationError(XledException):
     """Application didn't return successful status code"""
 
+    def __init__(self, *args, **kwargs):
+        """Initializes ApplicationError with `response` object."""
+        response = kwargs.pop("response", None)
+        self.response = response
+        super(ApplicationError, self).__init__(*args, **kwargs)
+
 
 class ValidationError(XledException):
     """Validation of challenge response wasn't successful"""
