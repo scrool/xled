@@ -130,6 +130,19 @@ class ControlInterface(object):
         app_response = ApplicationResponse(response)
         return app_response
 
+    def get_brightness(self):
+        """
+        Gets current brightness level and if dimming is applied
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "led/out/brightness")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        assert sorted(app_response.keys()) == [u"code", u"mode", u"value"]
+        return app_response
+
     def get_device_info(self):
         """
         Gets detailed information about device
@@ -236,6 +249,24 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "network/scan_results")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
+        return app_response
+
+    def set_brightness(self, brightness, enabled=True):
+        """
+        Sets new brightness
+
+        :param int brightness: new brightness in range of 0..100
+        :param bool enabled: set to False if the dimming should not be applied
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        assert brightness in range(0, 101)
+        mode = "enabled" if enabled else "disabled"
+        json_payload = {"value": brightness, "mode": mode, "type": "A"}
+        url = urljoin(self.base_url, "led/out/brightness")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
+        assert list(app_response.keys()) == [u"code"]
         return app_response
 
     def set_device_name(self, name):
