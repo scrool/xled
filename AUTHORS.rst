@@ -11,3 +11,4 @@ Contributors
 ------------
 
 * Paul Webster (@PaulWebster)
+* Artem Ignatyev (@timon)
