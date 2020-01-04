@@ -237,7 +237,7 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "network/scan")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
-        assert app_response.keys() == [u"code"]
+        assert list(app_response.keys()) == [u"code"]
 
     def network_scan_results(self):
         """
@@ -282,7 +282,7 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "device_name")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
-        assert app_response.keys() == [u"code"]
+        assert list(app_response.keys()) == [u"code"]
 
     def set_led_movie_config(self, frame_delay, frames_number, leds_number):
         """
@@ -343,7 +343,7 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "network/status")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
-        assert app_response.keys() == [u"code"]
+        assert list(app_response.keys()) == [u"code"]
 
     def set_network_mode_station(self, ssid, password):
         """
@@ -363,7 +363,7 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "network/status")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
-        assert app_response.keys() == [u"code"]
+        assert list(app_response.keys()) == [u"code"]
 
     def set_timer(self, time_on, time_off, time_now=None):
         """
@@ -391,7 +391,7 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "timer")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
-        assert app_response.keys() == [u"code"]
+        assert list(app_response.keys()) == [u"code"]
 
 
 class HighControlInterface(ControlInterface):
