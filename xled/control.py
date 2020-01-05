@@ -86,6 +86,17 @@ class ControlInterface(object):
         else:
             return ApplicationResponse(response)
 
+    def session_post(self, url, **kwargs):
+        retriable = kwargs.pop('retriable', True)
+
+        response = self.session.post(url, **kwargs)
+
+        if response.status_code == HTTP_FORBIDDEN and retriable:
+            self._session = None
+            return self.session_post(url, retriable = False, **kwargs)
+        else:
+            return ApplicationResponse(response)
+
     def firmware_0_update(self, firmware):
         """
         Uploads first stage of the firmware
@@ -95,9 +106,7 @@ class ControlInterface(object):
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
         url = urljoin(self.base_url, "fw/0/update")
-        response = self.session.post(url, data=firmware)
-        app_response = ApplicationResponse(response)
-        return app_response
+        return self.session_post(url, data=firmware)
 
     def firmware_1_update(self, firmware):
         """
@@ -108,9 +117,7 @@ class ControlInterface(object):
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
         url = urljoin(self.base_url, "fw/1/update")
-        response = self.session.post(url, data=firmware)
-        app_response = ApplicationResponse(response)
-        return app_response
+        return self.session_post(url, data=firmware)
 
     def firmware_update(self, stage0_sha1sum, stage1_sha1sum):
         """
@@ -128,9 +135,7 @@ class ControlInterface(object):
             }
         }
         url = urljoin(self.base_url, "fw/update")
-        response = self.session.post(url, json=json_payload)
-        app_response = ApplicationResponse(response)
-        return app_response
+        return self.session_post(url, json=json_payload)
 
     def firmware_version(self):
         """
@@ -269,8 +274,7 @@ class ControlInterface(object):
         if brightness is not None:
             json_payload["value"] = brightness
         url = urljoin(self.base_url, "led/out/brightness")
-        response = self.session.post(url, json=json_payload)
-        app_response = ApplicationResponse(response)
+        app_response = self.session_post(url, json=json_payload)
         assert list(app_response.keys()) == [u"code"]
         return app_response
 
@@ -285,8 +289,7 @@ class ControlInterface(object):
         assert len(name) <= 32
         json_payload = {"name": name}
         url = urljoin(self.base_url, "device_name")
-        response = self.session.post(url, json=json_payload)
-        app_response = ApplicationResponse(response)
+        app_response = self.session_post(url, json=json_payload)
         assert list(app_response.keys()) == [u"code"]
 
     def set_led_movie_config(self, frame_delay, frames_number, leds_number):
@@ -305,7 +308,7 @@ class ControlInterface(object):
             "leds_number": leds_number,
         }
         url = urljoin(self.base_url, "led/movie/config")
-        response = self.session.post(url, json=json_payload)
+        return self.session_post(url, json=json_payload)
         return ApplicationResponse(response)
 
     def set_mode(self, mode):
@@ -319,8 +322,7 @@ class ControlInterface(object):
         assert mode in ("movie", "demo", "off")
         json_payload = {"mode": mode}
         url = urljoin(self.base_url, "led/mode")
-        response = self.session.post(url, json=json_payload)
-        app_response = ApplicationResponse(response)
+        app_response = self.session_post(url, json=json_payload)
         assert list(app_response.keys()) == [u"code"]
 
     def set_led_movie_full(self, movie):
@@ -332,10 +334,9 @@ class ControlInterface(object):
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
         url = urljoin(self.base_url, "led/movie/full")
-        response = self.session.post(
+        return self.session_post(
             url, headers={"Content-Type": "application/octet-stream"}, data=movie
         )
-        return ApplicationResponse(response)
 
     def set_network_mode_ap(self):
         """
@@ -346,8 +347,7 @@ class ControlInterface(object):
         """
         json_payload = {"mode": 2}
         url = urljoin(self.base_url, "network/status")
-        response = self.session.post(url, json=json_payload)
-        app_response = ApplicationResponse(response)
+        app_response = self.session_post(url, json=json_payload)
         assert list(app_response.keys()) == [u"code"]
 
     def set_network_mode_station(self, ssid, password):
@@ -366,8 +366,7 @@ class ControlInterface(object):
             "station": {"dhcp": 1, "ssid": ssid, "encpassword": encpassword},
         }
         url = urljoin(self.base_url, "network/status")
-        response = self.session.post(url, json=json_payload)
-        app_response = ApplicationResponse(response)
+        app_response = self.session_post(url, json=json_payload)
         assert list(app_response.keys()) == [u"code"]
 
     def set_timer(self, time_on, time_off, time_now=None):
@@ -394,10 +393,8 @@ class ControlInterface(object):
 
         json_payload = {"time_on": time_on, "time_off": time_off, "time_now": time_now}
         url = urljoin(self.base_url, "timer")
-        response = self.session.post(url, json=json_payload)
-        app_response = ApplicationResponse(response)
+        app_response = self.session_post(url, json=json_payload)
         assert list(app_response.keys()) == [u"code"]
-
 
 class HighControlInterface(ControlInterface):
     """
