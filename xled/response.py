@@ -59,6 +59,9 @@ class ApplicationResponse(Mapping):
                     "No response to create application response data from"
                 )
 
+            if not self.response.ok:
+                raise ApplicationError(self.response.text)
+
             if self.response.raw is None:
                 self._data = {}
             else:
