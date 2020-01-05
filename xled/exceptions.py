@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-class XledException(IOError):
+class XledException(Exception):
     def __init__(self, *args, **kwargs):
         super(XledException, self).__init__(*args, **kwargs)
 
