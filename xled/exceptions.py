@@ -24,7 +24,7 @@ class AuthenticationError(XledException):
     """Authentication handshake wasn't successful"""
 
 
-class TokenExpiredError(XledException):
+class TokenExpiredError(ApplicationError):
     """Token is no longer valid"""
 
 

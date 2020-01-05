@@ -2,9 +2,10 @@
 
 from __future__ import absolute_import
 
-from xled.exceptions import ApplicationError
+from xled.exceptions import ApplicationError, TokenExpiredError
 from xled.compat import JSONDecodeError, Mapping
 
+HTTP_FORBIDDEN = 401
 
 class ApplicationResponse(Mapping):
     """The :class:`ApplicationResponse <ApplicationResponse>` object, which
@@ -59,8 +60,10 @@ class ApplicationResponse(Mapping):
                     "No response to create application response data from"
                 )
 
-            if not self.response.ok:
-                raise ApplicationError(self.response.text)
+            if self.response.status_code == HTTP_FORBIDDEN:
+                raise TokenExpiredError(self.response.text, response=self.response)
+            elif not self.response.ok:
+                raise ApplicationError(self.response.text, response=self.response)
 
             if self.response.raw is None:
                 self._data = {}
