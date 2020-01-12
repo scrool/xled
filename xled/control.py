@@ -251,21 +251,23 @@ class ControlInterface(object):
         app_response = ApplicationResponse(response)
         return app_response
 
-    def set_brightness(self, brightness, enabled=True):
+    def set_brightness(self, brightness=None, enabled=True):
         """
-        Sets new brightness
+        Sets new brightness or enable/disable brightness dimming
 
-        :param int brightness: new brightness in range of 0..255
+        :param brightness: new brightness in range of 0..255 or None if no
+                           change is requested
         :param bool enabled: set to False if the dimming should not be applied
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        assert brightness in range(0, 256)
+        assert brightness in range(0, 256) or brightness is None
         if enabled:
             json_payload = {"mode": "enabled", "type": "A"}
         else:
             json_payload = {"mode": "disabled"}
-        json_payload["value"] = brightness
+        if brightness is not None:
+            json_payload["value"] = brightness
         url = urljoin(self.base_url, "led/out/brightness")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
