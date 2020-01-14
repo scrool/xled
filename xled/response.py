@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import
 
-from xled.exceptions import ApplicationError, TokenExpiredError
+from xled.exceptions import ApplicationError, InvalidTokenError
 from xled.compat import JSONDecodeError, Mapping
 
 HTTP_FORBIDDEN = 401
@@ -61,13 +61,12 @@ class ApplicationResponse(Mapping):
                 )
 
             if self.response.status_code == HTTP_FORBIDDEN:
-                raise TokenExpiredError(self.response.text, response=self.response)
-            elif not self.response.ok:
-                raise ApplicationError(self.response.text, response=self.response)
+                raise InvalidTokenError(self.response.text, response=self.response)
 
             if self.response.raw is None:
                 self._data = {}
             else:
+                self.response.check_for_status()
                 try:
                     json_data = self.response.json()
                 except JSONDecodeError:

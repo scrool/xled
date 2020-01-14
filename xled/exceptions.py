@@ -24,9 +24,11 @@ class AuthenticationError(XledException):
     """Authentication handshake wasn't successful"""
 
 
-class TokenExpiredError(ApplicationError):
+class TokenExpiredError(XledException):
     """Token is no longer valid"""
 
+class InvalidTokenError(ApplicationError):
+    """Token was rejected by the device"""
 
 class HighInterfaceError(XledException):
     """High level interface error"""
