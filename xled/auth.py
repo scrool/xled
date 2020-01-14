@@ -325,26 +325,7 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
         :rtype: requests.Response
         """
         if not withhold_token:
-            if not self.authorized:
-                self.fetch_token()
-
-            if self.access_token:
-                for attempt in range(2):
-                    try:
-                        headers = self.add_token(headers)
-                    except TokenExpiredError:
-                        if not self.auto_refresh_token:
-                            raise
-                        log.debug("Auto refresh token is set, attempting to refresh.")
-                        self.fetch_token()
-                        if not self.access_token:
-                            log.error("Failed to refresh token.")
-                            raise AuthenticationError()
-                    else:
-                        break
-                else:
-                    log.error("Failed to add token.")
-                    raise AuthenticationError()
+            headers = self.add_authorization(headers)
 
         log.debug("Requesting url %s using method %s.", url, method)
         log.debug("Supplying headers %s", headers)
@@ -353,6 +334,33 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
             method, url, headers=headers, **kwargs
         )
 
+    def add_authorization(self, headers):
+        """Returns headers with added authorization
+
+        :param dict headers user supplied request headers
+        :rtype: dict
+        """
+        if not self.authorized:
+            self.fetch_token()
+
+        if self.access_token:
+            for attempt in range(2):
+                try:
+                    headers = self.add_token(headers)
+                except TokenExpiredError:
+                    if not self.auto_refresh_token:
+                        raise
+                    log.debug("Auto refresh token is set, attempting to refresh.")
+                    self.fetch_token()
+                    if not self.access_token:
+                        log.error("Failed to refresh token.")
+                        raise AuthenticationError()
+                else:
+                    break
+            else:
+                log.error("Failed to add token.")
+                raise AuthenticationError()
+        return headers
 
 class ValidatingClientMixin(object):
     """Mixin adds functionality to :class:`ClientApplication` to authenticate server"""
