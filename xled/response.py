@@ -62,6 +62,7 @@ class ApplicationResponse(Mapping):
             if self.response.raw is None:
                 self._data = {}
             else:
+                self.response.raise_for_status()
                 try:
                     json_data = self.response.json()
                 except JSONDecodeError:
