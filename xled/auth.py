@@ -324,15 +324,25 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
                                     isn't added to the request.
         :rtype: requests.Response
         """
-        if not withhold_token:
-            headers = self.add_authorization(headers)
+        for attempt in range(2):
+            if not withhold_token:
+                headers = self.add_authorization(headers)
 
-        log.debug("Requesting url %s using method %s.", url, method)
-        log.debug("Supplying headers %s", headers)
-        log.debug("Passing through key word arguments %s.", kwargs)
-        return super(BaseUrlChallengeResponseAuthSession, self).request(
-            method, url, headers=headers, **kwargs
-        )
+            log.debug("Requesting url %s using method %s.", url, method)
+            log.debug("Supplying headers %s", headers)
+            log.debug("Passing through key word arguments %s.", kwargs)
+            response = super(BaseUrlChallengeResponseAuthSession, self).request(
+                method, url, headers=headers, **kwargs
+            )
+            if response.status_code == 401:
+                log.warning(
+                    "Unexpected HTTP status code 401 to request with added token."
+                )
+                self.access_token = False
+                log.debug("Token invalidated.")
+            else:
+                break
+        return response
 
     def add_authorization(self, headers):
         """Returns headers with added authorization
