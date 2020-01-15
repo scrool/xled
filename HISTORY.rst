@@ -2,6 +2,32 @@
 History
 =======
 
+0.6.0 (2020-01-15)
+------------------
+* Drop support for python 3.4
+* Explicitly specify Linux as only operating system
+* Automatically refresh token if expired
+* Add brightness management
+* Check response is OK before trying to decode JSON from body
+* Use id instead of name in discovery
+* Device class representing the device
+* Get network status in control interface
+* Use response from alive device to check if we reached discover timeout
+* Provide generator xdiscover() to return all or specific devices
+* Support timeout for discovery
+* When agent stops stop ping task and processing responses
+* Provide close() for UDPClient and use it on DiscoveryInterface.stop()
+* Do not continue receiving more data if UDP recv timeouts
+* Other bugfixes and improvements:
+
+  * Fix assertions
+  * Expose HighControlInterface on package level
+  * If ApplicationError is raised, store value of response attribute
+  * Allow disable/enable of brightness without value change
+  * Update wheel from 0.30.0 to 0.33.1
+  * Update pip from 9.0.1 to 19.0.3
+  * Add python 3.6 and 3.7 to Travis config
+
 0.5.0 (2018-12-09)
 ------------------
 
