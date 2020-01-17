@@ -27,7 +27,7 @@ is_py3 = _ver[0] == 3
 is_py34 = _ver[:2] == (3, 4)
 
 if is_py2:
-    basestring = basestring
+    basestring = basestring  # noqa
 
 elif is_py3:
     basestring = (str, bytes)
@@ -48,7 +48,7 @@ if is_py2:
     zip = itertools.izip
 
 elif is_py3:
-    zip = zip
+    zip = zip  # noqa
 
 if is_py2:
     from collections import Mapping  # noqa
@@ -58,14 +58,14 @@ elif is_py3:
 
 
 if is_py2:
-    xrange = xrange
+    xrange = xrange  # noqa
 
 elif is_py3:
-    xrange = range
+    xrange = range  # noqa
 
 
 if is_py2:
-    from monotonic import monotonic
+    from monotonic import monotonic  # noqa
 
 elif is_py3:
     from time import monotonic  # noqa
