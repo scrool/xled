@@ -473,36 +473,70 @@ class InterfaceAgent(object):
         # print("Host {} has MAC address {}".format(ip_address, hw_address))
         if hw_address in self.peers:
             log.debug("Peer %s seen before.", hw_address)
-            self.peers[hw_address].is_alive()
-            if device_id != self.peers[hw_address].device_id:
-                old_device_id = self.peers[hw_address].device_id
-                self.peers[hw_address].device_id = device_id
-                msg_parts = [b"RENAMED", hw_address, old_device_id, device_id]
-                try:
-                    self._send_to_pipe_multipart(msg_parts)
-                except Exception:
-                    return
-            if ip_address != self.peers[hw_address].ip_address:
-                old_ip_address = self.peers[hw_address].ip_address
-                self.peers[hw_address].ip_address = ip_address
-                msg_parts = [b"ADDRESS_CHANGED", hw_address, old_ip_address, ip_address]
-                try:
-                    self._send_to_pipe_multipart(msg_parts)
-                except Exception:
-                    return
-            msg_parts = [b"ALIVE", hw_address, device_id, ip_address]
-            try:
-                self._send_to_pipe_multipart(msg_parts)
-            except Exception:
-                return
+            return self.process_seen_peer(hw_address, device_id, ip_address)
         else:
             log.debug("Never seen %s before.", hw_address)
-            self.peers[hw_address] = Peer(hw_address, device_id, ip_address)
-            msg_parts = [b"JOINED", hw_address, device_id, ip_address]
+            return self.process_new_peer(hw_address, device_id, ip_address)
+
+    def process_seen_peer(self, hw_address, device_id, ip_address):
+        """
+        Updates seen peer's info and sends out status message
+
+        This is called when we receive a message from a peer that we track as
+        seen peers. Updates expiry time for a peer and sends out ALIVE message.
+        If device ID or IP address changed updates peer's info and sends out
+        message RENAMED or ADDRESS_CHANGED messages respectively.
+
+        :param str hw_address: HW address of a device from which we have
+                               received a beacon. Must exist in list of peers.
+        :param str device_id: device ID decoded from a beacon
+        :param str ip_address: IP address decoded from a beacon
+        """
+        assert hw_address in self.peers
+        self.peers[hw_address].is_alive()
+        if device_id != self.peers[hw_address].device_id:
+            old_device_id = self.peers[hw_address].device_id
+            self.peers[hw_address].device_id = device_id
+            msg_parts = [b"RENAMED", hw_address, old_device_id, device_id]
             try:
                 self._send_to_pipe_multipart(msg_parts)
             except Exception:
                 return
+        if ip_address != self.peers[hw_address].ip_address:
+            old_ip_address = self.peers[hw_address].ip_address
+            self.peers[hw_address].ip_address = ip_address
+            msg_parts = [b"ADDRESS_CHANGED", hw_address, old_ip_address, ip_address]
+            try:
+                self._send_to_pipe_multipart(msg_parts)
+            except Exception:
+                return
+        msg_parts = [b"ALIVE", hw_address, device_id, ip_address]
+        try:
+            self._send_to_pipe_multipart(msg_parts)
+        except Exception:
+            return
+
+    def process_new_peer(self, hw_address, device_id, ip_address):
+        """
+        Adds new peer and sends out status message
+
+        This is called when we receive a message from HW address we don't have
+        in a list of peers. Adds peer info in a list of peers sends out message
+        JOINED message.
+
+        :param str hw_address: HW address of a device from which we have
+                               received a beacon. Must not exist in list of
+                               peers.
+        :param str device_id: device ID decoded from a beacon
+        :param str ip_address: IP address decoded from a beacon
+        """
+        assert hw_address not in self.peers
+        self.peers[hw_address] = Peer(hw_address, device_id, ip_address)
+        msg_parts = [b"JOINED", hw_address, device_id, ip_address]
+        try:
+            self._send_to_pipe_multipart(msg_parts)
+        except Exception:
+            return
 
     def reap_peers(self):
         """
