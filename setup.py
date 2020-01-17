@@ -50,6 +50,7 @@ setup(
     include_package_data=True,
     install_requires=requirements,
     tests_require=tests_requirements,
+    extras_require={"tests": tests_requirements,},  # noqa: E231
     license="MIT license",
     zip_safe=False,
     keywords="xled,twinkly",
