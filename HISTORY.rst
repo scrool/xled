@@ -2,6 +2,19 @@
 History
 =======
 
+0.6.1 (2020-01-17)
+------------------
+* Make tests with tox pass again so release can be automatically deployed:
+
+  * Add Black reformatter to tox linter envs
+  * Tox config: new linters env to run Flake8
+  * Tox config update: Flake8 against tests/ and setup.py as well
+  * Make xled.compat pass Flake8 for F821 undefined names
+  * Refactor beacon processing of seen/new peer into separate methods
+  * Reformat test_control test with black
+  * Make tox install test-only requires
+  * Use conditional deployment to pypi with travis only from master
+
 0.6.0 (2020-01-15)
 ------------------
 * Drop support for python 3.4
