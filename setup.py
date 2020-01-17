@@ -35,7 +35,7 @@ setup(
     # bumpversion v0.5.3 doesn't handle version string in double quotes
     # correctly so prevent Black to format it:
     # fmt: off
-    version='0.6.0',
+    version='0.6.1',
     # fmt: on
     description=(
         "Python library and command line interface to control "
