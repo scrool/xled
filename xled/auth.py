@@ -407,7 +407,7 @@ class ValidatingClientMixin(object):
                 "Generation 2 challenge-response invalid. "
                 "Received challenge-response: %r but %r was expected."
             )
-            log.error(msg, self._challenge_response, expected)
+            log.error(msg, self._challenge_response, self._challenge)
             raise ValidationError()
 
         msg = "challenge-response is correct."
