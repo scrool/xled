@@ -62,10 +62,16 @@ class ChallengeResponseAuth(AuthBase):
 
         if expected != self.challenge_response:
             msg = (
-                "validate_challenge_response(): login sent "
+                "Generation 1 validate_challenge_response(): login sent "
                 "challenge-response: %r. But %r was expected."
             )
-            log.error(msg, self.challenge_response, expected)
+            log.warning(msg, self.challenge_response, expected)
+        elif self._challenge != self._challenge_response:
+            msg = (
+                "Generation 2 validate_challenge_response(): login sent "
+                "challenge-response: %r. But %r was expected."
+            )
+            log.error(msg, self._challenge_response, self._challenge)
             return False
         msg = "validate_challenge_response(): challenge-response is correct."
         log.debug(msg)
