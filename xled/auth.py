@@ -486,12 +486,10 @@ class ClientApplication(ValidatingClientMixin):
         :param: app_response response Response from login endpoint.
         :type: application_response :class:`~xled.response.ApplicationResponse`
         """
-        print(vars(response))
         if "authentication_token" in response:
             self._authentication_token = response.get("authentication_token")
 
         if "challenge-response" in response:
-            print(response.get("challenge-response"))
             self._challenge_response = response.get("challenge-response")
 
         if "authentication_token_expires_in" in response:
