@@ -59,6 +59,7 @@ class ChallengeResponseAuth(AuthBase):
         expected = xled.security.make_challenge_response(
             self.challenge, self.hw_address
         )
+
         if expected != self.challenge_response:
             msg = (
                 "validate_challenge_response(): login sent "
@@ -396,7 +397,14 @@ class ValidatingClientMixin(object):
         expected = xled.security.make_challenge_response(self._challenge, hw_address)
         if expected != self._challenge_response:
             msg = (
-                "challenge-response invalid. "
+                "Generation 1 challenge-response invalid. "
+                "Received challenge-response: %r but %r was expected."
+            )
+            log.warning(msg, self._challenge_response, expected)
+            #raise ValidationError()
+        elif self._challenge != self._challenge_response:
+            msg = (
+                "Generation 2 challenge-response invalid. "
                 "Received challenge-response: %r but %r was expected."
             )
             log.error(msg, self._challenge_response, expected)
@@ -472,10 +480,12 @@ class ClientApplication(ValidatingClientMixin):
         :param: app_response response Response from login endpoint.
         :type: application_response :class:`~xled.response.ApplicationResponse`
         """
+        print(vars(response))
         if "authentication_token" in response:
             self._authentication_token = response.get("authentication_token")
 
         if "challenge-response" in response:
+            print(response.get("challenge-response"))
             self._challenge_response = response.get("challenge-response")
 
         if "authentication_token_expires_in" in response:
