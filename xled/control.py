@@ -140,7 +140,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "led/out/brightness")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
-        assert sorted(app_response.keys()) == [u"code", u"mode", u"value"]
+        required_keys = [u"code", u"mode", u"value"]
+        assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
     def get_device_info(self):
@@ -168,7 +169,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "device_name")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
-        assert sorted(app_response.keys()) == [u"code", u"name"]
+        required_keys = [u"code", u"name"]
+        assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
     def get_network_status(self):
@@ -197,7 +199,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "led/mode")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
-        assert sorted(app_response.keys()) == [u"code", u"mode"]
+        required_keys = [u"code", u"mode"]
+        assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
     def get_timer(self):
@@ -213,7 +216,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "timer")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
-        assert sorted(app_response.keys()) == [u"time_now", u"time_off", u"time_on"]
+        required_keys = [u"time_now", u"time_off", u"time_on", u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
     def led_reset(self):
@@ -271,7 +275,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "led/out/brightness")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
-        assert list(app_response.keys()) == [u"code"]
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
     def set_device_name(self, name):
@@ -287,7 +292,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "device_name")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
-        assert list(app_response.keys()) == [u"code"]
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
 
     def set_led_movie_config(self, frame_delay, frames_number, leds_number):
         """
@@ -321,7 +327,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "led/mode")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
-        assert list(app_response.keys()) == [u"code"]
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
 
     def set_led_movie_full(self, movie):
         """
@@ -348,7 +355,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "network/status")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
-        assert list(app_response.keys()) == [u"code"]
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
 
     def set_network_mode_station(self, ssid, password):
         """
@@ -368,7 +376,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "network/status")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
-        assert list(app_response.keys()) == [u"code"]
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
 
     def set_timer(self, time_on, time_off, time_now=None):
         """
@@ -396,7 +405,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "timer")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
-        assert list(app_response.keys()) == [u"code"]
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
 
 
 class HighControlInterface(ControlInterface):
