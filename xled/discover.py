@@ -461,8 +461,6 @@ class InterfaceAgent(object):
         # print("Host {} != ip_address {}".format(host, ip_address))
         log.debug("Getting hardware address of %s.", ip_address)
         hw_address = arpreq(ip_address)
-        if is_py3 and not isinstance(hw_address, bytes):
-            hw_address = bytes(hw_address, "utf-8")
         if hw_address is None:
             log.error("Unable to get HW adress of %s.", ip_address)
             msg_parts = [b"ERROR", device_id, ip_address]
@@ -470,6 +468,8 @@ class InterfaceAgent(object):
                 self._send_to_pipe_multipart(msg_parts)
             except Exception:
                 return
+        if is_py3 and not isinstance(hw_address, bytes):
+            hw_address = bytes(hw_address, "utf-8")
         # print("Host {} has MAC address {}".format(ip_address, hw_address))
         if hw_address in self.peers:
             log.debug("Peer %s seen before.", hw_address)
