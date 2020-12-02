@@ -35,7 +35,7 @@ def common_preamble(name=None, host_address=None):
         find_id=name, destination_host=host_address
     )
     if name:
-        click.echo("Working on requested device.".format(device_name))
+        click.echo("Working on requested device.")
     else:
         click.echo("Working on device: {}".format(device_name))
     log.debug("HW address = %s", hw_address)
