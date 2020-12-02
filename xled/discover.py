@@ -287,7 +287,7 @@ class Peer(object):
         self.is_alive()
 
     def __repr__(self):
-        return "Peer({0!r})".format(self.hw_address, self.device_id)
+        return "Peer({0!r}) device_id({1!r})".format(self.hw_address, self.device_id)
 
     def is_alive(self):
         """

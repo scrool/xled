@@ -422,7 +422,7 @@ class HighControlInterface(ControlInterface):
                 fw_stage_sums[stage] = xled.security.sha1sum(stage1)
             log.debug("Firmware stage %d SHA1SUM: %r", stage, fw_stage_sums[stage])
             if not fw_stage_sums[stage]:
-                msg = "Failed to compute SHA1SUM for firmware stage %d.".format(stage)
+                msg = "Failed to compute SHA1SUM for firmware stage %d." % (stage)
                 raise HighInterfaceError(msg)
                 assert False
 
@@ -454,12 +454,8 @@ class HighControlInterface(ControlInterface):
                 assert False
 
         if fw_stage_sums != uploaded_stage_sums:
-            log.error(
-                "Firmware SHA1SUMs: %r != uploaded SHA1SUMs",
-                fw_stage_sums,
-                uploaded_stage_sums,
-            )
-            msg = "Firmware SHA1SUMs doesn't match to uploaded SHA1SUMs.".format(stage)
+            log.error("Firmware SHA1SUMs: %r != uploaded SHA1SUMs", fw_stage_sums)
+            msg = "Firmware SHA1SUMs doesn't match to uploaded SHA1SUMs."
             raise HighInterfaceError(msg)
             assert False
         else:
