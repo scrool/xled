@@ -63,6 +63,17 @@ It turned out that application uses HTTP to control lights. I ended up with
 capturing network traffic and `documented this private API`_. In the end I'm
 able to configure the device pretty easilly.
 
+MacOS Notes
+------------
+
+On MacOS, you might get this error
+
+.. code-block:: python
+
+    socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+which is resolved this way: https://stackoverflow.com/a/53382881/43839
+
 Credits
 ---------
 

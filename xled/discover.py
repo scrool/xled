@@ -18,7 +18,7 @@ from threading import Thread
 
 import ipaddress
 import zmq
-from arpreq import arpreq
+from getmac import get_mac_address
 import tornado.log
 from tornado.ioloop import IOLoop, PeriodicCallback
 from zmq.eventloop.zmqstream import ZMQStream
@@ -460,7 +460,7 @@ class InterfaceAgent(object):
         # if host != ip_address:
         # print("Host {} != ip_address {}".format(host, ip_address))
         log.debug("Getting hardware address of %s.", ip_address)
-        hw_address = arpreq(ip_address)
+        hw_address = get_mac_address(ip=ip_address)
         if is_py3 and not isinstance(hw_address, bytes):
             hw_address = bytes(hw_address, "utf-8")
         if hw_address is None:
