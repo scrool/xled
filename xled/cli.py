@@ -18,10 +18,8 @@ import xled.security
 
 log = logging.getLogger(__name__)
 
-ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
 
-log.addHandler(ch)
+LOGGERS = (log, xled.discover.log, xled.auth.log, xled.control.log)
 
 
 def common_preamble(name=None, host_address=None):
@@ -86,6 +84,8 @@ def validate_time(ctx, param, value):
     help="Sets verbosity of auth module. Either CRITICAL, ERROR, WARNING, INFO or DEBUG",
 )
 def main(ctx, name, hostname):
+    for logger in LOGGERS:
+        click_log.basic_config(logger)
     if name and hostname:
         raise click.BadParameter("Either name or hostname can be set not both.")
     ctx.obj = {"name": name, "hostname": hostname}
