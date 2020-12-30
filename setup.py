@@ -14,7 +14,6 @@ with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
 requirements = [
-    "arpreq",
     "click-log",
     "Click>=6.0",
     "cryptography",
