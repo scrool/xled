@@ -13,12 +13,12 @@ import logging
 import time
 import uuid
 import collections
+import requests
 
 from threading import Thread
 
 import ipaddress
 import zmq
-from arpreq import arpreq
 import tornado.log
 from tornado.ioloop import IOLoop, PeriodicCallback
 from zmq.eventloop.zmqstream import ZMQStream
@@ -432,6 +432,21 @@ class InterfaceAgent(object):
             data, host = self.udp.recv(64)
             return data, host
 
+    def get_mac_address(self, ip_address):
+        ip = ip_address.decode("utf-8")
+
+        base_url = "http://{}/xled/v1/gestalt".format(ip)
+        r = requests.get(base_url)
+        if r.status_code != 200:
+            log.error("Failure getting MAC address from device at {}. Not a Twinkly?".format(ip))
+            return None
+
+        try:
+            hw_address = bytes(r.json().get("mac"), "utf-8")
+            return hw_address
+        except:
+            return None
+
     def handle_beacon(self, fd, event):
         """
         Reads response from nodes
@@ -460,9 +475,7 @@ class InterfaceAgent(object):
         # if host != ip_address:
         # print("Host {} != ip_address {}".format(host, ip_address))
         log.debug("Getting hardware address of %s.", ip_address)
-        hw_address = arpreq(ip_address)
-        if is_py3 and not isinstance(hw_address, bytes):
-            hw_address = bytes(hw_address, "utf-8")
+        hw_address = self.get_mac_address(ip_address)
         if hw_address is None:
             log.error("Unable to get HW adress of %s.", ip_address)
             msg_parts = [b"ERROR", device_id, ip_address]
