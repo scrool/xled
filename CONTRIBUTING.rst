@@ -24,6 +24,10 @@ Fix Bugs
 Look through the GitHub issues for bugs. Anything tagged with "bug"
 and "help wanted" is open to whoever wants to implement it.
 
+Generally project should implement only features described on
+https://xled-docs.readthedocs.io/ . Make sure you update device features,
+behavior, endpoints and so on there as well.
+
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
