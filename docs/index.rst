@@ -8,6 +8,27 @@ Contents:
 
    readme
 
+
+Support
+-------
+
+.. toctree::
+   :maxdepth: 2
+
+   supported_operating_systems
+   supported_python_versions
+   supported_devices
+
+
+Command Line Interface
+----------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   cli_guide
+
+
 Python API Documentation / Guide
 --------------------------------
 
