@@ -79,11 +79,13 @@ def xdiscover(find_id=None, destination_host=None, timeout=None):
             if event == b"JOINED":
                 assert len(response) == 3
                 hw_address, device_id, ip_address = response
+                if isinstance(hw_address, bytes):
+                    hw_address = hw_address.decode("utf-8")
+                if isinstance(device_id, bytes):
+                    device_id = device_id.decode("utf-8")
+                if isinstance(ip_address, bytes):
+                    ip_address = ip_address.decode("utf-8")
                 if find_id is None or find_id == device_id:
-                    if isinstance(hw_address, bytes):
-                        hw_address = hw_address.decode("utf-8")
-                    if isinstance(ip_address, bytes):
-                        ip_address = ip_address.decode("utf-8")
                     DiscoveredDevice = collections.namedtuple(
                         "DiscoveredDevice", ["hw_address", "id", "ip_address"]
                     )
