@@ -433,6 +433,12 @@ class InterfaceAgent(object):
             return data, host
 
     def get_mac_address(self, ip_address):
+        """
+        Gets the MAC address of the device at ip_address.
+
+        :param ip_address: The IP address or hostname to the device
+        :return: The MAC address, or None in case of failure
+        """
         ip = ip_address.decode("utf-8")
 
         base_url = "http://{}/xled/v1/gestalt".format(ip)
@@ -442,7 +448,7 @@ class InterfaceAgent(object):
             return None
 
         try:
-            hw_address = bytes(r.json().get("mac"), "utf-8")
+            hw_address = r.json().get("mac").encode("utf-8")
             return hw_address
         except:
             return None
