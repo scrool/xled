@@ -470,6 +470,7 @@ class InterfaceAgent(object):
                 self._send_to_pipe_multipart(msg_parts)
             except Exception:
                 return
+            return
         # print("Host {} has MAC address {}".format(ip_address, hw_address))
         if hw_address in self.peers:
             log.debug("Peer %s seen before.", hw_address)
