@@ -297,9 +297,9 @@ class ControlInterface(object):
 
     def set_led_movie_config(self, frame_delay, frames_number, leds_number):
         """
-        Performs firmware update from previously uploaded images
+        Sets movie configuration for the last uploaded movie
 
-        :param int frame_delay: speed of movie
+        :param int frame_delay: speed of movie (delay between frames in ms)
         :param int leds_number: total number of LEDs
         :param int frames_number: total number of frames
         :raises ApplicationError: on application error
