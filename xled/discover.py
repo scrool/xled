@@ -91,7 +91,7 @@ def xdiscover(find_id=None, destination_host=None, timeout=None):
                     if find_id == device_id:
                         return
                 else:
-                    print(
+                    log.debug(
                         "Device id {} ({}) joined: {}".format(
                             device_id, hw_address, ip_address
                         )
@@ -99,8 +99,9 @@ def xdiscover(find_id=None, destination_host=None, timeout=None):
                 if timeout and (monotonic() - start) > timeout:
                     raise DiscoverTimeout()
             elif event == b"ERROR":
-                print("Error")
-                print("Parameters: {}".format(response))
+                log.error(
+                    "Received error from discovery. Parameters: {}".format(response)
+                )
                 raise Exception("Error")
             elif event == b"RECEIVE_TIMEOUT":
                 assert timeout
@@ -112,8 +113,9 @@ def xdiscover(find_id=None, destination_host=None, timeout=None):
                 if timeout and (monotonic() - start) > timeout:
                     raise DiscoverTimeout()
             else:
-                print("Unknown event: {}".format(event))
-                print("Parameters: {}".format(response))
+                log.error("Unknown event: {}".format(event))
+                log.error("Parameters: {}".format(response))
+                raise Exception("Unknown event")
 
 
 def discover(find_id=None, destination_host=None, timeout=None):
@@ -399,7 +401,7 @@ class InterfaceAgent(object):
 
         :param event: anything.
         """
-        print("control message: %s", event)
+        log.debug("control message: %s", event)
 
     def _send_to_pipe_multipart(self, msg_parts):
         """
