@@ -474,6 +474,7 @@ class HighControlInterface(ControlInterface):
         response = self.firmware_update(fw_stage_sums[0], fw_stage_sums[1])
         if not response.ok:
             msg = "Failed to update firmware: {}.".format(response.status_code)
+            raise HighInterfaceError(msg)
             assert False
 
     def disable_timer(self):
