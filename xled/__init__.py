@@ -26,6 +26,7 @@ import logging
 from xled.control import ControlInterface, HighControlInterface  # noqa: F401
 from xled.device import Device  # noqa: F401
 from xled.discover import DiscoveryInterface  # noqa: F401
+from xled.realtime import RealtimeChannel  # noqa: F401
 
 from .__version__ import __title__, __description__, __version__  # noqa: F401
 from .__version__ import __author__, __author_email__  # noqa: F401
