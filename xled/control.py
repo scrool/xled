@@ -47,9 +47,16 @@ class ControlInterface(object):
 
     def __init__(self, host, hw_address=None):
         self.host = host
-        self.hw_address = hw_address
+        self._hw_address = hw_address
         self._session = None
         self._base_url = None
+
+    @property
+    def hw_address(self):
+        if not self._hw_address:
+            self._hw_address = xled.discover.get_mac_address(self.host)
+            assert self._hw_address
+        return self._hw_address
 
     @property
     def base_url(self):

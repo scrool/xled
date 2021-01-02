@@ -144,6 +144,26 @@ def pipe(ctx):
     child_socket.connect(url)
     return parent_socket, child_socket
 
+def get_mac_address(hostname):
+    """
+    Gets the MAC address of the device at ip_address.
+
+    :param hostname: The IP address or hostname to the device
+    :return: The MAC address, or None in case of failure
+    :rtype: str
+    """
+
+    url = "http://{}/xled/v1/gestalt".format(hostname)
+    r = requests.get(url)
+    if r.status_code != 200:
+        log.error("Failure getting MAC address from device at {}. Not a Twinkly?".format(hostname))
+        return None
+
+    try:
+        return r.json().get("mac")
+    except:
+        return None
+
 
 class DiscoveryInterface(object):
     """
@@ -436,27 +456,6 @@ class InterfaceAgent(object):
             data, host = self.udp.recv(64)
             return data, host
 
-    def get_mac_address(self, ip_address):
-        """
-        Gets the MAC address of the device at ip_address.
-
-        :param ip_address: The IP address or hostname to the device
-        :return: The MAC address, or None in case of failure
-        """
-        ip = ip_address.decode("utf-8")
-
-        base_url = "http://{}/xled/v1/gestalt".format(ip)
-        r = requests.get(base_url)
-        if r.status_code != 200:
-            log.error("Failure getting MAC address from device at {}. Not a Twinkly?".format(ip))
-            return None
-
-        try:
-            hw_address = r.json().get("mac").encode("utf-8")
-            return hw_address
-        except:
-            return None
-
     def handle_beacon(self, fd, event):
         """
         Reads response from nodes
@@ -485,8 +484,9 @@ class InterfaceAgent(object):
         # if host != ip_address:
         # print("Host {} != ip_address {}".format(host, ip_address))
         log.debug("Getting hardware address of %s.", ip_address)
-        hw_address = self.get_mac_address(ip_address)
-        if hw_address is None:
+        try:
+            hw_address = get_mac_address(ip_address.decode("utf-8")).encode("utf-8")
+        except:
             log.error("Unable to get HW adress of %s.", ip_address)
             msg_parts = [b"ERROR", device_id, ip_address]
             try:
