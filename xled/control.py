@@ -19,7 +19,6 @@ from __future__ import absolute_import
 
 import collections
 import io
-import locale
 import logging
 import struct
 from operator import xor
@@ -34,6 +33,9 @@ from xled.response import ApplicationResponse
 from xled.security import encrypt_wifi_password
 
 log = logging.getLogger(__name__)
+
+#: Time format as defined by C standard
+TIME_FORMAT = "%H:%M:%S"
 
 
 class ControlInterface(object):
@@ -502,17 +504,22 @@ class HighControlInterface(ControlInterface):
             raise HighInterfaceError(msg)
 
         now = device_response["time_now"]
-        format = locale.nl_langinfo(locale.T_FMT)
-        now_formatted = xled.util.date_from_seconds_after_midnight(now).strftime(format)
+        now_formatted = xled.util.date_from_seconds_after_midnight(now).strftime(
+            TIME_FORMAT
+        )
 
         if device_response["time_on"] == -1 and device_response["time_off"] == -1:
             return Timer(now_formatted, False, False)
 
         on = device_response["time_on"]
-        on_formatted = xled.util.date_from_seconds_after_midnight(on).strftime(format)
+        on_formatted = xled.util.date_from_seconds_after_midnight(on).strftime(
+            TIME_FORMAT
+        )
 
         off = device_response["time_on"]
-        off_formatted = xled.util.date_from_seconds_after_midnight(off).strftime(format)
+        off_formatted = xled.util.date_from_seconds_after_midnight(off).strftime(
+            TIME_FORMAT
+        )
 
         return Timer(now_formatted, on_formatted, off_formatted)
 
