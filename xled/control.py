@@ -40,7 +40,7 @@ log = logging.getLogger(__name__)
 #: Time format as defined by C standard
 TIME_FORMAT = "%H:%M:%S"
 
-# UDP port to send realtime frames to
+#: UDP port to send realtime frames to
 REALTIME_UDP_PORT_NUMBER = 7777
 
 
