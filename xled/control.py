@@ -17,9 +17,12 @@ This module contains interface to control specific device
 
 from __future__ import absolute_import
 
+import base64
 import collections
 import io
 import logging
+import math
+import socket
 import struct
 from operator import xor
 
@@ -36,6 +39,9 @@ log = logging.getLogger(__name__)
 
 #: Time format as defined by C standard
 TIME_FORMAT = "%H:%M:%S"
+
+# UDP port to send realtime frames to
+REALTIME_UDP_PORT_NUMBER = 7777
 
 
 class ControlInterface(object):
@@ -320,11 +326,11 @@ class ControlInterface(object):
         """
         Sets new LED operation mode.
 
-        :param str mode: Mode to set. One of 'movie', 'demo', 'off'.
+        :param str mode: Mode to set. One of 'movie', 'rt', 'demo', 'off'.
         :raises ApplicationError: on application error
         :rtype: None
         """
-        assert mode in ("movie", "demo", "off")
+        assert mode in ("movie", "rt", "demo", "off")
         json_payload = {"mode": mode}
         url = urljoin(self.base_url, "led/mode")
         response = self.session.post(url, json=json_payload)
@@ -409,6 +415,36 @@ class ControlInterface(object):
         app_response = ApplicationResponse(response)
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
+
+    def send_realtime_frame(self, leds_number, bytes_per_led, data):
+        """
+        Sends a realtime frame. The mode must have been set to 'rt'.
+
+        :param int leds_number: the number of leds in a frame
+        :param int bytes_per_led: the number of bytes per led (3 or 4)
+        :param bytearray data: byte array containing the raw frame data
+        :rtype: None
+        """
+        data_size = leds_number*bytes_per_led
+        assert len(data) == data_size
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            if data_size < 900 and leds_number < 256:
+                # Send single frame
+                packet = bytearray(b'\x01')
+                packet.extend(base64.b64decode(self.session.access_token))
+                packet.extend(bytes([leds_number]))
+                packet.extend(data)
+                sock.sendto(packet, (self.host, REALTIME_UDP_PORT_NUMBER))
+            else:
+                # Send multi frame
+                packet_size = 900//bytes_per_led
+                for i in range(0, math.ceil(data_size/packet_size)):
+                    packet_data = data[:(900//bytes_per_led)]
+                    data = data[(900//bytes_per_led):]
+                    packet = [ b'\x03', base64.b64decode(self.session.access_token),
+                        b'\x00\x00', bytes([i])]
+                    packet.append(packet_data)
+                    sock.sendto(packet, (self.host, REALTIME_UDP_PORT_NUMBER))
 
 
 class HighControlInterface(ControlInterface):
