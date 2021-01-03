@@ -572,7 +572,6 @@ class InterfaceAgent(object):
         now = time.time()
         for peer in list(self.peers.values()):
             if peer.expires_at < now:
-                log.debug("reaping %s", peer.hw_address, peer.expires_at, now)
                 self.peers.pop(peer.hw_address)
                 msg_parts = [b"LEFT", peer.hw_address]
                 try:
