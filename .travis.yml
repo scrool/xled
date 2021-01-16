@@ -21,28 +21,3 @@ deploy:
       Y2R6dW82L2xONWJBQWhrVUh2Z3RqMm5iUm5JVVN2UmsrNFptUU1RK243WnNjYXlLaXFuclBEL3M9
   provider: pypi
   user: __token__
-dist: bionic
-install: pip install -U tox-travis pre-commit tox
-language: python
-cache:
-  pip: true
-env:
-  - TEST_CMD="tox -e py"
-script:
-  - $TEST_CMD
-matrix:
-  include:
-    - name: "lint"
-      python: 3.7
-      env:
-        - TEST_CMD="pre-commit run --all-files --show-diff-on-failure"
-    - name: "2.7"
-      python: 2.7
-    - name: "3.6"
-      python: 3.6
-    - name: "3.7"
-      python: 3.7
-    - name: "3.8"
-      python: 3.8
-    - name: "3.9"
-      python: 3.9
