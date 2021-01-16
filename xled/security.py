@@ -17,12 +17,26 @@ import os
 import base64
 import hashlib
 import itertools
+import warnings
 
 import netaddr
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms
 
 from xled.compat import zip, is_py2
+
+if is_py2:
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        # This import would raise UserWarning on its own
+        from cryptography.utils import CryptographyDeprecationWarning
+
+with warnings.catch_warnings():
+    if is_py2:
+        # Make sure we ignore only CryptographyDeprecationWarning
+        warnings.simplefilter("ignore", category=CryptographyDeprecationWarning)
+
+    from cryptography.hazmat.backends import default_backend
+    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms
+
 
 #: Default key to encrypt challenge in login phase
 SHARED_KEY_CHALLANGE = b"evenmoresecret!!"
