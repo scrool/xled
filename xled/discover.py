@@ -448,7 +448,11 @@ class InterfaceAgent(object):
         base_url = "http://{}/xled/v1/gestalt".format(ip)
         r = requests.get(base_url)
         if r.status_code != 200:
-            log.error("Failure getting MAC address from device at {}. Not a Twinkly?".format(ip))
+            log.error(
+                "Failure getting MAC address from device at {}. Not a Twinkly?".format(
+                    ip
+                )
+            )
             return None
 
         try:
