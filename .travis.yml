@@ -22,7 +22,7 @@ deploy:
   provider: pypi
   user: __token__
 dist: bionic
-install: pip install -U tox-travis pre-comit tox
+install: pip install -U tox-travis pre-commit tox
 language: python
 cache:
   pip: true
