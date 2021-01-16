@@ -21,3 +21,5 @@ deploy:
       Y2R6dW82L2xONWJBQWhrVUh2Z3RqMm5iUm5JVVN2UmsrNFptUU1RK243WnNjYXlLaXFuclBEL3M9
   provider: pypi
   user: __token__
+dist: bionic
+language: python
