@@ -5,10 +5,17 @@
 
 from __future__ import absolute_import
 
-import vcr
 import unittest
+import warnings
 
+from xled.compat import is_py2
 import xled.control
+
+
+with warnings.catch_warnings():
+    if is_py2:
+        warnings.simplefilter("ignore", category=DeprecationWarning)
+    import vcr
 
 
 class TestControlInterface(unittest.TestCase):
