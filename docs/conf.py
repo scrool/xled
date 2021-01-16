@@ -31,7 +31,7 @@ project_root = os.path.dirname(cwd)
 # version is used.
 sys.path.insert(0, project_root)
 
-import xled
+import xled  # noqa: E402
 
 # -- General configuration ---------------------------------------------
 
