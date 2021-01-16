@@ -458,7 +458,7 @@ class InterfaceAgent(object):
         try:
             hw_address = r.json().get("mac").encode("utf-8")
             return hw_address
-        except:
+        except Exception:
             return None
 
     def handle_beacon(self, fd, event):
