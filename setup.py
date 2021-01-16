@@ -13,21 +13,38 @@ with open("README.rst") as readme_file:
 with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
+#: Common requirements
 requirements = [
     "click-log",
-    "Click>=6.0",
     "cryptography",
-    "netaddr",
-    "pyzmq>=17",
     "requests",
-    "tornado>=5.0.0",
     "requests-toolbelt",
 ]
+
+#: Python 2 requirements
+requirements_py2 = [
+    "ipaddress",
+    "monotonic",
+    "tornado>=5.0.0,<=5.1.1",
+    "pyzmq>=17,<20.0.0",
+    "Click>=6.0,<8.0",
+    "netaddr<=0.7.19",  # Dependencies zipp and importlib-resources no longer supports Python 2.7
+]
+
+#: Python 3 requirements
+requirements_py3 = [
+    "tornado>=5.0.0",
+    "pyzmq>=17",
+    "Click>=6.0",
+    "netaddr",
+]
+
 tests_requirements = ["vcrpy-unittest"]
 
-if sys.version_info < (3, 3):
-    requirements.append("ipaddress")
-    requirements.append("monotonic")
+if sys.version_info > (3, 3):
+    requirements.extend(requirements_py3)
+else:
+    requirements.extend(requirements_py2)
 
 setup(
     name="xled",
