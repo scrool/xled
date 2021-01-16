@@ -78,6 +78,25 @@ second device - Twinkly 210 RGB+W Wall I keep improving this library and CLI
 documentation to be able to operate my devices locally and not rely on
 availability of manufacturer's servers.
 
+References
+----------
+
+There are other projects that might be more suitable for your needs:
+
+* `Twinkly integration in Home Assistant`_
+* SmartThings:
+
+  * `Twinkly integration in SmartThings by StevenJonSmith`_
+  * `Twinkly integration in SmartThings by Dameon87`_
+
+* `TwinklyTree Binding`_ for openHAB
+* `Twinkly HomeKit Hub for Mongoose OS`_ using `Twinkly library for Mongoose OS`_
+* `TwinklyWPF`_ - .net 5 GUI and API library
+* `ioBroker.twinkly`_ - twinkly adapter for ioBroker to communicate with the Twinkly lights
+* `Twinkly.vb for HomeSeer`_
+* `thingzi-logic-twinkly`_ - Twinkly lights integration for node red
+* Python class to interact with generation I device and IDA Pro loader of firmware binary in `Twinkly Twinkly Little Star by F-Secure LABS`_.
+
 Credits
 ---------
 
@@ -93,7 +112,17 @@ This package was created with Cookiecutter_ and the
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`documented this private API`: https://xled-docs.readthedocs.io
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
-
+.. _`Twinkly library for Mongoose OS`: https://github.com/d4rkmen/twinkly
+.. _`Twinkly HomeKit Hub for Mongoose OS`: https://github.com/d4rkmen/twinkly-homekit
+.. _`TwinklyWPF`: https://github.com/MarkAlanJones/TwinklyWPF
+.. _`Twinkly integration in Home Assistant`: https://www.home-assistant.io/integrations/twinkly/
+.. _`ioBroker.twinkly`: https://www.npmjs.com/package/iobroker.twinkly
+.. _`Twinkly.vb for HomeSeer`: https://forums.homeseer.com/forum/developer-support/scripts-plug-ins-development-and-libraries/script-plug-in-library/1348314-twinkly-vb-christmas-tree-lights-with-predefined-and-custom-animations
+.. _`TwinklyTree Binding`: https://github.com/mvanhulsentop/openhab-addons/tree/twinklytree/bundles/org.openhab.binding.twinklytree
+.. _`Twinkly Twinkly Little Star by F-Secure LABS`: https://labs.f-secure.com/blog/twinkly-twinkly-little-star/
+.. _`Twinkly integration in SmartThings by StevenJonSmith`: https://github.com/StevenJonSmith/SmartThings
+.. _`Twinkly integration in SmartThings by Dameon87`: https://github.com/Dameon87/SmartThings
+.. _`thingzi-logic-twinkly`: https://www.npmjs.com/package/thingzi-logic-twinkly
 
 .. image:: https://badges.gitter.im/xled-community/chat.svg
    :alt: Join the chat at https://gitter.im/xled-community/chat
