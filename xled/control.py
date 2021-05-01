@@ -320,11 +320,11 @@ class ControlInterface(object):
         """
         Sets new LED operation mode.
 
-        :param str mode: Mode to set. One of 'movie', 'demo', 'off'.
+        :param str mode: Mode to set. One of 'movie', 'rt', 'demo', 'off'.
         :raises ApplicationError: on application error
         :rtype: None
         """
-        assert mode in ("movie", "demo", "off")
+        assert mode in ("movie", "rt", "demo", "off")
         json_payload = {"mode": mode}
         url = urljoin(self.base_url, "led/mode")
         response = self.session.post(url, json=json_payload)
