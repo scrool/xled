@@ -512,8 +512,6 @@ class HighControlInterface(ControlInterface):
         fw_funcalls = [self.firmware_0_update, self.firmware_1_update]
         stages = [0, 1] if stage1 is not None else [0]
         for stage in stages:
-            if stage1 is None:
-                continue
             # I don't know how to dynamically construct variable name
             # Something like this you mean? / aho
             fw_images[stage].seek(0)
@@ -622,7 +620,7 @@ class HighControlInterface(ControlInterface):
             return self.set_mode(self.last_mode)
         else:
             resp = self.get_led_movie_config()
-            self.set_mode("effect" if resp['frames_number'] == 0 else "movie")
+            return self.set_mode("effect" if resp['frames_number'] == 0 else "movie")
 
     def turn_off(self):
         """
