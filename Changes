@@ -1,0 +1,125 @@
+Changes in util.py:
+
+* Fixed a bug - get_formatted_timer reported the current time plus the
+device time, when just current time is wanted.
+
+* Added new utility function along the same lines, needed in
+  control.py
+
+
+Changes in control.py:
+
+  In class ControlInterface:
+
+* Added several functions for getting info from device: check_status,
+  get_led_config, get_led_current_effect, get_led_movie_config
+
+* Tried to make firmware_update work for generation II in accordance to
+  docs, allowing a single stage image (untested though, since I have no
+  firmware image to try) 
+
+* Fixed a bug in get_timer: At least in my firmware there is no "code"
+  in the response.
+
+* Changed network_scan to use the same principle for asserting the
+  result as the other functions. 
+
+* Added one function set_led_current_effect. (This is the only way I
+  could set which demo to show from python.)
+
+* Added "effect" mode in allowed modes. (I think this is the default
+  mode after factory reset, and allows the user to switch demo by the
+  button on the device. "Demo" mode do not allow that, it seems.)
+
+* Fixed a copy-paste typo in the doc string for
+  set_network_mode_station (was the same as set_network_mode_ap).
+
+  In class HighControlInterface:
+
+* Made it remember characteristics of the device, such as
+  number of leds, led profile, family, and strings, which can be used
+  to make operation more device independent.
+
+* Make it remember the current mode, and last mode before turn_off, so
+  it can return to it on turn_on()
+
+* Make turn_on avoid "movie" mode if there is no uploaded movie
+  (otherwise the device refuses to turn on).
+
+* Tried to make firmware_update work for generation II in accordance to
+  docs, allowing a single stage image (untested as mentioned above).
+
+* Fixed bug in get_formatted_timer: reported the same time for off as
+  on.
+
+* Added corresponding method set_formatted_timer.
+
+* Added several general utility functions for creating and
+  manipulating patterns, ie single frames for movies:
+  make_solid_pattern, make_func_pattern, copy_pattern, modify_pattern,
+  shift_pattern, rotate_pattern, permute pattern.
+
+* Added several general utility functions for creating and
+  manipulating movies (made out of the above patterns):
+  make_empty_movie, add_to_movie, make_func_movie, to_movie
+
+* Make the code more device independent, to handle both RGB and RGBW
+  seamlessly: by using the function make_pixel, the same color will be
+  provided on both RGB and RGBW devices. (AWW is less of a problem,
+  although the colors will not become the same of course.)
+
+* Separate the creation of patterns and movies from actually showing
+  them, by providing the functions show_movie, show_pattern, and
+  show_demo. (show_pattern is not necessarily needed, since it is just
+  like a one frame movie, but conceptually it is different since you need
+  not give a frame delay.)
+
+* Added functions save_movie and load_movie to save a created movie to
+  a file and read it back (possibly on another device). 
+
+* Removed the obsoleted function write_static_movie. I also strongly
+  suggest removing the function set_static_color, since it can be
+  trivially expressed as a combination of show_pattern and
+  make_solid_pattern and it violates the separation between creating
+  and showing patterns. However, that requires follow up changes, so
+  for now it is still there.
+
+
+New file ledcolor.py:
+
+* Implements a color model based on HSL, so that colors can be
+  specified as hue, saturation, and lightness, instead of raw r, g,
+  and b values. Main entrypoint is hsl_color.
+
+* The color model also takes care of white balancing, and conversion
+  between led-colors and computer screen colors. The latter needs
+  gamma correction whereas the leds do not, so the same rgb-values can
+  not be used. The functions image_to_led_rgb and led_to_image_rgb
+  converts between them.
+
+* You can choose from a few color circles (same colors but at
+  different distances) and two lighess policies.
+
+
+New file pattern.py:
+
+* Contains a number of utility functions useful when creating
+  patterns, as well as several examples of functions using them for
+  creating various patterns and a few movies.
+
+
+New file colorsphere.py:
+
+* Implements an interactive 3-dimensional color picker from which the
+  led lights can be rudimentarily controlled (one or a combination of
+  several colors can be set). Requires matplotlib and numpy.
+
+
+New file windowmgr.py:
+
+* Just a helper file for the colorsphere, to help arrange several
+  interactive widgets in a figure.
+
+
+ / Anders Holst
+

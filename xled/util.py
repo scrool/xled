@@ -20,9 +20,14 @@ def seconds_after_midnight():
 
 def date_from_seconds_after_midnight(seconds):
     now = datetime.datetime.now()
-    then = now + datetime.timedelta(seconds=seconds)
+    then = now.replace(hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(seconds=seconds)
     return then
 
 
 def seconds_after_midnight_from_time(hours, minutes):
     return hours * 60 * 60 + minutes * 60
+
+
+def seconds_after_midnight_from_string(timestr, form):
+    dt = datetime.datetime.strptime(timestr, form)
+    return dt.hour * 3600 + dt.minute * 60 + dt.second
