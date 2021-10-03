@@ -1,81 +1,208 @@
-Changes in util.py:
-
-* Fixed a bug - get_formatted_timer reported the current time plus the
-device time, when just current time is wanted.
-
-* Added new utility function along the same lines, needed in
-  control.py
-
-
 Changes in control.py:
 
   In class ControlInterface:
 
-* Added several functions for getting info from device: check_status,
-  get_led_config, get_led_current_effect, get_led_movie_config
+  In general, the idea with this update is to add (almost) all of the
+  calls as described in the docs (plus a few available ones not yet
+  documented). A the same time, the interface to the existing calls
+  were made more consistent, and a couple of bugs were fixed in the
+  process. In more detail:
 
-* Tried to make firmware_update work for generation II in accordance to
-  docs, allowing a single stage image (untested though, since I have no
-  firmware image to try) 
+* Added several missing functions for getting and setting info in the
+  device:
+  - check_status
+  - delete_movies
+  - delete_playlist
+  - get_led_config
+  - get_led_effects_current
+  - get_led_effects
+  - get_led_layout
+  - get_led_movie_config
+  - get_movies
+  - get_movies_current (missing in xled-docs)
+  - get_mqtt_config
+  - get_playlist
+  - get_playlist_current
+  - get_saturation (missing in xled-docs)
+  - set_led_effects_current (missing in xled-docs)
+  - set_led_layout
+  - set_movies_current (missing in xled-docs)
+  - set_movies_full
+  - set_movies_new
+  - set_mqtt_config
+  - set_playlist
+  - set_playlist_current (missing in xled-docs)
+  - set_rt_frame_rest
+  - set_saturation (missing in xled-docs)
 
-* Fixed a bug in get_timer: At least in my firmware there is no "code"
-  in the response.
+* Added support for sending rt frames over a socket, which is wastly
+  quicker than using the rest protocol (thanks goes to rec and
+  magicus). The first time this is used, an UDP client is created to
+  take care of the actual socket communication (and is reused in all
+  subsequent calls). One new function:
+  - set_rt_frame_socket
 
-* Changed network_scan to use the same principle for asserting the
-  result as the other functions. 
+* Made asserting the return values and returning the response
+  consistent for all calls, affecting these previous functions:
+  - firmware_version
+  - get_device_info
+  - led_reset
+  - network_scan
+  - network_scan_results
+  - set_device_name
+  - set_led_movie_config
+  - set_led_movie_full
+  - set_mode
+  - set_network_mode_ap
+  - set_network_mode_station
+  - set_timer
+  
+* The brightness value can either be set Absolute (type A) or Relative
+  (type R). (This option is missing in xled-doc.) An ptional parameter
+  is added in the call. Also, while the call may not crash with
+  parameters up to 255, it completely ignores anything above 100, so
+  it seems meaningless to allow.
 
-* Added one function set_led_current_effect. (This is the only way I
-  could set which demo to show from python.)
+* Saturation can be set similar to the brightness. This call is
+  completely missing in xled-doc. Whether it is very useful is
+  uncertain, but I added it anyway since it is available. The
+  corresponding calls are already mentioned above under new
+  functions. 
 
-* Added "effect" mode in allowed modes. (I think this is the default
-  mode after factory reset, and allows the user to switch demo by the
-  button on the device. "Demo" mode do not allow that, it seems.)
+* While setting the mode to Access-Point, a new password can be
+  provided for the device (instead of the default one). An optional
+  password argument is added to set_network_mode_ap to enable this 
+  functionality. 
+
+* When setting the mode to Station, an ssid and password was
+  required. However, if these have already been provided in a previos
+  call, it is possible to switch to Station mode without providing
+  them. The ssi and password arguments to set_network_mode_station are
+  made optional to enable this use.
 
 * Fixed a copy-paste typo in the doc string for
   set_network_mode_station (was the same as set_network_mode_ap).
 
+* Attempt to make firmware_update work for generation II in accordance to
+  docs, allowing a single stage image (untested though, since I have no
+  firmware image to try) 
+
+* Fixed a bug in get_timer: In early firmware (eg 2.2.1) there is no "code"
+  in the response.
+
+* Added "effect", "rt", and "playlist" mode among allowed modes, to
+  reflect the various added functionality above.
+
+
   In class HighControlInterface:
 
-* Made it remember characteristics of the device, such as
-  number of leds, led profile, family, and strings, which can be used
-  to make operation more device independent.
+  The general vision behind these changes is to provide a high level
+  interface with these properties:
+  - Easier and more intuitive to use than the low-level interface
+    (without the need to understand the underlying technicalities, or
+    in which order calls have to be made, or the format to use for
+    movies, etc).
+  - A uniform interface with respect to different families and
+    versions - the same high-level calls should work across all
+    versions (as far as possible - a functionality which is not there
+    in the device will still not work).
+  - A small set of generic but powerful primitives on top of which any
+    conceivable functionality (allowed by the device) should be
+    possible to build. 
+  The goals may be ambitious, but I think I have got a fair bit
+  towards it with these suggested changes. In more detail:
 
-* Make it remember the current mode, and last mode before turn_off, so
-  it can return to it on turn_on()
+* Provide a number of high level entrypoints along the principle "just
+  tell the leds what to show next and they will do it":
+  - show_pattern: shows a static, one-frame movie, given as argument
+  - show_movie: takes either the movie to show and its fps, or the id
+    of a previously uploaded movie
+  - show_rt_frame: shows a one-frame movie in realtime mode
+  - show_playlist: takes either a movie id to start from in an
+    existing playlist, or a list of movie ids to install as a playlist
+    and start showing
+  - show_effect: takes a preset effect id to show
+  - show_demo: in recent firmware cycles through preset effects, in
+    earlier behaves similar to show_effect
+  The user may of course call set_mode directly, but often it will
+  not be needed, since the above will make sure the device is in
+  the required mode.
 
-* Make turn_on avoid "movie" mode if there is no uploaded movie
-  (otherwise the device refuses to turn on).
+* In addition to the above entrypoints, two functions are needed to
+  handle movie lists / playlists:
+  - upload_movie: Upload the movie without showing it yet. Returns a
+    movie id to use in the above calls.
+  - clear_movies: Removes all uploaded movies (and any corresponding
+    playlist).
 
-* Tried to make firmware_update work for generation II in accordance to
-  docs, allowing a single stage image (untested as mentioned above).
+* Make the HighControlInterface remember characteristics of the
+  device, such as number of leds, led profile, family, firmware
+  version, and string configuration, which can be used to make
+  operation more device independent.
+
+* Make the interface remember the current mode, and last mode before
+  turn_off, so that turn_on() can return to the last mode. Also, (in
+  case last_mode is not known yet) make turn_on avoid "movie" mode if
+  there is no uploaded movie (otherwise the device refuses to turn
+  on).
+
+* To use the above entrypoints, a number of primitives for creating
+  and manipulating movies and patterns are needed. (A first impulse
+  was to put them in a separate class. However, to uphold the
+  abstraction levels, and avoid having the interface expose device
+  specific parameters and the internal representations used, this set
+  of primitives are included in the interface. That is, the low-level
+  representation and operations depends heavily on the led-profile,
+  the string configuration, the physical layout, and other parameters,
+  and with this solution no other package needs to worry about those
+  parameters.) These primitives are added to create and manipulate
+  "patterns" (ie single frames for movies):
+  - make_solid_pattern: Produce a single-colored pattern
+  - make_func_pattern: Produce a pattern by calling a user function
+    for the color of each led
+  - make_layout_pattern: Produce a pattern by calling a user function
+    for the color at each leds physical position 
+  - copy_pattern: Copy a pattern (since modify_pattern below makes
+    destructive changes, for efficiency)
+  - modify_pattern: Set the color of a specific led in a pattern
+  - shift_pattern: Move a pattern along the string of leds
+  - rotate_pattern: Move a pattern along the string of leds, shifting
+    in at one end what is shifted out at the other
+  - permute pattern: Perform a given permutation of led colors in the
+    pattern 
+  Then the following primitives are provided to combine "patterns"
+  into "movies" (essentially prioviding three different ways of
+  achieving the same thing, dependent on preferences):
+  - make_empty_movie: Make an initially empty movie to start from
+  - add_to_movie: Add a pattern last to a previously created movie
+  - make_func_movie: Make a movie by calling a user function for each
+    frame pattern.
+  - to_movie: Convert a single pattern or a list of patterns into a
+    movie object
+
+* Make the code handle both RGB and RGBW seamlessly (for increased
+  device independence): by making the above functions all use the
+  function make_pixel, the same color will be provided on both RGB and
+  RGBW devices (for now by always setting the white component to zero,
+  but more advanced solutions can be conceived of). (AWW is less of a
+  problem, although the colors will not become the same of course.)
+
+* Added functions save_movie and load_movie to save a created movie to
+  a file and read it back (possibly on another device). The format is
+  different from the raw dump of the bytestream though - its in
+  hexadecimal with one frame per row and with a header providing
+  parameters, to make it more device independent - but I'm happy to
+  discuss different options here.
 
 * Fixed bug in get_formatted_timer: reported the same time for off as
   on.
 
 * Added corresponding method set_formatted_timer.
 
-* Added several general utility functions for creating and
-  manipulating patterns, ie single frames for movies:
-  make_solid_pattern, make_func_pattern, copy_pattern, modify_pattern,
-  shift_pattern, rotate_pattern, permute pattern.
-
-* Added several general utility functions for creating and
-  manipulating movies (made out of the above patterns):
-  make_empty_movie, add_to_movie, make_func_movie, to_movie
-
-* Make the code more device independent, to handle both RGB and RGBW
-  seamlessly: by using the function make_pixel, the same color will be
-  provided on both RGB and RGBW devices. (AWW is less of a problem,
-  although the colors will not become the same of course.)
-
-* Separate the creation of patterns and movies from actually showing
-  them, by providing the functions show_movie, show_pattern, and
-  show_demo. (show_pattern is not necessarily needed, since it is just
-  like a one frame movie, but conceptually it is different since you need
-  not give a frame delay.)
-
-* Added functions save_movie and load_movie to save a created movie to
-  a file and read it back (possibly on another device). 
+* Attempt to make firmware_update work for generation II in accordance to
+  docs, allowing a single stage image (untested as mentioned above).
+  Also cleaned up the code a little. (Has this function ever been used?
+  From where can firmware images of different versions be fetched?)
 
 * Removed the obsoleted function write_static_movie. I also strongly
   suggest removing the function set_static_color, since it can be
@@ -84,6 +211,21 @@ Changes in control.py:
   and showing patterns. However, that requires follow up changes, so
   for now it is still there.
 
+
+Changes in util.py:
+
+* Fixed a bug - get_formatted_timer reported the current time plus the
+  device time, when just current time is wanted.
+
+* Added new utility function seconds_after_midnight_from_string, needed
+  in control.py
+
+
+Changes in security.py:
+
+* Fixed bug causing set_network_mode_station not to work with python3:
+  Make sure all relevant strings are of type bytes.
+  
 
 New file ledcolor.py:
 
@@ -111,8 +253,9 @@ New file pattern.py:
 New file colorsphere.py:
 
 * Implements an interactive 3-dimensional color picker from which the
-  led lights can be rudimentarily controlled (one or a combination of
-  several colors can be set). Requires matplotlib and numpy.
+  led lights can be rudimentarily controlled (a single color can be
+  set for now, but the plan is to extend the interface to be able to
+  select more complex effects). Requires matplotlib and numpy.
 
 
 New file windowmgr.py:

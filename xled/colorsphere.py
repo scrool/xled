@@ -11,11 +11,11 @@ It can be connected directly to controlling the led lights by a
 suitable callback function. One simple example callback function is
 provided.
 
-The main entrypoint is the class ColorPicker, which takes a callback
-function to call whenever a color is picked, and an optional boolean
-argument useevent telling whether the callback wishes to have the
-button press event for picking in addition to the hsl-coordinates
-of the picked color.
+The main entrypoint is the class ColorPicker, which takes one callback
+function to call whenever a color is clicked, and another callback
+function to call when the mouse moves. Both callback functions
+takes the hsl-coordinates under the mouse (or False if outside the
+sphere) and the click event as arguments.
 
 There is also an entrypoint launch_colorpicker, which takes a
 HighControlInterface object connected to some led lights as argument,
@@ -114,7 +114,8 @@ class ColorSphere():
     def __init__(self, fig, rect, wdt, hgt, callback, useevent=False):
         self.callback = callback
         self.useevent = useevent
-        self.mouse_color_callback = None
+        self.mouse_color_callbacks = []
+        self.block_draw = False
         self.lastbpos = False
         self.p1 = False
         self.fig = fig
@@ -159,34 +160,48 @@ class ColorSphere():
         return (h, s, l)
 
     def draw1(self, event=None):
-        ndiam = self.diam * (0.5 + self.rad / 2.0)
-        self.circ2.width = ndiam
-        self.circ2.height = ndiam
-        self.circ2.set_linewidth((1.0 - ndiam / self.diam) * self.size * 0.75)
-        arr = [[hsl_color_im(*(self.coordinates(self.dotsz * i, self.dotsz * j) or (0, 0, 0)))
-                for i in range(101)]
-               for j in range(101)]
-        if event and self.mouse_color_callback:
-            xind = int((event.x - self.xoff) // self.dotsz)
-            yind = int((event.y - self.yoff) // self.dotsz)
-            if (xind - 50.5)**2 + (yind - 50.5)**2 <= 50.5**2:
-                self.mouse_color_callback(arr[yind][xind], redraw=False)
-        self.im.set_array(arr)
+        if not self.block_draw:
+            ndiam = self.diam * (0.5 + self.rad / 2.0)
+            self.circ2.width = ndiam
+            self.circ2.height = ndiam
+            self.circ2.set_linewidth((1.0 - ndiam / self.diam) * self.size * 0.75)
+            arr = [[hsl_color_im(*(self.coordinates(self.dotsz * i, self.dotsz * j) or (0, 0, 0)))
+                    for i in range(101)]
+                   for j in range(101)]
+            if event and self.mouse_color_callbacks:
+                self.block_draw = True
+                self.color_change_event(event)
+                self.block_draw = False
+                #xind = int((event.x - self.xoff) // self.dotsz)
+                #yind = int((event.y - self.yoff) // self.dotsz)
+                #if (xind - 50.5)**2 + (yind - 50.5)**2 <= 50.5**2:
+                #    for func in self.mouse_color_callbacks:
+                #        func(arr[yind][xind], redraw=False)
+            self.im.set_array(arr)
+            if not plt.isinteractive():
+                self.fig.canvas.draw()
 
     def draw(self, event=None):
-        ndiam = self.diam * (0.5 + self.rad / 2.0)
-        self.circ2.width = ndiam
-        self.circ2.height = ndiam
-        self.circ2.set_linewidth((1.0 - ndiam / self.diam) * self.size * 0.75)
-        arr = self.coordinates_color_array(xxarr * self.dotsz, yyarr * self.dotsz)
-        arr = np.array(arr).reshape((101, 101, 3))
-        if event and self.mouse_color_callback:
-            xind = int((event.x - self.xoff) // self.dotsz)
-            yind = int((event.y - self.yoff) // self.dotsz)
-            if (xind - 50.5)**2 + (yind - 50.5)**2 <= 50.5**2:
-                self.mouse_color_callback(arr[yind][xind], redraw=False)
-        self.im.set_array(arr)
-
+        if not self.block_draw:
+            ndiam = self.diam * (0.5 + self.rad / 2.0)
+            self.circ2.width = ndiam
+            self.circ2.height = ndiam
+            self.circ2.set_linewidth((1.0 - ndiam / self.diam) * self.size * 0.75)
+            arr = self.coordinates_color_array(xxarr * self.dotsz, yyarr * self.dotsz)
+            arr = np.array(arr).reshape((101, 101, 3))
+            if event and self.mouse_color_callbacks:
+                self.block_draw = True
+                self.color_change_event(event)
+                self.block_draw = False
+                #xind = int((event.x - self.xoff) // self.dotsz)
+                #yind = int((event.y - self.yoff) // self.dotsz)
+                #if (xind - 50.5)**2 + (yind - 50.5)**2 <= 50.5**2:
+                #    for func in self.mouse_color_callbacks:
+                #        func(arr[yind][xind], redraw=False)
+            self.im.set_array(arr)
+            if not plt.isinteractive():
+                self.fig.canvas.draw()
+                
     def scroll_event(self, event):
         changed = False
         if event.key == "control":
@@ -258,8 +273,8 @@ class ColorSphere():
 
     def color_change_event(self, event):
         hsl = self.coordinates(event.x - self.xoff, event.y - self.yoff)
-        if hsl and self.mouse_color_callback:
-            self.mouse_color_callback(hsl_color_im(*hsl))
+        for func in self.mouse_color_callbacks:
+            func(hsl, event)
 
     def key_press_event(self, event):
         pass
@@ -324,62 +339,85 @@ class ColorSample():
                                  linewidth=bw * 0.75, edgecolor=(0, 0, 0), facecolor=initcol)
         self.ax.add_artist(self.sqr)
 
-    def set_color(self, rgb, redraw=True):
-        self.sqr.set_facecolor(rgb)
-        if redraw:
+    def set_color(self, hsl, ev=None):
+        if hsl:
+            self.sqr.set_facecolor(hsl_color_im(*hsl))
             self.fig.canvas.draw()
 
 
 class ColorPicker():
 
-    def __init__(self, callback, useevent=False):
+    def __init__(self, callback_click, callback_move):
         width = 500
         height = 500
         rect = (0.1, 0.1, 0.8, 0.8)
         self.win = WindowMgr("xled color picker", width, height, 1, 1)
         self.win.set_background(hsl_color_im(0.0, 0.0, 0.0))
-        self.sphere = ColorSphere(self.win.fig, rect, width, height, callback, useevent)
+        self.sphere = ColorSphere(self.win.fig, rect, width, height, callback_click, True)
         self.sample = ColorSample(self.win.fig, (0.04, 0.04, 0.16, 0.16), 2, hsl_color_im(0.0, 0.0, 1.0))
         self.win.register_target(rect, self.sphere)
         self.win.set_motion_callback(self.sphere.color_change_event)
-        self.sphere.mouse_color_callback = self.sample.set_color
+        self.sphere.mouse_color_callbacks.append(self.sample.set_color)
+        if callback_move:
+            self.sphere.mouse_color_callbacks.append(callback_move)
 
 
-# An example application of the color picker. Call launch_colorpicker with the
-# HighControlInterface as argument. Click on a color to select it. Shift-click
-# to select several colors. Control-click to blend the last two colors.
-
-def blendcols(rgb1, rgb2, p):
-    return tuple(map(lambda c1, c2: int(round(c1 + (c2 - c1) * p)), rgb1, rgb2))
-
-
-def callbackfunc(ctr):
-    lasthsl = [False]
-
-    def domessage(hsl, event):
-        if event.key == "control" and lasthsl[0] is not False:
-            del lasthsl[:-1]
-            col1 = hsl_color(*lasthsl[0])
-            col2 = hsl_color(*hsl)
-            lasthsl[0] = hsl
-            pat = ctr.make_func_pattern(lambda i: blendcols(col1, col2, random.random()))
-        elif event.key == "shift" and lasthsl[0] is not False:
-            lasthsl.append(hsl)
-            cols = list(map(lambda hsl: hsl_color(*hsl), lasthsl))
-            n = len(cols)
-            pat = ctr.make_func_pattern(lambda i: cols[i % n])
-        else:
-            col = hsl_color(*hsl)
-            del lasthsl[1:]
-            lasthsl[0] = hsl
-            pat = ctr.make_func_pattern(lambda i: col)
-        ctr.show_pattern(pat)
-    return domessage
+# Below is an example application of the color picker.
+# Call launch_colorpicker with the HighControlInterface as argument.
+# Hover over the sphere to watch colors. Click on a color to upload
+# it as a movie.
+# You can provide your own click and move callbacks for other effects.
 
 
 global_cp = False
+rtmode = False
+outermode = False
+printcol = False
 
 
-def launch_colorpicker(ctr):
+def make_click_func(ctr):
+
+    def on_click(hsl, event):
+        global outermode
+        global printcol
+        if hsl:
+            pat = ctr.make_solid_pattern(hsl_color(*hsl))
+            id = ctr.upload_movie(ctr.to_movie(pat), 1, force=True)
+            ctr.set_movies_current(id)
+            if printcol:
+                print(hsl_color(*hsl))
+            outermode = 'movie'
+
+    return on_click
+
+
+def make_move_func(ctr):
+
+    def on_move(hsl, event):
+        global rtmode
+        global outermode
+        if hsl:
+            if not rtmode:
+                outermode = ctr.get_mode()['mode']
+            pat = ctr.make_solid_pattern(hsl_color(*hsl))
+            ctr.show_rt_frame(ctr.to_movie(pat))
+            rtmode = True
+        else:
+            if rtmode:
+                if outermode:
+                    ctr.set_mode(outermode)
+                rtmode = False
+
+    return on_move
+
+
+def launch_colorpicker(ctr, printcolor=False, fromshell=False):
     global global_cp
-    global_cp = ColorPicker(callbackfunc(ctr), useevent=True)
+    global printcol
+    printcol = printcolor
+    global_cp = ColorPicker(make_click_func(ctr), make_move_func(ctr))
+    if fromshell:
+        plt.ioff()
+        plt.show()
+        if outermode:
+            ctr.set_mode(outermode)
