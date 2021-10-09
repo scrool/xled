@@ -17,8 +17,8 @@ with open("HISTORY.rst") as history_file:
 requirements = [
     "click-log",
     "cryptography",
-    "requests",
     "requests-toolbelt",
+    "requests",
 ]
 
 #: Python 2 requirements
