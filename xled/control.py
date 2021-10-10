@@ -30,12 +30,12 @@ from operator import xor
 
 from requests.compat import urljoin
 
-from xled.util import seconds_after_midnight, date_from_seconds_after_midnight, seconds_after_midnight_from_string
+import xled.util
+import xled.security
 from xled.udp_client import UDPClient
 from xled.auth import BaseUrlChallengeResponseAuthSession
 from xled.exceptions import HighInterfaceError
 from xled.response import ApplicationResponse
-from xled.security import encrypt_wifi_password
 
 log = logging.getLogger(__name__)
 
@@ -44,6 +44,7 @@ REALTIME_UDP_PORT_NUMBER = 7777
 
 #: Time format as defined by C standard
 TIME_FORMAT = "%H:%M:%S"
+SHORT_TIME_FORMAT = "%H:%M"
 
 
 class ControlInterface(object):
@@ -363,7 +364,7 @@ class ControlInterface(object):
 
     def get_movies_current(self):
         """
-        Gets the id of the currently played movie in the movie list
+        Gets the movie id of the currently played movie in the movie list
 
         .. seealso:: :py:meth:`set_movies_current()`
 
@@ -425,7 +426,7 @@ class ControlInterface(object):
 
     def get_playlist_current(self):
         """
-        Gets the id of the currently played movie in the playlist
+        Gets the movie id of the currently played movie in the playlist
 
         .. seealso:: :py:meth:`set_playlist_current()`
 
@@ -558,15 +559,15 @@ class ControlInterface(object):
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
-    def set_led_effects_current(self, id):
+    def set_led_effects_current(self, effect_id):
         """
         Sets the current effect of effect mode
 
-        :param int id: Effect id
+        :param int effect_id: id of effect
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        json_payload = {"effect_id": id}
+        json_payload = {"effect_id": effect_id}
         url = urljoin(self.base_url, "led/effects/current")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
@@ -653,17 +654,17 @@ class ControlInterface(object):
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
-    def set_movies_current(self, id):
+    def set_movies_current(self, movie_id):
         """
         Sets which movie in the movie list to play
 
         .. seealso:: :py:meth:`get_movies_current()`
 
-        :param int id: id of movie to play
+        :param int movie_id: id of movie to play
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        json_payload = {"id": id}
+        json_payload = {"id": movie_id}
         url = urljoin(self.base_url, "movies/current")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
@@ -788,7 +789,7 @@ class ControlInterface(object):
         """
         assert self.hw_address
         if ssid and password:
-            encpassword = encrypt_wifi_password(password, self.hw_address)
+            encpassword = xled.security.encrypt_wifi_password(password, self.hw_address)
             json_payload = {
                 "mode": 1,
                 "station": {"dhcp": 1, "ssid": ssid, "encpassword": encpassword},
@@ -821,7 +822,7 @@ class ControlInterface(object):
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
-    def set_playlist_current(self, id):
+    def set_playlist_current(self, movie_id):
         """
         Sets which movie in the playlist to play
 
@@ -830,7 +831,7 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        json_payload = {"id": id}
+        json_payload = {"id": movie_id}
         url = urljoin(self.base_url, "playlist/current")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
@@ -944,7 +945,7 @@ class ControlInterface(object):
         assert isinstance(time_off, int)
         assert time_off >= -1
         if time_now is None:
-            time_now = seconds_after_midnight()
+            time_now = xled.util.seconds_after_midnight()
             log.debug("Setting time now to %s", time_now)
 
         json_payload = {
@@ -982,27 +983,32 @@ class HighControlInterface(ControlInterface):
         self.last_rt_time = None
         self.curr_mode = self.get_mode()['mode']
 
+    def firmware_num_stages(self):
+        if self.family == "D":
+            return 2
+        else:
+            return 1
+
     def update_firmware(self, stage0, stage1=None):
         """
         Uploads firmware and runs update
 
         :param stage0: file-like seekable object pointing to stage0 of firmware.
         :param stage1: file-like seekable object pointing to stage1 of firmware,
-                       or None if there are no stage1.
+                       or None if there is no stage1.
         :raises ApplicationError: on application error
         :raises HighInterfaceError: on error during update
         """
-        if self.family == "D":
+        twostage = self.fimware_num_stages() == 2
+        if twostage:
             assert stage1
         else:
             assert stage1 is None
         fw_stage_sums = [None, None]
         fw_images = [stage0, stage1]
         fw_funcalls = [self.firmware_0_update, self.firmware_1_update]
-        stages = [0, 1] if self.family == "D" else [0]
+        stages = [0, 1] if twostage else [0]
         for stage in stages:
-            # I don't know how to dynamically construct variable name
-            # Something like this you mean? / aho
             fw_images[stage].seek(0)
             fw_stage_sums[stage] = xled.security.sha1sum(fw_images[stage])
             log.debug("Firmware stage %d SHA1SUM: %r", stage, fw_stage_sums[stage])
@@ -1072,32 +1078,44 @@ class HighControlInterface(ControlInterface):
             raise HighInterfaceError(msg)
 
         now = device_response["time_now"]
-        now_formatted = date_from_seconds_after_midnight(now).strftime(TIME_FORMAT)
+        now_formatted = xled.util.date_from_seconds_after_midnight(now).strftime(TIME_FORMAT)
 
         if device_response["time_on"] == -1 and device_response["time_off"] == -1:
             return Timer(now_formatted, False, False)
 
         on = device_response["time_on"]
-        on_formatted = date_from_seconds_after_midnight(on).strftime(TIME_FORMAT)
+        on_formatted = xled.util.date_from_seconds_after_midnight(on).strftime(TIME_FORMAT)
 
         off = device_response["time_off"]
-        off_formatted = date_from_seconds_after_midnight(off).strftime(TIME_FORMAT)
+        off_formatted = xled.util.date_from_seconds_after_midnight(off).strftime(TIME_FORMAT)
 
         return Timer(now_formatted, on_formatted, off_formatted)
 
     def set_formatted_timer(self, timestr_on, timestr_off):
         """
-        Sets timer on and off times, given as strings in H:M:S format
+        Sets timer on and off times, given as strings in H:M:S or H:M format
 
+        :param str timestr_on: time to turn on
+        :param str timestr_off: time to turn off
         """
-        time_on = seconds_after_midnight_from_string(timestr_on, TIME_FORMAT)
-        time_off = seconds_after_midnight_from_string(timestr_off, TIME_FORMAT)
+        try:
+            time_on = xled.util.seconds_after_midnight_from_string(timestr_on, TIME_FORMAT)
+        except ValueError:
+            time_on = xled.util.seconds_after_midnight_from_string(timestr_on, SHORT_TIME_FORMAT)
+        try:
+            time_off = xled.util.seconds_after_midnight_from_string(timestr_off, TIME_FORMAT)
+        except ValueError:
+            time_off = xled.util.seconds_after_midnight_from_string(timestr_off, SHORT_TIME_FORMAT)
 
         return self.set_timer(time_on, time_off)
 
     def turn_on(self):
         """
         Turns on the device.
+
+        Sets the mode to the last used mode before turn_off(). 
+        If the last mode is not known, sets 'movie' mode if there is an
+        uploaded movie, else 'effect' mode.
         """
         if self.last_mode:
             return self.set_mode(self.last_mode)
@@ -1111,9 +1129,11 @@ class HighControlInterface(ControlInterface):
     def turn_off(self):
         """
         Turns off the device.
+
+        Remembers the previous mode, so that turn_on() can return to it.
         """
         mode = self.get_mode()["mode"]
-        if mode != "off":
+        if mode != "off" and mode != "rt":
             self.last_mode = mode
         return self.set_mode("off")
 
@@ -1124,73 +1144,22 @@ class HighControlInterface(ControlInterface):
         return self.get_mode()["mode"] != "off"
 
     def set_mode(self, mode):
-        if mode in ("movie", "playlist", "rt", "demo", "effect", "off"):
-            self.curr_mode = mode
-            if mode != "off" and mode != "rt":
-                self.last_mode = mode
-            if mode == "rt":
-                self.last_rt_time = time.time()
-            super(HighControlInterface, self).set_mode(mode)
+        """
+        Sets new LED operation mode.
+
+        :param str mode: Mode to set. One of 'movie', 'playlist', 'rt', 'demo', 'effect' or 'off'.
+        This function is a wrapper around the low-level ControlInterface.set_mode,
+        to remember the currently used mode.
+        """
+        assert mode in ("movie", "playlist", "rt", "demo", "effect", "off")
+        self.curr_mode = mode
+        if mode != "off" and mode != "rt":
+            self.last_mode = mode
+        if mode == "rt":
+            self.last_rt_time = time.time()
+        super(HighControlInterface, self).set_mode(mode)
 
     # Functions for selecting what to show
-
-    def clear_movies(self):
-        """
-        Removes all uploaded movies and any playlist.
-        If the current mode is 'movie' or 'playlist' it switches mode to 'effect'
-        """
-        if self.curr_mode == 'movie' or self.curr_mode == 'playlist':
-            self.set_mode('effect')
-        if self.family == 'D' or self.version < (2, 5, 6):
-            # No list of movies to remove in this version,
-            # but disable movie mode until new movie is uploaded
-            self.set_led_movie_config(1000, 0, self.num_leds)
-        else:
-            # The playlist is removed automatically when movies are removed
-            self.delete_movies()
-
-    def upload_movie(self, movie, fps, force=False):
-        """
-        Uploads a new movie with the provided frames-per-second.
-        Note: if the movie does not fit in the remaining capacity, it just
-        returns False, in which case the user can try clear_movies first.
-        Does not switch to movie mode, use show_movie instead for that.
-        The movie is an object suitable created with to_movie or make_func_movie.
-        Returns the new movie id, which can be used in calls to show_movie or
-        show_playlist.
-
-        :param movie: a file-like object that points to movie
-        :param fps: frames per second, or None if a movie id is given
-        :rtype: int
-        """
-        numframes = movie.seek(0, 2) // (self.led_bytes * self.num_leds)
-        movie.seek(0)
-        if self.family == 'D' or self.version < (2, 5, 6):
-            self.set_led_movie_config(1000 // fps, numframes, self.num_leds)
-            self.set_led_movie_full(movie)
-            return 0
-        else:
-            res = self.get_movies()
-            capacity = res['available_frames'] - 1
-            if numframes > capacity or len(res['movies']) > 15:
-                if force:
-                    if self.curr_mode == 'movie' or self.curr_mode == 'playlist':
-                        self.set_mode('effect')
-                    self.delete_movies()
-                else:
-                    return False
-            if self.curr_mode == 'movie':
-                oldid = self.get_movies_current()['id']
-            res = self.set_movies_new("",
-                                      str(uuid.uuid4()),
-                                      self.led_profile.lower() + "_raw",
-                                      self.num_leds,
-                                      numframes,
-                                      fps)
-            self.set_movies_full(movie)
-            if self.curr_mode == 'movie':
-                self.set_movies_current(oldid)  # Dont change currently shown movie
-            return res['id']
 
     def show_movie(self, movie_or_id, fps=None):
         """
@@ -1242,6 +1211,51 @@ class HighControlInterface(ControlInterface):
         if self.curr_mode != 'movie':
             self.set_mode('movie')
         return True
+
+    def upload_movie(self, movie, fps, force=False):
+        """
+        Uploads a new movie with the provided frames-per-second.
+        Note: if the movie does not fit in the remaining capacity, and force is
+        not set to True, the function just returns False, in which case the user
+        can try clear_movies first.
+        Does not switch to movie mode, use show_movie instead for that.
+        The movie is an object suitable created with to_movie or make_func_movie.
+        Returns the new movie id, which can be used in calls to show_movie or
+        show_playlist.
+
+        :param movie: a file-like object that points to movie
+        :param fps: frames per second, or None if a movie id is given
+        :param bool force: if remaining capacity is too low, previous movies will be removed
+        :rtype: int
+        """
+        numframes = movie.seek(0, 2) // (self.led_bytes * self.num_leds)
+        movie.seek(0)
+        if self.family == 'D' or self.version < (2, 5, 6):
+            self.set_led_movie_config(1000 // fps, numframes, self.num_leds)
+            self.set_led_movie_full(movie)
+            return 0
+        else:
+            res = self.get_movies()
+            capacity = res['available_frames'] - 1
+            if numframes > capacity or len(res['movies']) > 15:
+                if force:
+                    if self.curr_mode == 'movie' or self.curr_mode == 'playlist':
+                        self.set_mode('effect')
+                    self.delete_movies()
+                else:
+                    return False
+            if self.curr_mode == 'movie':
+                oldid = self.get_movies_current()['id']
+            res = self.set_movies_new("",
+                                      str(uuid.uuid4()),
+                                      self.led_profile.lower() + "_raw",
+                                      self.num_leds,
+                                      numframes,
+                                      fps)
+            self.set_movies_full(movie)
+            if self.curr_mode == 'movie':
+                self.set_movies_current(oldid)  # Dont change currently shown movie
+            return res['id']
 
     def show_pattern(self, pat):
         """
@@ -1313,28 +1327,43 @@ class HighControlInterface(ControlInterface):
         else:
             self.set_rt_frame_socket(frame, 3)
 
-    def show_effect(self, id):
+    def show_effect(self, effect_id):
         """
         Shows the builtin effect with the provided id.
         Switches to effect mode if necessary.
 
-        :param int id: The demo id to show
+        :param int effect_id: The effect id to show
         """
-        self.set_led_effects_current(id)
+        self.set_led_effects_current(effect_id)
         if self.curr_mode != 'effect':
             self.set_mode('effect')
 
-    def show_demo(self, id=None):
+    def show_demo(self, effect_id=None):
         """
         Switches to demo mode if not there already.
         Starts from the optional provided effect id.
 
-        :param id: The optional demo id to show
+        :param effect_id: The optional effect id to start demo from
         """
-        if id:
-            self.set_led_effects_current(id)
+        if effect_id:
+            self.set_led_effects_current(effect_id)
         if self.curr_mode != 'demo':
             self.set_mode('demo')
+
+    def clear_movies(self):
+        """
+        Removes all uploaded movies and any playlist.
+        If the current mode is 'movie' or 'playlist' it switches mode to 'effect'
+        """
+        if self.curr_mode == 'movie' or self.curr_mode == 'playlist':
+            self.set_mode('effect')
+        if self.family == 'D' or self.version < (2, 5, 6):
+            # No list of movies to remove in this version,
+            # but disable movie mode until new movie is uploaded
+            self.set_led_movie_config(1000, 0, self.num_leds)
+        else:
+            # The playlist is removed automatically when movies are removed
+            self.delete_movies()
 
     # Functions for creating and manipulating movies and patterns (single frames of movies)
 
