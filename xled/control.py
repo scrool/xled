@@ -74,6 +74,52 @@ class ControlInterface(object):
             assert self._session
         return self._session
 
+    def check_status(self):
+        """
+        Check that the device is online and responding
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "status")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def delete_movies(self):
+        """
+        Remove all uploaded movies.
+
+        .. seealso:: :py:meth:`get_movies()` :py:meth:`set_movies_new()` :py:meth:`set_movies_full()`
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "movies")
+        response = self.session.delete(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def delete_playlist(self):
+        """
+        Clear the playlist
+
+        .. seealso:: :py:meth:`get_playlist()` :py:meth:`set_playlist()`
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "playlist")
+        response = self.session.delete(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
     def firmware_0_update(self, firmware):
         """
         Uploads first stage of the firmware
@@ -175,16 +221,76 @@ class ControlInterface(object):
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
-    def get_network_status(self):
+    def get_led_config(self):
         """
-        Gets network status
+        Gets the structural configuration of the leds in term of strings
 
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        url = urljoin(self.base_url, "network/status")
+        url = urljoin(self.base_url, "led/config")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
+        required_keys = [u"strings", u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def get_led_effects_current(self):
+        """
+        Get the current effect index
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "led/effects/current")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]  # and some that depends on fw version ('effect_id' or 'preset_id')
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def get_led_effects(self):
+        """
+        Get the number of effects and their unique_ids
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "led/effects")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"effects_number", u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def get_led_layout(self):
+        """
+        Gets the physical layout of the leds
+
+        .. seealso:: :py:meth:`set_led_layout()`
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "led/layout/full")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"source", u"synthesized", u"coordinates", u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def get_led_movie_config(self):
+        """
+        Gets the parameters for playing the uploaded movie
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "led/movie/config")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"frame_delay", u"leds_number", u"frames_number", u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
     def get_mode(self):
@@ -202,6 +308,112 @@ class ControlInterface(object):
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
         required_keys = [u"code", u"mode"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def get_movies(self):
+        """
+        Gets list of uploaded movies.
+
+        .. seealso:: :py:meth:`delete_movies()` :py:meth:`set_movies_new()` :py:meth:`set_movies_full()`
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "movies")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"movies", u"available_frames", u"max_capacity", u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def get_movies_current(self):
+        """
+        Gets the movie id of the currently played movie in the movie list
+
+        .. seealso:: :py:meth:`set_movies_current()`
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "movies/current")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"id", u"unique_id", u"name", u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def get_mqtt_config(self):
+        """
+        Gets the mqtt configuration parameters
+
+        .. seealso:: :py:meth:`set_mqtt_config()`
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "mqtt/config")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]  # and some more that depends on the family
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def get_network_status(self):
+        """
+        Gets network status
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "network/status")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        return app_response
+
+    def get_playlist(self):
+        """
+        Gets the current playlist
+
+        .. seealso:: :py:meth:`delete_playlist()` :py:meth:`set_playlist()`
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "playlist")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"entries", u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def get_playlist_current(self):
+        """
+        Gets the movie id of the currently played movie in the playlist
+
+        .. seealso:: :py:meth:`set_playlist_current()`
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "playlist/current")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"id", u"unique_id", u"name", u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def get_saturation(self):
+        """
+        Gets current saturation level and if desaturation is applied
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "led/out/saturation")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code", u"mode", u"value"]
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
@@ -297,6 +509,46 @@ class ControlInterface(object):
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
 
+    def set_led_effects_current(self, effect_id):
+        """
+        Sets the current effect of effect mode
+
+        :param int effect_id: id of effect
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        json_payload = {"effect_id": effect_id}
+        url = urljoin(self.base_url, "led/effects/current")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def set_led_layout(self, source, coordinates, synthesized=False):
+        """
+        Sets the physical layout of the leds
+
+        :param str source: 2d, 3d, or linear
+        :param list coordinates: list of dictionaries with keys 'x', 'y', and 'z'
+        :param bool synthesized: presumably whether it is synthetic or real coordinates
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        assert source in ['linear', '2d', '3d']
+        assert isinstance(coordinates, list)
+        json_payload = {
+            "source": source,
+            "coordinates": coordinates,
+            "synthesized": synthesized
+        }
+        url = urljoin(self.base_url, "led/layout/full")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
     def set_led_movie_config(self, frame_delay, frames_number, leds_number):
         """
         Sets movie configuration for the last uploaded movie
@@ -316,6 +568,20 @@ class ControlInterface(object):
         response = self.session.post(url, json=json_payload)
         return ApplicationResponse(response)
 
+    def set_led_movie_full(self, movie):
+        """
+        Uploads movie
+
+        :param movie: file-like object that points to movie file.
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "led/movie/full")
+        response = self.session.post(
+            url, headers={"Content-Type": "application/octet-stream"}, data=movie
+        )
+        return ApplicationResponse(response)
+
     def set_mode(self, mode):
         """
         Sets new LED operation mode.
@@ -332,19 +598,103 @@ class ControlInterface(object):
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
 
-    def set_led_movie_full(self, movie):
+    def set_movies_current(self, movie_id):
         """
-        Uploads movie
+        Sets which movie in the movie list to play
+
+        .. seealso:: :py:meth:`get_movies_current()`
+
+        :param int movie_id: id of movie to play
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        json_payload = {"id": movie_id}
+        url = urljoin(self.base_url, "movies/current")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def set_movies_full(self, movie):
+        """
+        Uploads a movie to the movie list
+
+        Presumes that 'set_movies_new' has been called earlier with the movie params.
+
+        .. seealso:: :py:meth:`get_movies()` :py:meth:`delete_movies()` :py:meth:`set_movies_new()`
 
         :param movie: file-like object that points to movie file.
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        url = urljoin(self.base_url, "led/movie/full")
-        response = self.session.post(
-            url, headers={"Content-Type": "application/octet-stream"}, data=movie
-        )
-        return ApplicationResponse(response)
+        url = urljoin(self.base_url, "movies/full")
+        head = {"Content-Type": "application/octet-stream"}
+        response = self.session.post(url, headers=head, data=movie)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def set_movies_new(self, name, uid, dtype, nleds, nframes, fps):
+        """
+        Prepares the upload of a new movie to the movie list by setting its parameters
+
+        .. seealso:: :py:meth:`get_movies()` :py:meth:`delete_movies()` :py:meth:`set_movies_full()`
+
+        :param str name: name of new movie
+        :param str uid: unique id of new movie
+        :param str dtype: descriptor_type, one of rgb_raw, rgbw_raw, or aww_raw
+        :param int nleds: number of leds
+        :param int nframes: number of frames
+        :param int fps: frames per second of the new movie
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        assert len(name) <= 32
+        json_payload = {
+            "name": name,
+            "unique_id": uid,
+            "descriptor_type": dtype,
+            "leds_per_frame": nleds,
+            "frames_number": nframes,
+            "fps": fps
+        }
+        url = urljoin(self.base_url, "movies/new")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def set_mqtt_config(self, br_host, br_port, client_id, user, interval):
+        """
+        Sets the mqtt configuration parameters
+
+        .. seealso:: :py:meth:`get_mqtt_config()`
+
+        :param str br_host: the new broker host
+        :param int br_port: the new broker port, or None to use the default
+        :param str client_id: the new client_id
+        :param str user: the new user name
+        :param int interval: the keep alive interval
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        json_payload = {
+            "broker_host": br_host,
+            "client_id": client_id,
+            "user": user,
+            "keep_alive_interval": interval
+        }
+        if br_port:
+            json_payload["boroker_port"] = br_port
+        url = urljoin(self.base_url, "mqtt/config")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
 
     def set_network_mode_ap(self):
         """
@@ -380,6 +730,90 @@ class ControlInterface(object):
         app_response = ApplicationResponse(response)
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
+
+    def set_playlist(self, entries):
+        """
+        Sets a new playlist
+
+        .. seealso:: :py:meth:`get_playlist()` :py:meth:`delete_playlist()`
+
+        :param list entries: list of playlist entries each with keys "unique_id" and "duration"
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        assert isinstance(entries, list)
+        json_payload = {"entries": entries}
+        url = urljoin(self.base_url, "playlist")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def set_playlist_current(self, movie_id):
+        """
+        Sets which movie in the playlist to play
+
+        .. seealso:: :py:meth:`get_playlist_current()`
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        json_payload = {"id": movie_id}
+        url = urljoin(self.base_url, "playlist/current")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def set_rt_frame_rest(self, frame):
+        """
+        Uploads a frame in rt-mode, using the ordinary restful protocol
+
+        :param frame: file-like object that points to frame file.
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "led/rt/frame")
+        response = self.session.post(
+            url, headers={"Content-Type": "application/octet-stream"}, data=frame
+        )
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def set_saturation(self, saturation=None, enabled=True, relative=False):
+        """
+        Sets new saturation or enable/disable desaturation
+
+        :param saturation: new saturation in range of 0..100 or a relative
+                           change in -100..100 or None if no change is requested
+        :param bool enabled: set to False if no desaturation should be applied
+        :param bool relative: set to True to make a relative change
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        if saturation is not None:
+            if relative:
+                assert saturation in range(-100, 101)
+                json_payload = {"value": saturation, "type": "R"}  # Relative
+            else:
+                assert saturation in range(0, 101)
+                json_payload = {"value": saturation, "type": "A"}  # Absolute
+        else:
+            json_payload = {}
+        if enabled:
+            json_payload["mode"] = "enabled"
+        else:
+            json_payload["mode"] = "disabled"
+        url = urljoin(self.base_url, "led/out/saturation")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
 
     def set_timer(self, time_on, time_off, time_now=None):
         """
