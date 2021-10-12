@@ -476,23 +476,28 @@ class ControlInterface(object):
         app_response = ApplicationResponse(response)
         return app_response
 
-    def set_brightness(self, brightness=None, enabled=True):
+    def set_brightness(self, brightness=None, enabled=True, relative=False):
         """
         Sets new brightness or enable/disable brightness dimming
 
-        :param brightness: new brightness in range of 0..255 or None if no
-                           change is requested
-        :param bool enabled: set to False if the dimming should not be applied
+        :param brightness: new brightness in range of 0..100 or a relative
+                           change in -100..100 or None if no change is requested
+        :param bool enabled: set to False if no dimming should be applied
+        :param bool relative: set to True to make a relative change
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        assert brightness in range(0, 256) or brightness is None
-        if enabled:
-            json_payload = {"mode": "enabled", "type": "A"}
-        else:
-            json_payload = {"mode": "disabled"}
         if brightness is not None:
-            json_payload["value"] = brightness
+            if relative:
+                assert brightness in range(-100, 101)
+                json_payload = {"value": brightness, "type": "R"}  # Relative
+            else:
+                assert brightness in range(0, 101)
+                json_payload = {"value": brightness, "type": "A"}  # Absolute
+        if enabled:
+            json_payload["mode"] = "enabled"
+        else:
+            json_payload["mode"] = "disabled"
         url = urljoin(self.base_url, "led/out/brightness")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
