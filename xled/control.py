@@ -183,6 +183,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "fw/version")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
+        required_keys = [u"version", u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
     def get_brightness(self):
@@ -209,6 +211,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "gestalt")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
+        required_keys = [u"code"]  # and several more, dependent on fw version
+        assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
     def get_device_name(self):
@@ -376,6 +380,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "network/status")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
+        required_keys = [u"mode", u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
     def get_playlist(self):
@@ -437,7 +443,7 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "timer")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
-        required_keys = [u"time_now", u"time_off", u"time_on", u"code"]
+        required_keys = [u"time_now", u"time_off", u"time_on"]  # Early firmware lack 'code'
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
@@ -450,19 +456,24 @@ class ControlInterface(object):
         """
         url = urljoin(self.base_url, "led/reset")
         response = self.session.get(url)
-        return ApplicationResponse(response)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
 
     def network_scan(self):
         """
         Initiate WiFi network scan
 
         :raises ApplicationError: on application error
-        :rtype: None
+        :rtype: :class:`~xled.response.ApplicationResponse`
         """
         url = urljoin(self.base_url, "network/scan")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
-        assert list(app_response.keys()) == [u"code"]
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
 
     def network_scan_results(self):
         """
@@ -474,6 +485,8 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "network/scan_results")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
+        required_keys = [u"networks", u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
     def set_brightness(self, brightness=None, enabled=True, relative=False):
@@ -511,7 +524,7 @@ class ControlInterface(object):
 
         :param str name: new device name
         :raises ApplicationError: on application error
-        :rtype: None
+        :rtype: :class:`~xled.response.ApplicationResponse`
         """
         assert len(name) <= 32
         json_payload = {"name": name}
@@ -520,6 +533,7 @@ class ControlInterface(object):
         app_response = ApplicationResponse(response)
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
+        return app_response
 
     def set_led_effects_current(self, effect_id):
         """
@@ -578,7 +592,10 @@ class ControlInterface(object):
         }
         url = urljoin(self.base_url, "led/movie/config")
         response = self.session.post(url, json=json_payload)
-        return ApplicationResponse(response)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
 
     def set_led_movie_full(self, movie):
         """
@@ -589,26 +606,29 @@ class ControlInterface(object):
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
         url = urljoin(self.base_url, "led/movie/full")
-        response = self.session.post(
-            url, headers={"Content-Type": "application/octet-stream"}, data=movie
-        )
-        return ApplicationResponse(response)
+        head = {"Content-Type": "application/octet-stream"}
+        response = self.session.post(url, headers=head, data=movie)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
 
     def set_mode(self, mode):
         """
         Sets new LED operation mode.
 
-        :param str mode: Mode to set. One of 'movie', 'demo', 'off'.
+        :param str mode: Mode to set. One of 'movie', 'playlist', 'rt', 'demo', 'effect' or 'off'.
         :raises ApplicationError: on application error
-        :rtype: None
+        :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        assert mode in ("movie", "demo", "off")
+        assert mode in ("movie", "playlist", "rt", "demo", "effect", "off")
         json_payload = {"mode": mode}
         url = urljoin(self.base_url, "led/mode")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
+        return app_response
 
     def set_movies_current(self, movie_id):
         """
@@ -855,7 +875,7 @@ class ControlInterface(object):
             automatically if not set.
         :type time_now: int or None
         :raises ApplicationError: on application error
-        :rtype: None
+        :rtype: :class:`~xled.response.ApplicationResponse`
         """
         assert isinstance(time_on, int)
         assert time_on >= -1
@@ -865,12 +885,17 @@ class ControlInterface(object):
             time_now = xled.util.seconds_after_midnight()
             log.debug("Setting time now to %s", time_now)
 
-        json_payload = {"time_on": time_on, "time_off": time_off, "time_now": time_now}
+        json_payload = {
+            "time_on": time_on,
+            "time_off": time_off,
+            "time_now": time_now
+        }
         url = urljoin(self.base_url, "timer")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
+        return app_response
 
 
 class HighControlInterface(ControlInterface):
