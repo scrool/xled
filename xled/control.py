@@ -146,7 +146,7 @@ class ControlInterface(object):
         app_response = ApplicationResponse(response)
         return app_response
 
-    def firmware_update(self, stage0_sha1sum, stage1_sha1sum):
+    def firmware_update(self, stage0_sha1sum, stage1_sha1sum=None):
         """
         Performs firmware update from previously uploaded images
 
@@ -155,12 +155,19 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        json_payload = {
-            "checksum": {
-                "stage0_sha1sum": stage0_sha1sum,
-                "stage1_sha1sum": stage1_sha1sum,
+        if stage1_sha1sum is not None:
+            json_payload = {
+                "checksum": {
+                    "stage0_sha1sum": stage0_sha1sum,
+                    "stage1_sha1sum": stage1_sha1sum,
+                }
             }
-        }
+        else:
+            json_payload = {
+                "checksum": {
+                    "stage0_sha1sum": stage0_sha1sum,
+                }
+            }
         url = urljoin(self.base_url, "fw/update")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
