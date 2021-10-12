@@ -708,40 +708,56 @@ class ControlInterface(object):
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
-    def set_network_mode_ap(self):
+    def set_network_mode_ap(self, password=None):
         """
         Sets network mode to Access Point
+        If password is given, changes the Access Point password
+        (after which you have to connect again with the new password)
 
+        :param str password: new password to set
         :raises ApplicationError: on application error
-        :rtype: None
+        :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        json_payload = {"mode": 2}
+        if password:
+            json_payload = {
+                "mode": 2,
+                "ap": {"password": password, "enc": 4}
+            }
+        else:
+            json_payload = {"mode": 2}
         url = urljoin(self.base_url, "network/status")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
+        return app_response
 
-    def set_network_mode_station(self, ssid, password):
+    def set_network_mode_station(self, ssid=None, password=None):
         """
-        Sets network mode to Access Point
+        Sets network mode to Station
+        The first time you need to provide an ssid and password for
+        the WIFI to connect to.
 
-        :param str ssid: SSID if the access point to connect to
+        :param str ssid: SSID of the access point to connect to
         :param str password: password to use
         :raises ApplicationError: on application error
-        :rtype: None
+        :rtype: :class:`~xled.response.ApplicationResponse`
         """
         assert self.hw_address
-        encpassword = encrypt_wifi_password(password, self.hw_address)
-        json_payload = {
-            "mode": 1,
-            "station": {"dhcp": 1, "ssid": ssid, "encpassword": encpassword},
-        }
+        if ssid and password:
+            encpassword = xled.security.encrypt_wifi_password(password, self.hw_address)
+            json_payload = {
+                "mode": 1,
+                "station": {"dhcp": 1, "ssid": ssid, "encpassword": encpassword},
+            }
+        else:
+            json_payload = {"mode": 1}
         url = urljoin(self.base_url, "network/status")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
+        return app_response
 
     def set_playlist(self, entries):
         """
