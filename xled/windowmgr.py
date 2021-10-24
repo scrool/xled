@@ -30,9 +30,12 @@ class WindowMgr():
         self.targetdict = {}
         self.lastkeytarget = None
         self.lastbuttontarget = None
-        self.motioncallback = None
+        self.motion_hook = []
+        self.resize_hook = []
+        self.close_hook = []
         self.globalkeydict = {}
         self.fig = plt.figure(name)
+        self.pixpt = 72.0 / self.fig.dpi
         self.fig.set_size_inches((width / self.fig.dpi, height / self.fig.dpi))
         self.fig.canvas.mpl_connect('key_press_event', self.key_press_callback)
         self.fig.canvas.mpl_connect('key_release_event', self.key_release_callback)
@@ -40,6 +43,8 @@ class WindowMgr():
         self.fig.canvas.mpl_connect('button_press_event', self.button_press_callback)
         self.fig.canvas.mpl_connect('motion_notify_event', self.button_motion_callback)
         self.fig.canvas.mpl_connect('button_release_event', self.button_release_callback)
+        self.fig.canvas.mpl_connect('resize_event', self.resize_callback)
+        self.fig.canvas.mpl_connect('close_event', self.close_callback)
 
     def get_figure(self):
         return self.fig
@@ -72,8 +77,14 @@ class WindowMgr():
     def register_target(self, rect, target):
         self.targetdict[rect] = target
 
-    def set_motion_callback(self, func):
-        self.motioncallback = func
+    def add_motion_callback(self, func):
+        self.motion_hook.append(func)
+
+    def add_resize_callback(self, func):
+        self.resize_hook.append(func)
+
+    def add_close_callback(self, func):
+        self.close_hook.append(func)
 
     def clear_targets(self):
         self.targetdict = {}
@@ -118,8 +129,9 @@ class WindowMgr():
         # Only motion events while pressed, unless specific motion callback
         if self.lastbuttontarget is not None and 'motion_notify_event' in dir(self.lastbuttontarget):
             self.lastbuttontarget.motion_notify_event(event)
-        elif self.motioncallback is not None:
-            self.motioncallback(event)
+        elif self.motion_hook:
+            for func in self.motion_hook:
+                func(event)
 
     def button_release_callback(self, event):
         # The release goes to the same target as the press
@@ -127,3 +139,13 @@ class WindowMgr():
         self.lastbuttontarget = None
         if target is not None and 'button_release_event' in dir(target):
             target.button_release_event(event)
+
+    def resize_callback(self, event):
+        if self.resize_hook:
+            for func in self.resize_hook:
+                func(event)
+
+    def close_callback(self, event):
+        if self.close_hook:
+            for func in self.close_hook:
+                func(event)

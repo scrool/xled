@@ -111,7 +111,7 @@ def origmatrix():
 
 class ColorSphere():
 
-    def __init__(self, fig, rect, wdt, hgt, callback, useevent=False):
+    def __init__(self, fig, rect, wdt, hgt, pixpt, callback, useevent=False):
         self.callback = callback
         self.useevent = useevent
         self.mouse_color_callbacks = []
@@ -119,9 +119,11 @@ class ColorSphere():
         self.lastbpos = False
         self.p1 = False
         self.fig = fig
-        self.xoff = wdt * rect[0]
-        self.yoff = hgt * rect[1]
+        self.rect = rect
         self.size = min(wdt * rect[2], hgt * rect[3])
+        self.xoff = wdt * (rect[0] + rect[2]/2) - self.size / 2 
+        self.yoff = hgt * (rect[1] + rect[3]/2) - self.size / 2
+        self.pixpt  = pixpt
         self.diam = 1.0
         cent = (0, 0)
         self.ax = fig.add_axes(rect, frame_on=False, xticks=[], yticks=[])
@@ -132,7 +134,7 @@ class ColorSphere():
         self.circ2 = mpl.patches.Ellipse(cent, self.diam, self.diam,
                                          linewidth=0, edgecolor=self.gray2, fill=False)
         self.circ1 = mpl.patches.Ellipse(cent, self.diam + diameps, self.diam + diameps,
-                                         linewidth=10 * 0.75, edgecolor=self.gray1, fill=False)
+                                         linewidth=10 * self.pixpt, edgecolor=self.gray1, fill=False)
         self.ax.add_artist(self.circ2)
         self.ax.add_artist(self.circ1)
         self.rad = 1.0
@@ -140,6 +142,13 @@ class ColorSphere():
         self.eye = origmatrix()
         self.draw()
 
+    def resize(self, newwdt, newhgt):
+        self.size = min(newwdt * self.rect[2], newhgt * self.rect[3])
+        self.xoff = newwdt * (self.rect[0] + self.rect[2]/2) - self.size / 2 
+        self.yoff = newhgt * (self.rect[1] + self.rect[3]/2) - self.size / 2
+        diameps = 0.5 * 10 / self.size
+        self.dotsz = self.size / 100.0
+        
     def coordinates(self, xx, yy):
         x = xx / (self.size * 0.5) - 1.0
         y = yy / (self.size * 0.5) - 1.0
@@ -159,49 +168,22 @@ class ColorSphere():
         l = 1.0 - 2.0 * acos(max(-1.0, min(1.0, pe[2]))) / pi
         return (h, s, l)
 
-    def draw1(self, event=None):
-        if not self.block_draw:
-            ndiam = self.diam * (0.5 + self.rad / 2.0)
-            self.circ2.width = ndiam
-            self.circ2.height = ndiam
-            self.circ2.set_linewidth((1.0 - ndiam / self.diam) * self.size * 0.75)
-            arr = [[hsl_color_im(*(self.coordinates(self.dotsz * i, self.dotsz * j) or (0, 0, 0)))
-                    for i in range(101)]
-                   for j in range(101)]
-            if event and self.mouse_color_callbacks:
-                self.block_draw = True
-                self.color_change_event(event)
-                self.block_draw = False
-                #xind = int((event.x - self.xoff) // self.dotsz)
-                #yind = int((event.y - self.yoff) // self.dotsz)
-                #if (xind - 50.5)**2 + (yind - 50.5)**2 <= 50.5**2:
-                #    for func in self.mouse_color_callbacks:
-                #        func(arr[yind][xind], redraw=False)
-            self.im.set_array(arr)
-            if not plt.isinteractive():
-                self.fig.canvas.draw()
-
     def draw(self, event=None):
         if not self.block_draw:
             ndiam = self.diam * (0.5 + self.rad / 2.0)
             self.circ2.width = ndiam
             self.circ2.height = ndiam
-            self.circ2.set_linewidth((1.0 - ndiam / self.diam) * self.size * 0.75)
+            self.circ2.set_linewidth((1.0 - ndiam / self.diam) * self.size * self.pixpt)
             arr = self.coordinates_color_array(xxarr * self.dotsz, yyarr * self.dotsz)
             arr = np.array(arr).reshape((101, 101, 3))
+            self.im.set_array(arr)
             if event and self.mouse_color_callbacks:
                 self.block_draw = True
                 self.color_change_event(event)
                 self.block_draw = False
-                #xind = int((event.x - self.xoff) // self.dotsz)
-                #yind = int((event.y - self.yoff) // self.dotsz)
-                #if (xind - 50.5)**2 + (yind - 50.5)**2 <= 50.5**2:
-                #    for func in self.mouse_color_callbacks:
-                #        func(arr[yind][xind], redraw=False)
-            self.im.set_array(arr)
             if not plt.isinteractive():
                 self.fig.canvas.draw()
-                
+
     def scroll_event(self, event):
         changed = False
         if event.key == "control":
@@ -275,6 +257,9 @@ class ColorSphere():
         hsl = self.coordinates(event.x - self.xoff, event.y - self.yoff)
         for func in self.mouse_color_callbacks:
             func(hsl, event)
+        if not self.block_draw:
+            if not plt.isinteractive():
+                self.fig.canvas.draw()
 
     def key_press_event(self, event):
         pass
@@ -336,30 +321,31 @@ class ColorSample():
         self.ax = fig.add_axes(rect, frame_on=False, xticks=[], yticks=[])
         self.rect = rect
         self.sqr = plt.Rectangle((0, 0), 1.0, 1.0,
-                                 linewidth=bw * 0.75, edgecolor=(0, 0, 0), facecolor=initcol)
+                                 linewidth=bw, edgecolor=(0, 0, 0), facecolor=initcol)
         self.ax.add_artist(self.sqr)
 
     def set_color(self, hsl, ev=None):
         if hsl:
             self.sqr.set_facecolor(hsl_color_im(*hsl))
-            self.fig.canvas.draw()
 
 
 class ColorPicker():
 
-    def __init__(self, callback_click, callback_move):
+    def __init__(self, callback_click, callback_move, name="Color Sphere"):
         width = 500
         height = 500
         rect = (0.1, 0.1, 0.8, 0.8)
-        self.win = WindowMgr("xled color picker", width, height, 1, 1)
+        self.win = WindowMgr(name, width, height, 1, 1)
         self.win.set_background(hsl_color_im(0.0, 0.0, 0.0))
-        self.sphere = ColorSphere(self.win.fig, rect, width, height, callback_click, True)
-        self.sample = ColorSample(self.win.fig, (0.04, 0.04, 0.16, 0.16), 2, hsl_color_im(0.0, 0.0, 1.0))
+        self.sphere = ColorSphere(self.win.fig, rect, width, height, self.win.pixpt, callback_click, True)
+        self.sample = ColorSample(self.win.fig, (0.04, 0.04, 0.16, 0.16), 2*self.win.pixpt, hsl_color_im(0.0, 0.0, 1.0))
         self.win.register_target(rect, self.sphere)
-        self.win.set_motion_callback(self.sphere.color_change_event)
+        self.win.add_motion_callback(self.sphere.color_change_event)
+        self.win.add_resize_callback(lambda ev: self.sphere.resize(ev.width, ev.height))
         self.sphere.mouse_color_callbacks.append(self.sample.set_color)
         if callback_move:
             self.sphere.mouse_color_callbacks.append(callback_move)
+            self.win.add_close_callback(lambda ev: callback_move(None, ev))
 
 
 # Below is an example application of the color picker.
@@ -415,9 +401,7 @@ def launch_colorpicker(ctr, printcolor=False, fromshell=False):
     global global_cp
     global printcol
     printcol = printcolor
-    global_cp = ColorPicker(make_click_func(ctr), make_move_func(ctr))
+    global_cp = ColorPicker(make_click_func(ctr), make_move_func(ctr), name="Xled Color Picker")
     if fromshell:
-        plt.ioff()
-        plt.show()
-        if outermode:
-            ctr.set_mode(outermode)
+        global_co.win.add_close_callback(lambda *args: global_cp.win.fig.canvas.stop_event_loop())
+        global_cp.win.fig.canvas.start_event_loop(0)
