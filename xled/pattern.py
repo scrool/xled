@@ -1,4 +1,3 @@
-
 """
 xled.pattern
 ~~~~~~~~~~~~
@@ -120,7 +119,7 @@ def random_hsl_color_func(hue=False, sat=False, light=False):
         h0 = hue
         hd = 0.0
 
-    def func(i):
+    def func(*args):
         light = lightexp(l0 + random.random() * ld, 1.0 / le) if ld != 0.0 else l0
         sat = (s0 + random.random() * sd)**(1.0 / se) if sd != 0.0 else s0
         hue = (h0 + random.random() * hd) % 1.0 if hd != 0.0 else h0
@@ -154,17 +153,9 @@ def make_alternating_color_pattern(ctr, rgblst):
 
 def make_color_spectrum_pattern(ctr, offset=0, lightness=0.0):
     """
-    Return a pattern of alternating colors from rgblst.
+    Return a pattern of the color spectrum along the string.
     """
     return ctr.make_func_pattern(lambda i: hsl_color(((i - offset) / float(ctr.num_leds)) % 1.0, 1.0, lightness),
-                                 circular=True)
-
-
-def make_wavy_pattern(ctr, rgb, cyclelen, offset=0):
-    """
-    Return a sinusoidal wave pattern of the given color.
-    """
-    return ctr.make_func_pattern(lambda i: dimcolor(rgb, m.sin((((i - offset) / float(cyclelen)) % 1.0) * m.pi)**2),
                                  circular=True)
 
 
@@ -188,7 +179,7 @@ def make_random_blend_color_pattern(ctr, rgb1, rgb2):
 
 def make_random_colors_pattern(ctr, lightness=0.0):
     """
-    Return a pattern of randomly drawn hues of the same lightness (optionally given).
+    Return a pattern of randomly drawn hues of the same lightness.
     """
     return ctr.make_func_pattern(lambda i: hsl_color(random.random(), 1.0, lightness))
 
@@ -205,46 +196,3 @@ def make_random_hsl_pattern(ctr, hue=False, sat=False, light=False):
     Return a pattern with random colors in the ranges specified by hue, sat, and light.
     """
     return ctr.make_func_pattern(random_hsl_color_func(hue, sat, light))
-
-
-# Very simple examples of movies made with the above functions, just for inspiration
-
-def make_rotating_spectrum_movie(ctr, step=5, lightness=0.0):
-    """
-    Return a movie of a rotating spectrum.
-    Step length and lightness can be optionally provided.
-    """
-    return ctr.to_movie([make_color_spectrum_pattern(ctr, i * step, lightness)
-                         for i in range(ctr.num_leds // step)])
-
-
-def make_rotating_waves_movie(ctr, cyclelen=50, step=2):
-    """
-    Return a movie of a rotating waves of changing colors.
-    Wave length and step length can be optionally provided.
-    """
-    return ctr.to_movie([make_wavy_pattern(ctr, hsl_color(i * 0.008, 1.0, 0.0), cyclelen, i * step)
-                         for i in range(125)])
-
-
-def make_sparkling_movie(ctr, basecol, sparklecols, freq):
-    """
-    Return a movie of a solid base color, sprinkled by blinking
-    with colors in the list sparklecols at random frequency freq.
-    Tha parameter sparklecols may also be a single color.
-    """
-    basepat = ctr.make_solid_pattern(basecol)
-    return ctr.to_movie([sprinkle_pattern(ctr, basepat, sparklecols if isinstance(sparklecols, list) else [sparklecols], freq)
-                         for i in range(100)])
-
-# Trying to mimic AWW profile leds, of "metallic luster" (assuming the default color style "8col" and "equilight")
-# Silver:
-# ctr.show_movie(make_sparkling_movie(ctr, hsl_color(0.0, 1.0, 0.3), hsl_color(0.0, 1.0, 0.8), 10), 100)
-# Gold:
-# ctr.show_movie(make_sparkling_movie(ctr, hsl_color(0.5, 1.0, -0.2), hsl_color(0.5, 1.0, 0.8), 10), 100)
-# Rose gold:
-# ctr.show_movie(make_sparkling_movie(ctr, hsl_color(0.57, 1.0, 0.05), hsl_color(0.57, 1.0, 0.8), 10), 100)
-# Bronze:
-# ctr.show_movie(make_sparkling_movie(ctr, hsl_color(0.58, 1.0, -0.4), hsl_color(0.58, 1.0, 0.5), 10), 100)
-# Stainless steel:
-# ctr.show_movie(make_sparkling_movie(ctr, hsl_color(0.0, 0.0, 0.0), hsl_color(0.0, 0.0, 1.0), 10), 100)
