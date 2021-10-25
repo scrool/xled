@@ -42,7 +42,7 @@ with warnings.catch_warnings():
 SHARED_KEY_CHALLANGE = b"evenmoresecret!!"
 
 #: Default key to encrypt WiFi password
-SHARED_KEY_WIFI = "supersecretkey!!"
+SHARED_KEY_WIFI = b"supersecretkey!!"
 
 #: Read buffer size for sha1sum
 BUFFER_SIZE = 65536
@@ -146,8 +146,10 @@ def encrypt_wifi_password(password, mac_address, key=SHARED_KEY_WIFI):
     :return: Base 64 encoded string of ciphertext of input password
     :rtype: str
     """
+    if not isinstance(password, bytes):
+        password = bytes(password, "utf-8")
     secret_key = derive_key(key, mac_address)
-    data = password.ljust(64, "\x00")
+    data = password.ljust(64, b"\x00")
     rc4_encoded = rc4(data, secret_key)
     return base64.b64encode(rc4_encoded)
 
