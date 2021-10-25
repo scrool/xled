@@ -699,28 +699,34 @@ class ControlInterface(object):
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
-    def set_mqtt_config(self, br_host, br_port, client_id, user, interval):
+    def set_mqtt_config(self, broker_host=None, broker_port=None, client_id=None, user=None, interval=None):
         """
         Sets the mqtt configuration parameters
 
         .. seealso:: :py:meth:`get_mqtt_config()`
 
-        :param str br_host: the new broker host
-        :param int br_port: the new broker port, or None to use the default
-        :param str client_id: the new client_id
-        :param str user: the new user name
-        :param int interval: the keep alive interval
+        :param str broker_host: optional broker host
+        :param int broker_port: optional broker port
+        :param str client_id: optional client_id
+        :param str user: optional user name
+        :param int interval: optional keep alive interval
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        json_payload = {
-            "broker_host": br_host,
-            "client_id": client_id,
-            "user": user,
-            "keep_alive_interval": interval
-        }
-        if br_port:
-            json_payload["boroker_port"] = br_port
+        json_payload = {}
+        if broker_host:
+            json_payload["broker_host"] = broker_host
+        if broker_port:
+            json_payload["broker_port"] = broker_port
+        if client_id:
+            json_payload["client_id"] = client_id
+        if interval is not None:
+            json_payload["keep_alive_interval"] = interval
+        if user:
+            json_payload["user"] = user
+        if not json_payload:
+            msg = "At least some value needs to be set"
+            raise ValueError(msg)
         url = urljoin(self.base_url, "mqtt/config")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
