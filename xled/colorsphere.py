@@ -403,5 +403,5 @@ def launch_colorpicker(ctr, printcolor=False, fromshell=False):
     printcol = printcolor
     global_cp = ColorPicker(make_click_func(ctr), make_move_func(ctr), name="Xled Color Picker")
     if fromshell:
-        global_co.win.add_close_callback(lambda *args: global_cp.win.fig.canvas.stop_event_loop())
+        global_cp.win.add_close_callback(lambda *args: global_cp.win.fig.canvas.stop_event_loop())
         global_cp.win.fig.canvas.start_event_loop(0)
