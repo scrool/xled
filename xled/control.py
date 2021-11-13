@@ -100,7 +100,7 @@ class ControlInterface(object):
 
     def check_status(self):
         """
-        Check that the device is online and responding
+        Checks that the device is online and responding
 
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
@@ -130,7 +130,7 @@ class ControlInterface(object):
 
     def delete_playlist(self):
         """
-        Clear the playlist
+        Clears the playlist
 
         .. seealso:: :py:meth:`get_playlist()` :py:meth:`set_playlist()`
 
@@ -179,19 +179,13 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
+        json_payload = {
+            "checksum": {
+                "stage0_sha1sum": stage0_sha1sum,
+            }
+        }
         if stage1_sha1sum is not None:
-            json_payload = {
-                "checksum": {
-                    "stage0_sha1sum": stage0_sha1sum,
-                    "stage1_sha1sum": stage1_sha1sum,
-                }
-            }
-        else:
-            json_payload = {
-                "checksum": {
-                    "stage0_sha1sum": stage0_sha1sum,
-                }
-            }
+            json_payload["checksum"]["stage1_sha1sum"] = stage1_sha1sum
         url = urljoin(self.base_url, "fw/update")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
@@ -272,7 +266,7 @@ class ControlInterface(object):
 
     def get_led_effects_current(self):
         """
-        Get the current effect index
+        Gets the current effect index
 
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
@@ -280,13 +274,13 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "led/effects/current")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
-        required_keys = [u"code"]  # and some that depends on fw version ('effect_id' or 'preset_id')
+        required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
     def get_led_effects(self):
         """
-        Get the number of effects and their unique_ids
+        Gets the number of effects and their unique_ids
 
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
@@ -761,6 +755,7 @@ class ControlInterface(object):
     def set_network_mode_ap(self, password=None):
         """
         Sets network mode to Access Point
+
         If password is given, changes the Access Point password
         (after which you have to connect again with the new password)
 
@@ -768,13 +763,9 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
+        json_payload = {"mode": 2}
         if password:
-            json_payload = {
-                "mode": 2,
-                "ap": {"password": password, "enc": 4}
-            }
-        else:
-            json_payload = {"mode": 2}
+            json_payload["ap"] = {"password": password, "enc": 4}
         url = urljoin(self.base_url, "network/status")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
@@ -785,6 +776,7 @@ class ControlInterface(object):
     def set_network_mode_station(self, ssid=None, password=None):
         """
         Sets network mode to Station
+
         The first time you need to provide an ssid and password for
         the WIFI to connect to.
 
@@ -793,15 +785,13 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        assert self.hw_address
+        json_payload = {"mode": 1}
         if ssid and password:
+            assert self.hw_address
             encpassword = xled.security.encrypt_wifi_password(password, self.hw_address)
-            json_payload = {
-                "mode": 1,
-                "station": {"dhcp": 1, "ssid": ssid, "encpassword": encpassword},
-            }
+            json_payload["station"] = {"dhcp": 1, "ssid": ssid, "encpassword": encpassword}
         else:
-            json_payload = {"mode": 1}
+            assert not ssid and not password
         url = urljoin(self.base_url, "network/status")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
@@ -1119,7 +1109,7 @@ class HighControlInterface(ControlInterface):
         """
         Turns on the device.
 
-        Sets the mode to the last used mode before turn_off(). 
+        Sets the mode to the last used mode before turn_off().
         If the last mode is not known, sets 'movie' mode if there is an
         uploaded movie, else 'effect' mode.
         """
