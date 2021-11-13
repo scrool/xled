@@ -33,7 +33,8 @@ def rotate90(coords):
 
 class TestControlInterface(unittest.TestCase):
     """
-    Tests for the methods of ControlInterface in the `xled.control` module.
+    Tests for all the methods of ControlInterface in the `xled.control` module,
+    except the realtime protocols which are tested separately.
     """
 
     @vcr.use_cassette("tests/cassettes/TestControlInterface.test_misc_info.yaml")
