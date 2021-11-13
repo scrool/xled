@@ -1,0 +1,69 @@
+interactions:
+- request:
+    body: '{"challenge": "faEr54IjEfX8to6j+8KbZIyH+Qi4BTPBkTc+r9kjdSI="}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['61']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.25.1]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/login
+  response:
+    body: {string: '{"authentication_token":"twRz1V60otw=","authentication_token_expires_in":14400,"challenge-response":"ed7371b55de52c65042ab5585d7b26fda936a697","code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['155']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"challenge_response": "ed7371b55de52c65042ab5585d7b26fda936a697"}'
+    headers:
+      Content-Length: ['66']
+      Content-Type: [application/json]
+      X-Auth-Token: [twRz1V60otw=]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/verify
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [twRz1V60otw=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/network/scan
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [twRz1V60otw=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/network/scan_results
+  response:
+    body: {string: '{"code": 1000,"networks":[{"ssid":"TN_24GHz_D21CEF","mac":"30:91:8f:d2:1c:ef","rssi":203,"channel":11,"enc":4}]}'}
+    headers:
+      Connection: [close]
+      Content-Type: [application/json]
+      Transfer-Encoding: [chunked]
+    status: {code: 200, message: OK}
+version: 1

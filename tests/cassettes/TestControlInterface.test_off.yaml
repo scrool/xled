@@ -1,0 +1,71 @@
+interactions:
+- request:
+    body: '{"challenge": "bGw3siXO0Ez4V5wu1SAJhjhzfS/KQZrSBto+CE13dZM="}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['61']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.25.1]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/login
+  response:
+    body: {string: '{"authentication_token":"2HdRDgkVNQk=","authentication_token_expires_in":14400,"challenge-response":"76c3009c029df51ad5a5d145dd7589cc9bb738a9","code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['155']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"challenge_response": "76c3009c029df51ad5a5d145dd7589cc9bb738a9"}'
+    headers:
+      Content-Length: ['66']
+      Content-Type: [application/json]
+      X-Auth-Token: [2HdRDgkVNQk=]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/verify
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"mode": "off"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['15']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [2HdRDgkVNQk=]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/led/mode
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [2HdRDgkVNQk=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/led/mode
+  response:
+    body: {string: '{"mode":"off","shop_mode":0,"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['40']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+version: 1

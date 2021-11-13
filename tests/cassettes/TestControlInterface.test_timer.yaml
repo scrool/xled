@@ -1,0 +1,90 @@
+interactions:
+- request:
+    body: '{"challenge": "4C0OELYfRx/cXo4kdbObmp+YKiHuir2fsRq7fF54lIE="}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['61']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.25.1]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/login
+  response:
+    body: {string: '{"authentication_token":"Ds9b2QCAlIs=","authentication_token_expires_in":14400,"challenge-response":"cf6cace67b2bff484bcbc697969152c00add1107","code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['155']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"challenge_response": "cf6cace67b2bff484bcbc697969152c00add1107"}'
+    headers:
+      Content-Length: ['66']
+      Content-Type: [application/json]
+      X-Auth-Token: [Ds9b2QCAlIs=]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/verify
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"time_on": 3600, "time_off": 7200, "time_now": 68181}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['54']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [Ds9b2QCAlIs=]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/timer
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [Ds9b2QCAlIs=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/timer
+  response:
+    body: {string: '{"time_now":68181,"time_on":3600,"time_off":7200,"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['61']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"time_on": -1, "time_off": -1, "time_now": 68181}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['50']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [Ds9b2QCAlIs=]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/timer
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+version: 1
