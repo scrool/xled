@@ -896,11 +896,7 @@ class ControlInterface(object):
             time_now = xled.util.seconds_after_midnight()
             log.debug("Setting time now to %s", time_now)
 
-        json_payload = {
-            "time_on": time_on,
-            "time_off": time_off,
-            "time_now": time_now
-        }
+        json_payload = {"time_on": time_on, "time_off": time_off, "time_now": time_now}
         url = urljoin(self.base_url, "timer")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
