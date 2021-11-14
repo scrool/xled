@@ -1,0 +1,19 @@
+---
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+
+      - name: Lint
+        uses: pre-commit/action@v2.0.2
