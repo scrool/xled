@@ -437,7 +437,11 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "timer")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
-        required_keys = [u"time_now", u"time_off", u"time_on"]  # Early firmware lack 'code'
+        required_keys = [
+            u"time_now",
+            u"time_off",
+            u"time_on",
+        ]  # Early firmware lack 'code'
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
@@ -555,12 +559,12 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        assert source in ['linear', '2d', '3d']
+        assert source in ["linear", "2d", "3d"]
         assert isinstance(coordinates, list)
         json_payload = {
             "source": source,
             "coordinates": coordinates,
-            "synthesized": synthesized
+            "synthesized": synthesized,
         }
         url = urljoin(self.base_url, "led/layout/full")
         response = self.session.post(url, json=json_payload)
@@ -684,7 +688,7 @@ class ControlInterface(object):
             "descriptor_type": dtype,
             "leds_per_frame": nleds,
             "frames_number": nframes,
-            "fps": fps
+            "fps": fps,
         }
         url = urljoin(self.base_url, "movies/new")
         response = self.session.post(url, json=json_payload)
@@ -693,7 +697,14 @@ class ControlInterface(object):
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
-    def set_mqtt_config(self, broker_host=None, broker_port=None, client_id=None, user=None, interval=None):
+    def set_mqtt_config(
+        self,
+        broker_host=None,
+        broker_port=None,
+        client_id=None,
+        user=None,
+        interval=None,
+    ):
         """
         Sets the mqtt configuration parameters
 
@@ -765,7 +776,11 @@ class ControlInterface(object):
         if ssid and password:
             assert self.hw_address
             encpassword = xled.security.encrypt_wifi_password(password, self.hw_address)
-            json_payload["station"] = {"dhcp": 1, "ssid": ssid, "encpassword": encpassword}
+            json_payload["station"] = {
+                "dhcp": 1,
+                "ssid": ssid,
+                "encpassword": encpassword,
+            }
         else:
             assert not ssid and not password
         url = urljoin(self.base_url, "network/status")
@@ -881,11 +896,7 @@ class ControlInterface(object):
             time_now = xled.util.seconds_after_midnight()
             log.debug("Setting time now to %s", time_now)
 
-        json_payload = {
-            "time_on": time_on,
-            "time_off": time_off,
-            "time_now": time_now
-        }
+        json_payload = {"time_on": time_on, "time_off": time_off, "time_now": time_now}
         url = urljoin(self.base_url, "timer")
         response = self.session.post(url, json=json_payload)
         app_response = ApplicationResponse(response)
