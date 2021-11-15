@@ -23,12 +23,12 @@ with warnings.catch_warnings():
 def make_solid_movie(num, r, g, b):
     pat = [struct.pack(">BBB", r, g, b)] * num
     movie = io.BytesIO()
-    movie.write(b''.join(pat))
+    movie.write(b"".join(pat))
     movie.seek(0)
     return movie
 
 
-class FakeUDPclient():
+class FakeUDPclient:
     """
     Fake UDP client to replace the real UDP client, to catch the socket traffic.
     """
@@ -71,16 +71,24 @@ class TestControlInterfaceRealtime(unittest.TestCase):
         self.redirect_xled_socket_to_fake_client(ctr)
 
         # Version 1 socket realtime protocol
-        ctr.set_rt_frame_socket(make_solid_movie(num_leds, 230, 170, 0), 1, min(255, num_leds))
-        self.assertEqual(self.fakeclient.retrieve_data(),
-                         b'\x010"\x06\x04]j&X\xfa' + b'\xe6\xaa\x00' * num_leds)
+        ctr.set_rt_frame_socket(
+            make_solid_movie(num_leds, 230, 170, 0), 1, min(255, num_leds)
+        )
+        self.assertEqual(
+            self.fakeclient.retrieve_data(),
+            b'\x010"\x06\x04]j&X\xfa' + b"\xe6\xaa\x00" * num_leds,
+        )
 
         # Version 2 socket realtime protocol
         ctr.set_rt_frame_socket(make_solid_movie(num_leds, 100, 255, 0), 2)
-        self.assertEqual(self.fakeclient.retrieve_data(),
-                         b'\x020"\x06\x04]j&X\x00' + b'd\xff\x00' * num_leds)
+        self.assertEqual(
+            self.fakeclient.retrieve_data(),
+            b'\x020"\x06\x04]j&X\x00' + b"d\xff\x00" * num_leds,
+        )
 
         # Version 3 socket realtime protocol
         ctr.set_rt_frame_socket(make_solid_movie(num_leds, 230, 85, 0), 3)
-        self.assertEqual(self.fakeclient.retrieve_data(),
-                         b'\x030"\x06\x04]j&X\x00\x00\x00' + b'\xe6U\x00' * num_leds)
+        self.assertEqual(
+            self.fakeclient.retrieve_data(),
+            b'\x030"\x06\x04]j&X\x00\x00\x00' + b"\xe6U\x00" * num_leds,
+        )
