@@ -26,11 +26,11 @@ from operator import xor
 from requests.compat import urljoin
 
 import xled.util
+import xled.security
 from xled.auth import BaseUrlChallengeResponseAuthSession
 from xled.compat import xrange
 from xled.exceptions import HighInterfaceError
 from xled.response import ApplicationResponse
-from xled.security import encrypt_wifi_password
 
 log = logging.getLogger(__name__)
 
@@ -205,7 +205,7 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "gestalt")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
-        required_keys = [u"code"]  # and several more, dependent on fw version
+        required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
@@ -360,7 +360,7 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "mqtt/config")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
-        required_keys = [u"code"]  # and some more that depends on the family
+        required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
@@ -437,11 +437,7 @@ class ControlInterface(object):
         url = urljoin(self.base_url, "timer")
         response = self.session.get(url)
         app_response = ApplicationResponse(response)
-        required_keys = [
-            u"time_now",
-            u"time_off",
-            u"time_on",
-        ]  # Early firmware lack 'code'
+        required_keys = [u"time_now", u"time_off", u"time_on"]
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
