@@ -21,18 +21,23 @@ import collections
 import io
 import logging
 import struct
+import base64
 from operator import xor
 
 from requests.compat import urljoin
 
 import xled.util
 import xled.security
+from xled.udp_client import UDPClient
 from xled.auth import BaseUrlChallengeResponseAuthSession
 from xled.compat import xrange
 from xled.exceptions import HighInterfaceError
 from xled.response import ApplicationResponse
 
 log = logging.getLogger(__name__)
+
+#: UDP port to send realtime frames to
+REALTIME_UDP_PORT_NUMBER = 7777
 
 #: Time format as defined by C standard
 TIME_FORMAT = "%H:%M:%S"
@@ -49,6 +54,7 @@ class ControlInterface(object):
         self.host = host
         self.hw_address = hw_address
         self._session = None
+        self._udpclient = None
         self._base_url = None
 
     @property
@@ -73,6 +79,20 @@ class ControlInterface(object):
             )
             assert self._session
         return self._session
+
+    @property
+    def udpclient(self):
+        """
+        Client for sending UDP packets to the realtime port
+
+        :return: the UDP client
+            :py:class:`~.udp_client.UDPClient()`.
+        :rtype: udp_client.UDPClient
+        """
+        if not self._udpclient:
+            self._udpclient = UDPClient(REALTIME_UDP_PORT_NUMBER, self.host)
+            assert self._udpclient
+        return self._udpclient
 
     def check_status(self):
         """
@@ -838,6 +858,45 @@ class ControlInterface(object):
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
+
+    def set_rt_frame_socket(self, frame, version, leds_number=None):
+        """
+        Uploads a frame in rt-mode, over an UDP socket.
+        This is much faster than the restful protocol.
+
+        :param frame: file-like object representing the frame
+        :param version: use protocol version 1, 2 or 3
+        :param int leds_number: the number of leds (only used in version 1)
+        :rtype: None
+        """
+        if version == 1:
+            # Send single frame, generation I
+            packet = bytearray(b"\x01")
+            packet.extend(base64.b64decode(self.session.access_token))
+            packet.extend(struct.pack(">B", leds_number))
+            packet.extend(frame.read())
+            self.udpclient.send(packet)
+        elif version == 2:
+            # Send single frame, generation II pre 2.4.14
+            packet = bytearray(b"\x02")
+            packet.extend(base64.b64decode(self.session.access_token))
+            packet.extend(b"\x00")
+            packet.extend(frame.read())
+            self.udpclient.send(packet)
+        else:
+            # Send multi frame, generation II post 2.4.14
+            packet_size = 900
+            data_packet = frame.read(packet_size)
+            i = 0
+            while data_packet:
+                packet = bytearray(b"\x03")
+                packet.extend(base64.b64decode(self.session.access_token))
+                packet.extend(b"\x00\x00")
+                packet.extend(struct.pack(">B", i))
+                packet.extend(data_packet)
+                self.udpclient.send(packet)
+                data_packet = frame.read(packet_size)
+                i += 1
 
     def set_saturation(self, saturation=None, enabled=True, relative=False):
         """
