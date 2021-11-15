@@ -1,0 +1,157 @@
+interactions:
+- request:
+    body: '{"challenge": "tjs3lCjtW5QyTLZWnzSVeM9xqTapi/Lb2qGHBfA37M4="}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['61']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.25.1]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/login
+  response:
+    body: {string: '{"authentication_token":"wZoGUrp7tJU=","authentication_token_expires_in":14400,"challenge-response":"6b0c7ef829bedbe0d3095c8edf13ea742d4dbcc3","code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['155']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"challenge_response": "6b0c7ef829bedbe0d3095c8edf13ea742d4dbcc3"}'
+    headers:
+      Content-Length: ['66']
+      Content-Type: [application/json]
+      X-Auth-Token: [wZoGUrp7tJU=]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/verify
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [wZoGUrp7tJU=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/status
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [wZoGUrp7tJU=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/led/reset
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [wZoGUrp7tJU=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/fw/version
+  response:
+    body: {string: '{"version":"2.7.1","code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['31']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [wZoGUrp7tJU=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/gestalt
+  response:
+    body: {string: '{"product_name":"Twinkly","hardware_version":"100","bytes_per_led":3,"hw_id":"d64f58","flash_size":64,"led_type":14,"product_code":"TWS250STP-B","fw_family":"F","device_name":"Twinkly_D64F59","uptime":"1058345","mac":"84:0d:8e:d6:4f:59","uuid":"330467ED-C463-4F4E-9FBB-AA0ECE825ADD","max_supported_led":500,"number_of_led":250,"led_profile":"RGB","frame_rate":20,"measured_frame_rate":23.81,"movie_capacity":992,"copyright":"LEDWORKS
+        2021","code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['452']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [wZoGUrp7tJU=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/device_name
+  response:
+    body: {string: '{"name":"Twinkly_D64F59","code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['37']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"name": "Twinkly_D64F59"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['26']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [wZoGUrp7tJU=]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/device_name
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [wZoGUrp7tJU=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/led/config
+  response:
+    body: {string: '{"strings":[{"first_led_id":0,"length":125},{"first_led_id":125,"length":125}],"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['91']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+version: 1
