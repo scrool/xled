@@ -26,14 +26,15 @@ Use of the library:
 
     >>> import xled
     >>> discovered_device = xled.discover.discover()
-    >>> discovered_device.name
+    >>> discovered_device.id
     'Twinkly_33AAFF'
     >>> control = xled.ControlInterface(discovered_device.ip_address, discovered_device.hw_address)
     >>> control.set_mode('movie')
+    <ApplicationResponse [1000]>
     >>> control.get_mode()['mode']
-    u'movie'
+    'movie'
     >>> control.get_device_info()['number_of_led']
-    105
+    210
 
 Use of the CLI:
 
