@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"challenge": "4C0OELYfRx/cXo4kdbObmp+YKiHuir2fsRq7fF54lIE="}'
+    body: '{"challenge": "bKcFcTjrkA6T8S8rtN6BQQZ9L2cJHW2Olk0dwnv8TgE="}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
@@ -11,18 +11,18 @@ interactions:
     method: POST
     uri: http://192.168.10.100/xled/v1/login
   response:
-    body: {string: '{"authentication_token":"Ds9b2QCAlIs=","authentication_token_expires_in":14400,"challenge-response":"cf6cace67b2bff484bcbc697969152c00add1107","code":1000}'}
+    body: {string: '{"authentication_token":"z/bOSqJmyk8=","authentication_token_expires_in":14400,"challenge-response":"c77b9adb9751fc7128fd4ba2c87b5e8016d430be","code":1000}'}
     headers:
       Connection: [close]
       Content-Length: ['155']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: '{"challenge_response": "cf6cace67b2bff484bcbc697969152c00add1107"}'
+    body: '{"challenge_response": "c77b9adb9751fc7128fd4ba2c87b5e8016d430be"}'
     headers:
       Content-Length: ['66']
       Content-Type: [application/json]
-      X-Auth-Token: [Ds9b2QCAlIs=]
+      X-Auth-Token: [z/bOSqJmyk8=]
     method: POST
     uri: http://192.168.10.100/xled/v1/verify
   response:
@@ -33,15 +33,15 @@ interactions:
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: '{"time_on": 3600, "time_off": 7200, "time_now": 68181}'
+    body: '{"time_on": 3600, "time_off": 7200, "time_now": 1298}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['54']
+      Content-Length: ['53']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [Ds9b2QCAlIs=]
+      X-Auth-Token: [z/bOSqJmyk8=]
     method: POST
     uri: http://192.168.10.100/xled/v1/timer
   response:
@@ -58,26 +58,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [Ds9b2QCAlIs=]
+      X-Auth-Token: [z/bOSqJmyk8=]
     method: GET
     uri: http://192.168.10.100/xled/v1/timer
   response:
-    body: {string: '{"time_now":68181,"time_on":3600,"time_off":7200,"code":1000}'}
+    body: {string: '{"time_now":1298,"time_on":3600,"time_off":7200,"code":1000}'}
     headers:
       Connection: [close]
-      Content-Length: ['61']
+      Content-Length: ['60']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: '{"time_on": -1, "time_off": -1, "time_now": 68181}'
+    body: '{"time_on": -1, "time_off": -1, "time_now": 1298}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['50']
+      Content-Length: ['49']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [Ds9b2QCAlIs=]
+      X-Auth-Token: [z/bOSqJmyk8=]
     method: POST
     uri: http://192.168.10.100/xled/v1/timer
   response:

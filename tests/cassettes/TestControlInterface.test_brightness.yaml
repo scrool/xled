@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"challenge": "+lrDSvZKTXhxhlEc2HzxMwqglJmzi0lAX2trsa6JLUk="}'
+    body: '{"challenge": "6kzkoU4ZimoFrvTUz7MQQ4L57yQzV98TXUOUGTbnxvY="}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
@@ -11,18 +11,18 @@ interactions:
     method: POST
     uri: http://192.168.10.100/xled/v1/login
   response:
-    body: {string: '{"authentication_token":"jauR0eWgoMI=","authentication_token_expires_in":14400,"challenge-response":"f3c3579af56070d395da2d2fd264bbf8867964f4","code":1000}'}
+    body: {string: '{"authentication_token":"tdcGEvXT7LA=","authentication_token_expires_in":14400,"challenge-response":"dc868d77d066352e4d32924aa873c5da68a93a40","code":1000}'}
     headers:
       Connection: [close]
       Content-Length: ['155']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: '{"challenge_response": "f3c3579af56070d395da2d2fd264bbf8867964f4"}'
+    body: '{"challenge_response": "dc868d77d066352e4d32924aa873c5da68a93a40"}'
     headers:
       Content-Length: ['66']
       Content-Type: [application/json]
-      X-Auth-Token: [jauR0eWgoMI=]
+      X-Auth-Token: [tdcGEvXT7LA=]
     method: POST
     uri: http://192.168.10.100/xled/v1/verify
   response:
@@ -33,35 +33,55 @@ interactions:
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: null
+    body: '{"value": 50, "type": "A", "mode": "enabled"}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
+      Content-Length: ['45']
+      Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [jauR0eWgoMI=]
-    method: GET
-    uri: http://192.168.10.100/xled/v1/mqtt/config
+      X-Auth-Token: [tdcGEvXT7LA=]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/led/out/brightness
   response:
-    body: {string: '{"broker_host":"127.0.0.1","broker_port":8883,"client_id":"840D8ED64F59","user":"twinkly32","keep_alive_interval":7200,"code":1000}'}
+    body: {string: '{"code":1000}'}
     headers:
       Connection: [close]
-      Content-Length: ['131']
+      Content-Length: ['13']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: '{"broker_host": "127.0.0.1", "broker_port": 8883, "client_id": "ABCDEF123456",
-      "keep_alive_interval": 7200, "user": "Bigfoot99"}'
+    body: '{"value": -20, "type": "R", "mode": "enabled"}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['128']
+      Content-Length: ['46']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [jauR0eWgoMI=]
+      X-Auth-Token: [tdcGEvXT7LA=]
     method: POST
-    uri: http://192.168.10.100/xled/v1/mqtt/config
+    uri: http://192.168.10.100/xled/v1/led/out/brightness
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"value": 100, "type": "A", "mode": "disabled"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['47']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [tdcGEvXT7LA=]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/led/out/brightness
   response:
     body: {string: '{"code":1000}'}
     headers:
@@ -76,34 +96,14 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [jauR0eWgoMI=]
+      X-Auth-Token: [tdcGEvXT7LA=]
     method: GET
-    uri: http://192.168.10.100/xled/v1/mqtt/config
+    uri: http://192.168.10.100/xled/v1/led/out/brightness
   response:
-    body: {string: '{"broker_host":"127.0.0.1","broker_port":8883,"client_id":"ABCDEF123456","user":"Bigfoot99","keep_alive_interval":7200,"code":1000}'}
+    body: {string: '{"value":100,"mode":"disabled","code":1000}'}
     headers:
       Connection: [close]
-      Content-Length: ['131']
-      Content-Type: [application/json]
-    status: {code: 200, message: OK}
-- request:
-    body: '{"broker_host": "127.0.0.1", "broker_port": 8883, "client_id": "840D8ED64F59",
-      "keep_alive_interval": 7200, "user": "twinkly32"}'
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['128']
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [jauR0eWgoMI=]
-    method: POST
-    uri: http://192.168.10.100/xled/v1/mqtt/config
-  response:
-    body: {string: '{"code":1000}'}
-    headers:
-      Connection: [close]
-      Content-Length: ['13']
+      Content-Length: ['43']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 version: 1

@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"challenge": "XMkOKo2Jwsr28JupPWyGosOMKp4EF/A6MfUCtiHeeIY="}'
+    body: '{"challenge": "f6x4kyZc9bo+2v0qKiypA8g/BwvKQAELytyoKBD1k5I="}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
@@ -11,18 +11,18 @@ interactions:
     method: POST
     uri: http://192.168.10.100/xled/v1/login
   response:
-    body: {string: '{"authentication_token":"0Fz10XuLCNs=","authentication_token_expires_in":14400,"challenge-response":"cbbed55e3fbdaf1e06fe6a6910c2ae2b66a1cd6e","code":1000}'}
+    body: {string: '{"authentication_token":"e5C/yaikvog=","authentication_token_expires_in":14400,"challenge-response":"920b14f3a4f4a670175db387fab1203c5dcfabd2","code":1000}'}
     headers:
       Connection: [close]
       Content-Length: ['155']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: '{"challenge_response": "cbbed55e3fbdaf1e06fe6a6910c2ae2b66a1cd6e"}'
+    body: '{"challenge_response": "920b14f3a4f4a670175db387fab1203c5dcfabd2"}'
     headers:
       Content-Length: ['66']
       Content-Type: [application/json]
-      X-Auth-Token: [0Fz10XuLCNs=]
+      X-Auth-Token: [e5C/yaikvog=]
     method: POST
     uri: http://192.168.10.100/xled/v1/verify
   response:
@@ -39,9 +39,9 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [0Fz10XuLCNs=]
+      X-Auth-Token: [e5C/yaikvog=]
     method: GET
-    uri: http://192.168.10.100/xled/v1/network/scan
+    uri: http://192.168.10.100/xled/v1/status
   response:
     body: {string: '{"code":1000}'}
     headers:
@@ -56,14 +56,14 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [0Fz10XuLCNs=]
+      X-Auth-Token: [e5C/yaikvog=]
     method: GET
-    uri: http://192.168.10.100/xled/v1/network/scan_results
+    uri: http://192.168.10.100/xled/v1/led/reset
   response:
-    body: {string: '{"code": 1000,"networks":[{"ssid":"TN_24GHz_D21CEF","mac":"30:91:8f:d2:1c:ef","rssi":210,"channel":6,"enc":4}]}'}
+    body: {string: '{"code":1000}'}
     headers:
       Connection: [close]
+      Content-Length: ['13']
       Content-Type: [application/json]
-      Transfer-Encoding: [chunked]
     status: {code: 200, message: OK}
 version: 1

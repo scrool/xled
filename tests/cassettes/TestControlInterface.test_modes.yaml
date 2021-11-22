@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"challenge": "bGw3siXO0Ez4V5wu1SAJhjhzfS/KQZrSBto+CE13dZM="}'
+    body: '{"challenge": "rgtpXGv4sqm4j6LK7Nf2cYAK3CQQY97WaNt7oru6pVs="}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
@@ -11,18 +11,18 @@ interactions:
     method: POST
     uri: http://192.168.10.100/xled/v1/login
   response:
-    body: {string: '{"authentication_token":"2HdRDgkVNQk=","authentication_token_expires_in":14400,"challenge-response":"76c3009c029df51ad5a5d145dd7589cc9bb738a9","code":1000}'}
+    body: {string: '{"authentication_token":"j4C2oCHrWgA=","authentication_token_expires_in":14400,"challenge-response":"38622b683c9fe4c53535cf5ac2309dd326c8cad7","code":1000}'}
     headers:
       Connection: [close]
       Content-Length: ['155']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: '{"challenge_response": "76c3009c029df51ad5a5d145dd7589cc9bb738a9"}'
+    body: '{"challenge_response": "38622b683c9fe4c53535cf5ac2309dd326c8cad7"}'
     headers:
       Content-Length: ['66']
       Content-Type: [application/json]
-      X-Auth-Token: [2HdRDgkVNQk=]
+      X-Auth-Token: [j4C2oCHrWgA=]
     method: POST
     uri: http://192.168.10.100/xled/v1/verify
   response:
@@ -33,15 +33,15 @@ interactions:
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: '{"mode": "off"}'
+    body: '{"mode": "demo"}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['15']
+      Content-Length: ['16']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [2HdRDgkVNQk=]
+      X-Auth-Token: [j4C2oCHrWgA=]
     method: POST
     uri: http://192.168.10.100/xled/v1/led/mode
   response:
@@ -58,7 +58,43 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [2HdRDgkVNQk=]
+      X-Auth-Token: [j4C2oCHrWgA=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/led/mode
+  response:
+    body: {string: '{"mode":"demo","shop_mode":0,"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['41']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"mode": "off"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['15']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [j4C2oCHrWgA=]
+    method: POST
+    uri: http://192.168.10.100/xled/v1/led/mode
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [j4C2oCHrWgA=]
     method: GET
     uri: http://192.168.10.100/xled/v1/led/mode
   response:

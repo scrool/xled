@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"challenge": "7bxBSNZkm9KBZ0MjtG/AYIyMmHYRsl0B6eni4rOpQ7M="}'
+    body: '{"challenge": "lNisYswZrOK2gp6+Pfz8RAsbtRdNfMbioc5A8b2dmPg="}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
@@ -11,18 +11,18 @@ interactions:
     method: POST
     uri: http://192.168.10.100/xled/v1/login
   response:
-    body: {string: '{"authentication_token":"LlyI7TdT9+g=","authentication_token_expires_in":14400,"challenge-response":"e2947ac39e115964d8413930f585c619f3eb254d","code":1000}'}
+    body: {string: '{"authentication_token":"p/rgCUn7AfA=","authentication_token_expires_in":14400,"challenge-response":"86b485190a2f41f7a8b9fd75ff259fd104440566","code":1000}'}
     headers:
       Connection: [close]
       Content-Length: ['155']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: '{"challenge_response": "e2947ac39e115964d8413930f585c619f3eb254d"}'
+    body: '{"challenge_response": "86b485190a2f41f7a8b9fd75ff259fd104440566"}'
     headers:
       Content-Length: ['66']
       Content-Type: [application/json]
-      X-Auth-Token: [LlyI7TdT9+g=]
+      X-Auth-Token: [p/rgCUn7AfA=]
     method: POST
     uri: http://192.168.10.100/xled/v1/verify
   response:
@@ -41,7 +41,7 @@ interactions:
       Content-Length: ['18']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [LlyI7TdT9+g=]
+      X-Auth-Token: [p/rgCUn7AfA=]
     method: POST
     uri: http://192.168.10.100/xled/v1/led/mode
   response:
@@ -58,7 +58,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [LlyI7TdT9+g=]
+      X-Auth-Token: [p/rgCUn7AfA=]
     method: GET
     uri: http://192.168.10.100/xled/v1/led/mode
   response:
@@ -75,7 +75,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [LlyI7TdT9+g=]
+      X-Auth-Token: [p/rgCUn7AfA=]
     method: GET
     uri: http://192.168.10.100/xled/v1/led/effects
   response:
@@ -94,7 +94,7 @@ interactions:
       Content-Length: ['16']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [LlyI7TdT9+g=]
+      X-Auth-Token: [p/rgCUn7AfA=]
     method: POST
     uri: http://192.168.10.100/xled/v1/led/effects/current
   response:
@@ -111,7 +111,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [LlyI7TdT9+g=]
+      X-Auth-Token: [p/rgCUn7AfA=]
     method: GET
     uri: http://192.168.10.100/xled/v1/led/effects/current
   response:

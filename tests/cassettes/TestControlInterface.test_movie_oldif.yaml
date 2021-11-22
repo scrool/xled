@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"challenge": "zzW/C0YISNlqoekphGbglQxlcs/WWxzn6FGlw7baztg="}'
+    body: '{"challenge": "VMtHHa+ZlWQBfb10BlU/IxsL41J6vjHHsqHHKxMz53w="}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
@@ -11,18 +11,18 @@ interactions:
     method: POST
     uri: http://192.168.10.100/xled/v1/login
   response:
-    body: {string: '{"authentication_token":"V+rfI4OYkTM=","authentication_token_expires_in":14400,"challenge-response":"1d97808f827eeffaef3213665b47fdb03b4b1b32","code":1000}'}
+    body: {string: '{"authentication_token":"lOel5wTLgQo=","authentication_token_expires_in":14400,"challenge-response":"97c68261bd3cc59da3008cf4e3bca2fbd64c2bc7","code":1000}'}
     headers:
       Connection: [close]
       Content-Length: ['155']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: '{"challenge_response": "1d97808f827eeffaef3213665b47fdb03b4b1b32"}'
+    body: '{"challenge_response": "97c68261bd3cc59da3008cf4e3bca2fbd64c2bc7"}'
     headers:
       Content-Length: ['66']
       Content-Type: [application/json]
-      X-Auth-Token: [V+rfI4OYkTM=]
+      X-Auth-Token: [lOel5wTLgQo=]
     method: POST
     uri: http://192.168.10.100/xled/v1/verify
   response:
@@ -30,23 +30,6 @@ interactions:
     headers:
       Connection: [close]
       Content-Length: ['13']
-      Content-Type: [application/json]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [V+rfI4OYkTM=]
-    method: GET
-    uri: http://192.168.10.100/xled/v1/led/movie/config
-  response:
-    body: {string: '{"frame_delay":50,"leds_number":250,"loop_type":0,"frames_number":120,"sync":{"mode":"none","compat_mode":0},"code":1000}'}
-    headers:
-      Connection: [close]
-      Content-Length: ['121']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
@@ -76,7 +59,7 @@ interactions:
       Content-Length: ['750']
       Content-Type: [application/octet-stream]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [V+rfI4OYkTM=]
+      X-Auth-Token: [lOel5wTLgQo=]
     method: POST
     uri: http://192.168.10.100/xled/v1/led/movie/full
   response:
@@ -95,7 +78,7 @@ interactions:
       Content-Length: ['61']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [V+rfI4OYkTM=]
+      X-Auth-Token: [lOel5wTLgQo=]
     method: POST
     uri: http://192.168.10.100/xled/v1/led/movie/config
   response:
@@ -103,6 +86,23 @@ interactions:
     headers:
       Connection: [close]
       Content-Length: ['13']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [lOel5wTLgQo=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/led/movie/config
+  response:
+    body: {string: '{"frame_delay":1000,"leds_number":250,"loop_type":0,"frames_number":1,"sync":{"mode":"none","compat_mode":0},"code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['121']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
@@ -114,7 +114,7 @@ interactions:
       Content-Length: ['17']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [V+rfI4OYkTM=]
+      X-Auth-Token: [lOel5wTLgQo=]
     method: POST
     uri: http://192.168.10.100/xled/v1/led/mode
   response:
@@ -131,11 +131,11 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [V+rfI4OYkTM=]
+      X-Auth-Token: [lOel5wTLgQo=]
     method: GET
     uri: http://192.168.10.100/xled/v1/led/mode
   response:
-    body: {string: '{"mode":"movie","shop_mode":0,"id":0,"unique_id":"A151A936-2836-4BB2-926C-BE592052D60E","name":"","code":1000}'}
+    body: {string: '{"mode":"movie","shop_mode":0,"id":0,"unique_id":"A8A2EFF2-356F-4A0D-A97A-09FC5EA2EB48","name":"","code":1000}'}
     headers:
       Connection: [close]
       Content-Length: ['110']
