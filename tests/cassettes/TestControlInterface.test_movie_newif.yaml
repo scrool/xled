@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"challenge": "tevVfoG6khfVvNaFmsKJ715PvOLFefKaVrIx25v4lYw="}'
+    body: '{"challenge": "3DM1tM8OaT/u+D8/cvZJbCbg71BXrnNw+Taiskf0yIQ="}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
@@ -11,18 +11,18 @@ interactions:
     method: POST
     uri: http://192.168.10.100/xled/v1/login
   response:
-    body: {string: '{"authentication_token":"hkGAHMMkb70=","authentication_token_expires_in":14400,"challenge-response":"b82f1ab3fa54adf243ed6238e8b1859bfa7b6072","code":1000}'}
+    body: {string: '{"authentication_token":"f8puAa+s/gc=","authentication_token_expires_in":14400,"challenge-response":"1031bf0457a9b3b251281bbdcf152f959b15157b","code":1000}'}
     headers:
       Connection: [close]
       Content-Length: ['155']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: '{"challenge_response": "b82f1ab3fa54adf243ed6238e8b1859bfa7b6072"}'
+    body: '{"challenge_response": "1031bf0457a9b3b251281bbdcf152f959b15157b"}'
     headers:
       Content-Length: ['66']
       Content-Type: [application/json]
-      X-Auth-Token: [hkGAHMMkb70=]
+      X-Auth-Token: [f8puAa+s/gc=]
     method: POST
     uri: http://192.168.10.100/xled/v1/verify
   response:
@@ -41,7 +41,7 @@ interactions:
       Content-Length: ['15']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [hkGAHMMkb70=]
+      X-Auth-Token: [f8puAa+s/gc=]
     method: POST
     uri: http://192.168.10.100/xled/v1/led/mode
   response:
@@ -59,7 +59,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [hkGAHMMkb70=]
+      X-Auth-Token: [f8puAa+s/gc=]
     method: DELETE
     uri: http://192.168.10.100/xled/v1/movies
   response:
@@ -76,7 +76,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [hkGAHMMkb70=]
+      X-Auth-Token: [f8puAa+s/gc=]
     method: GET
     uri: http://192.168.10.100/xled/v1/movies
   response:
@@ -97,11 +97,11 @@ interactions:
       Content-Length: ['153']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [hkGAHMMkb70=]
+      X-Auth-Token: [f8puAa+s/gc=]
     method: POST
     uri: http://192.168.10.100/xled/v1/movies/new
   response:
-    body: {string: '{"entry_point":0,"id":0,"handle":78,"unique_id":"00000000-0000-0000-000A-000000000001","code":1000}'}
+    body: {string: '{"entry_point":0,"id":0,"handle":83,"unique_id":"00000000-0000-0000-000A-000000000001","code":1000}'}
     headers:
       Connection: [close]
       Content-Length: ['99']
@@ -134,7 +134,7 @@ interactions:
       Content-Length: ['750']
       Content-Type: [application/octet-stream]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [hkGAHMMkb70=]
+      X-Auth-Token: [f8puAa+s/gc=]
     method: POST
     uri: http://192.168.10.100/xled/v1/movies/full
   response:
@@ -154,11 +154,11 @@ interactions:
       Content-Length: ['152']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [hkGAHMMkb70=]
+      X-Auth-Token: [f8puAa+s/gc=]
     method: POST
     uri: http://192.168.10.100/xled/v1/movies/new
   response:
-    body: {string: '{"entry_point":2,"id":1,"handle":79,"unique_id":"00000000-0000-0000-000A-000000000002","code":1000}'}
+    body: {string: '{"entry_point":2,"id":1,"handle":84,"unique_id":"00000000-0000-0000-000A-000000000002","code":1000}'}
     headers:
       Connection: [close]
       Content-Length: ['99']
@@ -191,7 +191,7 @@ interactions:
       Content-Length: ['750']
       Content-Type: [application/octet-stream]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [hkGAHMMkb70=]
+      X-Auth-Token: [f8puAa+s/gc=]
     method: POST
     uri: http://192.168.10.100/xled/v1/movies/full
   response:
@@ -210,7 +210,7 @@ interactions:
       Content-Length: ['9']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [hkGAHMMkb70=]
+      X-Auth-Token: [f8puAa+s/gc=]
     method: POST
     uri: http://192.168.10.100/xled/v1/movies/current
   response:
@@ -227,7 +227,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [hkGAHMMkb70=]
+      X-Auth-Token: [f8puAa+s/gc=]
     method: GET
     uri: http://192.168.10.100/xled/v1/movies/current
   response:

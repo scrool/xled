@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"challenge": "ASXYKh6ierdN76fcQuUONIy5fi8bPmhMrfWFXKy3l4k="}'
+    body: '{"challenge": "xnXlgGxr1EYbUVLgTJRODc9dLX8FtwgoLeZYWypdNz4="}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
@@ -11,18 +11,18 @@ interactions:
     method: POST
     uri: http://192.168.10.100/xled/v1/login
   response:
-    body: {string: '{"authentication_token":"HImNJTdacco=","authentication_token_expires_in":14400,"challenge-response":"562e93778d7d87bba5f56169417be7c92398179f","code":1000}'}
+    body: {string: '{"authentication_token":"lkzAlsT03AU=","authentication_token_expires_in":14400,"challenge-response":"cb602fa3f992dcd3be9c746891ef5d39b3cb8809","code":1000}'}
     headers:
       Connection: [close]
       Content-Length: ['155']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
-    body: '{"challenge_response": "562e93778d7d87bba5f56169417be7c92398179f"}'
+    body: '{"challenge_response": "cb602fa3f992dcd3be9c746891ef5d39b3cb8809"}'
     headers:
       Content-Length: ['66']
       Content-Type: [application/json]
-      X-Auth-Token: [HImNJTdacco=]
+      X-Auth-Token: [lkzAlsT03AU=]
     method: POST
     uri: http://192.168.10.100/xled/v1/verify
   response:
@@ -39,7 +39,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [HImNJTdacco=]
+      X-Auth-Token: [lkzAlsT03AU=]
     method: GET
     uri: http://192.168.10.100/xled/v1/movies
   response:
@@ -59,7 +59,7 @@ interactions:
       Content-Length: ['153']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [HImNJTdacco=]
+      X-Auth-Token: [lkzAlsT03AU=]
     method: POST
     uri: http://192.168.10.100/xled/v1/playlist
   response:
@@ -76,11 +76,11 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [HImNJTdacco=]
+      X-Auth-Token: [lkzAlsT03AU=]
     method: GET
     uri: http://192.168.10.100/xled/v1/playlist
   response:
-    body: {string: '{"unique_id":"00000000-0000-0000-0000-000000000000","name":"","entries":[{"id":0,"handle":15,"name":"green","unique_id":"00000000-0000-0000-000A-000000000001","duration":5},{"id":1,"handle":16,"name":"lime","unique_id":"00000000-0000-0000-000A-000000000002","duration":5}],"code":1000}'}
+    body: {string: '{"unique_id":"00000000-0000-0000-0000-000000000000","name":"","entries":[{"id":0,"handle":83,"name":"green","unique_id":"00000000-0000-0000-000A-000000000001","duration":5},{"id":1,"handle":84,"name":"lime","unique_id":"00000000-0000-0000-000A-000000000002","duration":5}],"code":1000}'}
     headers:
       Connection: [close]
       Content-Type: [application/json]
@@ -95,7 +95,7 @@ interactions:
       Content-Length: ['20']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [HImNJTdacco=]
+      X-Auth-Token: [lkzAlsT03AU=]
     method: POST
     uri: http://192.168.10.100/xled/v1/led/mode
   response:
@@ -112,7 +112,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [HImNJTdacco=]
+      X-Auth-Token: [lkzAlsT03AU=]
     method: GET
     uri: http://192.168.10.100/xled/v1/led/mode
   response:
@@ -120,23 +120,6 @@ interactions:
     headers:
       Connection: [close]
       Content-Length: ['202']
-      Content-Type: [application/json]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [HImNJTdacco=]
-    method: GET
-    uri: http://192.168.10.100/xled/v1/playlist/current
-  response:
-    body: {string: '{"duration":5,"id":0,"unique_id":"00000000-0000-0000-000A-000000000001","name":"green","code":1000}'}
-    headers:
-      Connection: [close]
-      Content-Length: ['99']
       Content-Type: [application/json]
     status: {code: 200, message: OK}
 - request:
@@ -148,7 +131,7 @@ interactions:
       Content-Length: ['9']
       Content-Type: [application/json]
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [HImNJTdacco=]
+      X-Auth-Token: [lkzAlsT03AU=]
     method: POST
     uri: http://192.168.10.100/xled/v1/playlist/current
   response:
@@ -164,9 +147,26 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
+      User-Agent: [python-requests/2.25.1]
+      X-Auth-Token: [lkzAlsT03AU=]
+    method: GET
+    uri: http://192.168.10.100/xled/v1/playlist/current
+  response:
+    body: {string: '{"duration":5,"id":1,"unique_id":"00000000-0000-0000-000A-000000000002","name":"lime","code":1000}'}
+    headers:
+      Connection: [close]
+      Content-Length: ['98']
+      Content-Type: [application/json]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
       Content-Length: ['0']
       User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [HImNJTdacco=]
+      X-Auth-Token: [lkzAlsT03AU=]
     method: DELETE
     uri: http://192.168.10.100/xled/v1/playlist
   response:
