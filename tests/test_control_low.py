@@ -35,12 +35,11 @@ def make_solid_movie(num, nbytes, r, g, b):
 class TestControlInterface(unittest.TestCase):
     """
     Tests for all the methods of ControlInterface in the `xled.control` module,
-    except the realtime protocols which are tested separately.
+    except the realtime protocols and the network modes, which are tested separately.
     """
 
     def setUp(self):
         self.host = "192.168.10.100"
-        self.hostap = "192.168.4.1"
         self.numleds = 250
         self.ledbytes = 3
         self.isrecording = False
@@ -80,26 +79,24 @@ class TestControlInterface(unittest.TestCase):
         if self.isrecording:
             print("get_device_info:", res)
         else:
-            self.assertEqual(
+            self.assertEqualSubdict(
                 res,
                 {
                     "product_name": "Twinkly",
                     "hardware_version": "100",
                     "bytes_per_led": 3,
-                    "hw_id": "d64f58",
+                    "hw_id": "abcdee",
                     "flash_size": 64,
                     "led_type": 14,
                     "product_code": "TWS250STP-B",
                     "fw_family": "F",
-                    "device_name": "Twinkly_D64F59",
-                    "uptime": "24262968",
-                    "mac": "84:0d:8e:d6:4f:59",
-                    "uuid": "330467ED-C463-4F4E-9FBB-AA0ECE825ADD",
+                    "device_name": "Twinkly_ABCDEF",
+                    "mac": "01:23:45:67:89:ab",
+                    "uuid": "00000000-0000-0000-0000-000000000000",
                     "max_supported_led": 500,
                     "number_of_led": 250,
                     "led_profile": "RGB",
                     "frame_rate": 20,
-                    "measured_frame_rate": 24.39,
                     "movie_capacity": 992,
                     "copyright": "LEDWORKS 2021",
                     "code": 1000,
@@ -333,7 +330,7 @@ class TestControlInterface(unittest.TestCase):
             self.assertEqual(res, {"value": 100, "mode": "disabled", "code": 1000})
 
     @vcr.use_cassette("tests/cassettes/TestControlInterface.test_movie_oldif.yaml")
-    def test_movie_oldif(self):
+    def test_movie_1_oldif(self):
         ctr = ControlInterface(self.host)
         m_white = make_solid_movie(self.numleds, self.ledbytes, 230, 255, 160)
 
@@ -387,7 +384,7 @@ class TestControlInterface(unittest.TestCase):
 
     # Avalable from fw version 2.5.6
     @vcr.use_cassette("tests/cassettes/TestControlInterface.test_movie_newif.yaml")
-    def test_movie_newif(self):
+    def test_movie_2_newif(self):
         ctr = ControlInterface(self.host)
         m_green = make_solid_movie(self.numleds, self.ledbytes, 0, 255, 0)
         m_lime = make_solid_movie(self.numleds, self.ledbytes, 100, 255, 0)
@@ -491,7 +488,7 @@ class TestControlInterface(unittest.TestCase):
 
     # Avalable from fw version 2.5.6
     @vcr.use_cassette("tests/cassettes/TestControlInterface.test_playlist.yaml")
-    def test_playlist(self):
+    def test_movie_3_playlist(self):
         ctr = ControlInterface(self.host)
 
         # Assumes being recorded after test_movies_newif, so there are some movies
@@ -635,92 +632,15 @@ class TestControlInterface(unittest.TestCase):
                     "code": 1000,
                     "networks": [
                         {
-                            "ssid": "TN_24GHz_D21CEF",
-                            "mac": "30:91:8f:d2:1c:ef",
-                            "rssi": 210,
+                            "ssid": "MyWiFi",
+                            "mac": "00:11:22:33:44:55",
+                            "rssi": 208,
                             "channel": 6,
                             "enc": 4,
                         }
                     ],
                 },
             )
-
-    @vcr.use_cassette("tests/cassettes/TestControlInterface.test_network_mode_ap.yaml")
-    def test_network_mode_ap(self):
-        ctr = ControlInterface(self.host)
-
-        res = ctr.get_network_status()._data
-        if self.isrecording:
-            print("get_network_status:", res)
-        else:
-            self.assertEqual(
-                res,
-                {
-                    "mode": 1,
-                    "station": {
-                        "ssid": "TN_24GHz_D21CEF",
-                        "ip": "192.168.10.100",
-                        "gw": "192.168.10.1",
-                        "mask": "255.255.255.0",
-                        "rssi": -60,
-                    },
-                    "ap": {
-                        "ssid": "Twinkly_D64F59",
-                        "channel": 1,
-                        "ip": "192.168.4.1",
-                        "enc": 4,
-                        "ssid_hidden": 0,
-                        "max_connections": 4,
-                        "password_changed": 1,
-                    },
-                    "code": 1000,
-                },
-            )
-
-        res = ctr.set_network_mode_ap()._data
-        if self.isrecording:
-            print("set_network_mode_ap:", res)
-        else:
-            self.assertEqual(res, {"code": 1000})
-
-    @vcr.use_cassette(
-        "tests/cassettes/TestControlInterface.test_network_mode_station.yaml"
-    )
-    def test_network_mode_station(self):
-        ctr = ControlInterface(self.hostap)
-
-        res = ctr.get_network_status()._data
-        if self.isrecording:
-            print("get_network_status:", res)
-        else:
-            self.assertEqual(
-                res,
-                {
-                    "mode": 2,
-                    "station": {
-                        "ssid": "",
-                        "ip": "0.0.0.0",
-                        "gw": "0.0.0.0",
-                        "mask": "0.0.0.0",
-                    },
-                    "ap": {
-                        "ssid": "Twinkly_D64F59",
-                        "channel": 6,
-                        "ip": "192.168.4.1",
-                        "enc": 3,
-                        "ssid_hidden": 0,
-                        "max_connections": 4,
-                        "password_changed": 1,
-                    },
-                    "code": 1000,
-                },
-            )
-
-        res = ctr.set_network_mode_station()._data
-        if self.isrecording:
-            print("set_network_mode_station:", res)
-        else:
-            self.assertEqual(res, {"code": 1000})
 
     @vcr.use_cassette("tests/cassettes/TestControlInterface.test_modes.yaml")
     def test_modes(self):
