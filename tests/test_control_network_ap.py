@@ -21,7 +21,7 @@ with warnings.catch_warnings():
 class TestControlInterfaceNetworkAP(unittest.TestCase):
     """
     Tests setting network mode to Access point. Assumes that the device is
-    initially in Station network mode. 
+    initially in Station network mode.
     """
 
     def setUp(self):

@@ -22,7 +22,7 @@ class TestControlInterfaceNetworkStation(unittest.TestCase):
     """
     Tests setting network mode to Station. Assumes that the device is
     initially in AP network mode, and that it already has a configured
-    wavelan ssid and password to connect with. 
+    wavelan ssid and password to connect with.
     """
 
     def setUp(self):
