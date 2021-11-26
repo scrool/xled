@@ -1,109 +1,160 @@
 interactions:
 - request:
-    body: '{"challenge": "+lrDSvZKTXhxhlEc2HzxMwqglJmzi0lAX2trsa6JLUk="}'
+    body: '{"challenge": "FGAVkwHC5FvWg/iBMmoCXwiAG0DF5mN02nC5RVWpv48="}'
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['61']
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.25.1]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
     method: POST
     uri: http://192.168.10.100/xled/v1/login
   response:
-    body: {string: '{"authentication_token":"jauR0eWgoMI=","authentication_token_expires_in":14400,"challenge-response":"f3c3579af56070d395da2d2fd264bbf8867964f4","code":1000}'}
+    body: {string: '{"authentication_token":"IGNwmKF7J/w=","authentication_token_expires_in":14400,"challenge-response":"448b2b2e39578d6661f8f965ba7d4d3d966dc6b9","code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['155']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '155'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
-    body: '{"challenge_response": "f3c3579af56070d395da2d2fd264bbf8867964f4"}'
+    body: '{"challenge_response": "448b2b2e39578d6661f8f965ba7d4d3d966dc6b9"}'
     headers:
-      Content-Length: ['66']
-      Content-Type: [application/json]
-      X-Auth-Token: [jauR0eWgoMI=]
+      Content-Length:
+      - '66'
+      Content-Type:
+      - application/json
+      X-Auth-Token:
+      - IGNwmKF7J/w=
     method: POST
     uri: http://192.168.10.100/xled/v1/verify
   response:
     body: {string: '{"code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['13']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [jauR0eWgoMI=]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - IGNwmKF7J/w=
     method: GET
     uri: http://192.168.10.100/xled/v1/mqtt/config
   response:
-    body: {string: '{"broker_host":"127.0.0.1","broker_port":8883,"client_id":"840D8ED64F59","user":"twinkly32","keep_alive_interval":7200,"code":1000}'}
+    body: {string: '{"broker_host":"127.0.0.1","broker_port":8883,"client_id":"0123456789AB","user":"twinkly32","keep_alive_interval":7200,"code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['131']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '131'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
     body: '{"broker_host": "127.0.0.1", "broker_port": 8883, "client_id": "ABCDEF123456",
       "keep_alive_interval": 7200, "user": "Bigfoot99"}'
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['128']
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [jauR0eWgoMI=]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '128'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - IGNwmKF7J/w=
     method: POST
     uri: http://192.168.10.100/xled/v1/mqtt/config
   response:
     body: {string: '{"code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['13']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [jauR0eWgoMI=]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - IGNwmKF7J/w=
     method: GET
     uri: http://192.168.10.100/xled/v1/mqtt/config
   response:
     body: {string: '{"broker_host":"127.0.0.1","broker_port":8883,"client_id":"ABCDEF123456","user":"Bigfoot99","keep_alive_interval":7200,"code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['131']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '131'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
-    body: '{"broker_host": "127.0.0.1", "broker_port": 8883, "client_id": "840D8ED64F59",
+    body: '{"broker_host": "127.0.0.1", "broker_port": 8883, "client_id": "0123456789AB",
       "keep_alive_interval": 7200, "user": "twinkly32"}'
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['128']
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [jauR0eWgoMI=]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '128'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - IGNwmKF7J/w=
     method: POST
     uri: http://192.168.10.100/xled/v1/mqtt/config
   response:
     body: {string: '{"code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['13']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 version: 1

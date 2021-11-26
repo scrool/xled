@@ -2,70 +2,103 @@ interactions:
 - request:
     body: '{"challenge": "qMh1/9lPi7RWyEneD6NG7EuNDYqqgQP4Bx/iEjf23zw="}'
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['61']
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.25.1]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
     method: POST
     uri: http://192.168.4.1/xled/v1/login
   response:
     body: {string: '{"authentication_token":"21R3mG4Ttjc=","authentication_token_expires_in":14400,"challenge-response":"00ca2180a41b309e825233f93d468a7a10a922fc","code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['155']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '155'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
     body: '{"challenge_response": "00ca2180a41b309e825233f93d468a7a10a922fc"}'
     headers:
-      Content-Length: ['66']
-      Content-Type: [application/json]
-      X-Auth-Token: [21R3mG4Ttjc=]
+      Content-Length:
+      - '66'
+      Content-Type:
+      - application/json
+      X-Auth-Token:
+      - 21R3mG4Ttjc=
     method: POST
     uri: http://192.168.4.1/xled/v1/verify
   response:
     body: {string: '{"code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['13']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [21R3mG4Ttjc=]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - 21R3mG4Ttjc=
     method: GET
     uri: http://192.168.4.1/xled/v1/network/status
   response:
-    body: {string: '{"mode":2,"station":{"ssid":"","ip":"0.0.0.0","gw":"0.0.0.0","mask":"0.0.0.0"},"ap":{"ssid":"Twinkly_D64F59","channel":6,"ip":"192.168.4.1","enc":3,"ssid_hidden":0,"max_connections":4,"password_changed":1},"code":1000}'}
+    body: {string: '{"mode":2,"station":{"ssid":"","ip":"0.0.0.0","gw":"0.0.0.0","mask":"0.0.0.0"},"ap":{"ssid":"Twinkly_ABCDEF","channel":6,"ip":"192.168.4.1","enc":3,"ssid_hidden":0,"max_connections":4,"password_changed":1},"code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['218']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '218'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
     body: '{"mode": 1}'
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['11']
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [21R3mG4Ttjc=]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '11'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - 21R3mG4Ttjc=
     method: POST
     uri: http://192.168.4.1/xled/v1/network/status
   response:
     body: {string: '{"code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['13']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 version: 1

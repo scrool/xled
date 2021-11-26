@@ -1,124 +1,183 @@
 interactions:
 - request:
-    body: '{"challenge": "lNisYswZrOK2gp6+Pfz8RAsbtRdNfMbioc5A8b2dmPg="}'
+    body: '{"challenge": "J/Wk6W+J4mKUFJqJyCDyZ4MRiFaEwrkVPxAUYhjJp3w="}'
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['61']
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.25.1]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
     method: POST
     uri: http://192.168.10.100/xled/v1/login
   response:
-    body: {string: '{"authentication_token":"p/rgCUn7AfA=","authentication_token_expires_in":14400,"challenge-response":"86b485190a2f41f7a8b9fd75ff259fd104440566","code":1000}'}
+    body: {string: '{"authentication_token":"bDdIbymT58Y=","authentication_token_expires_in":14400,"challenge-response":"5d484c84ec9874817fe5fafdaebaa67bc446b6f5","code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['155']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '155'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
-    body: '{"challenge_response": "86b485190a2f41f7a8b9fd75ff259fd104440566"}'
+    body: '{"challenge_response": "5d484c84ec9874817fe5fafdaebaa67bc446b6f5"}'
     headers:
-      Content-Length: ['66']
-      Content-Type: [application/json]
-      X-Auth-Token: [p/rgCUn7AfA=]
+      Content-Length:
+      - '66'
+      Content-Type:
+      - application/json
+      X-Auth-Token:
+      - bDdIbymT58Y=
     method: POST
     uri: http://192.168.10.100/xled/v1/verify
   response:
     body: {string: '{"code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['13']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
     body: '{"mode": "effect"}'
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['18']
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [p/rgCUn7AfA=]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '18'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - bDdIbymT58Y=
     method: POST
     uri: http://192.168.10.100/xled/v1/led/mode
   response:
     body: {string: '{"code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['13']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [p/rgCUn7AfA=]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - bDdIbymT58Y=
     method: GET
     uri: http://192.168.10.100/xled/v1/led/mode
   response:
     body: {string: '{"mode":"effect","shop_mode":0,"code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['43']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '43'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [p/rgCUn7AfA=]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - bDdIbymT58Y=
     method: GET
     uri: http://192.168.10.100/xled/v1/led/effects
   response:
     body: {string: '{"code": 1000,"effects_number":15,"unique_ids":["00000000-0000-0000-0000-000000000001","00000000-0000-0000-0000-000000000002","00000000-0000-0000-0000-000000000003","00000000-0000-0000-0000-000000000004","00000000-0000-0000-0000-000000000005","00000000-0000-0000-0000-000000000006","00000000-0000-0000-0000-000000000007","00000000-0000-0000-0000-000000000008","00000000-0000-0000-0000-000000000009","00000000-0000-0000-0000-00000000000A","00000000-0000-0000-0000-00000000000B","00000000-0000-0000-0000-00000000000C","00000000-0000-0000-0000-00000000000D","00000000-0000-0000-0000-00000000000E","00000000-0000-0000-0000-00000000000F"]}'}
     headers:
-      Connection: [close]
-      Content-Type: [application/json]
-      Transfer-Encoding: [chunked]
+      Connection:
+      - close
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
     status: {code: 200, message: OK}
 - request:
     body: '{"effect_id": 2}'
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['16']
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [p/rgCUn7AfA=]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '16'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - bDdIbymT58Y=
     method: POST
     uri: http://192.168.10.100/xled/v1/led/effects/current
   response:
     body: {string: '{"code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['13']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.25.1]
-      X-Auth-Token: [p/rgCUn7AfA=]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - bDdIbymT58Y=
     method: GET
     uri: http://192.168.10.100/xled/v1/led/effects/current
   response:
     body: {string: '{"preset_id":2,"unique_id":"00000000-0000-0000-0000-000000000003","code":1000}'}
     headers:
-      Connection: [close]
-      Content-Length: ['78']
-      Content-Type: [application/json]
+      Connection:
+      - close
+      Content-Length:
+      - '78'
+      Content-Type:
+      - application/json
     status: {code: 200, message: OK}
 version: 1
