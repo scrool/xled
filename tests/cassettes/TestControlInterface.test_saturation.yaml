@@ -1,0 +1,162 @@
+interactions:
+- request:
+    body: '{"challenge": "6Z/xIey7jUu3Z/D8FycPb5sdglnoQieaub7LjlTAWEg="}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+    method: POST
+    uri: http://192.168.10.100/xled/v1/login
+  response:
+    body: {string: '{"authentication_token":"08/aKf1RM5s=","authentication_token_expires_in":14400,"challenge-response":"4943c15e1a1d336a2ed196612f588c07e4206f33","code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '155'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: '{"challenge_response": "4943c15e1a1d336a2ed196612f588c07e4206f33"}'
+    headers:
+      Content-Length:
+      - '66'
+      Content-Type:
+      - application/json
+      X-Auth-Token:
+      - 08/aKf1RM5s=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/verify
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: '{"value": 90, "type": "A", "mode": "enabled"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '45'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - 08/aKf1RM5s=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/led/out/saturation
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: '{"value": -30, "type": "R", "mode": "enabled"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '46'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - 08/aKf1RM5s=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/led/out/saturation
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: '{"value": 80, "type": "R", "mode": "disabled"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '46'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - 08/aKf1RM5s=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/led/out/saturation
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - 08/aKf1RM5s=
+    method: GET
+    uri: http://192.168.10.100/xled/v1/led/out/saturation
+  response:
+    body: {string: '{"value":100,"mode":"disabled","code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '43'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+version: 1

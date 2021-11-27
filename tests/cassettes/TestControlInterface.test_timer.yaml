@@ -1,0 +1,133 @@
+interactions:
+- request:
+    body: '{"challenge": "kgxXEZT3FQaCv2kSNM2gAXO7CPMDPZDTrtEIBqLNIy8="}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+    method: POST
+    uri: http://192.168.10.100/xled/v1/login
+  response:
+    body: {string: '{"authentication_token":"GCsEMGB2IL0=","authentication_token_expires_in":14400,"challenge-response":"245c664f68ce7de4ee8fe2846f90e2dc129310eb","code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '155'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: '{"challenge_response": "245c664f68ce7de4ee8fe2846f90e2dc129310eb"}'
+    headers:
+      Content-Length:
+      - '66'
+      Content-Type:
+      - application/json
+      X-Auth-Token:
+      - GCsEMGB2IL0=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/verify
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: '{"time_on": 3600, "time_off": 7200, "time_now": 73904}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '54'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - GCsEMGB2IL0=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/timer
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - GCsEMGB2IL0=
+    method: GET
+    uri: http://192.168.10.100/xled/v1/timer
+  response:
+    body: {string: '{"time_now":73904,"time_on":3600,"time_off":7200,"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: '{"time_on": -1, "time_off": -1, "time_now": 73905}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '50'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - GCsEMGB2IL0=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/timer
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+version: 1

@@ -1,0 +1,340 @@
+interactions:
+- request:
+    body: '{"challenge": "tA2ogXlnGiwftzccfvowE333LRmmLPOVXt+u8RmNYFY="}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+    method: POST
+    uri: http://192.168.10.100/xled/v1/login
+  response:
+    body: {string: '{"authentication_token":"vnDDHImNxLM=","authentication_token_expires_in":14400,"challenge-response":"aa732b2aee8fd64ca1ec7f8824ec5cdd6faeb931","code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '155'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: '{"challenge_response": "aa732b2aee8fd64ca1ec7f8824ec5cdd6faeb931"}'
+    headers:
+      Content-Length:
+      - '66'
+      Content-Type:
+      - application/json
+      X-Auth-Token:
+      - vnDDHImNxLM=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/verify
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: '{"mode": "off"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '15'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - vnDDHImNxLM=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/led/mode
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - vnDDHImNxLM=
+    method: DELETE
+    uri: http://192.168.10.100/xled/v1/movies
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - vnDDHImNxLM=
+    method: GET
+    uri: http://192.168.10.100/xled/v1/movies
+  response:
+    body: {string: '{"movies":[],"available_frames":992,"max_capacity":992,"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+    status: {code: 200, message: OK}
+- request:
+    body: '{"name": "green", "unique_id": "00000000-0000-0000-000A-000000000001",
+      "descriptor_type": "rgb_raw", "leds_per_frame": 250, "frames_number": 1, "fps":
+      1}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '153'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - vnDDHImNxLM=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/movies/new
+  response:
+    body: {string: '{"entry_point":0,"id":0,"handle":99,"unique_id":"00000000-0000-0000-000A-000000000001","code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '99'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A
+        AP8AAP8AAP8A
+      - 0
+      - null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '750'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - vnDDHImNxLM=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/movies/full
+  response:
+    body: {string: '{"frames_number":1,"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '31'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: '{"name": "lime", "unique_id": "00000000-0000-0000-000A-000000000002", "descriptor_type":
+      "rgb_raw", "leds_per_frame": 250, "frames_number": 1, "fps": 1}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '152'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - vnDDHImNxLM=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/movies/new
+  response:
+    body: {string: '{"entry_point":2,"id":1,"handle":100,"unique_id":"00000000-0000-0000-000A-000000000002","code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '100'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: !!python/object/new:_io.BytesIO
+      state: !!python/tuple
+      - !!binary |
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8AZP8A
+        ZP8AZP8AZP8A
+      - 0
+      - null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '750'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - vnDDHImNxLM=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/movies/full
+  response:
+    body: {string: '{"frames_number":1,"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '31'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: '{"id": 0}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '9'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - vnDDHImNxLM=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/movies/current
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - vnDDHImNxLM=
+    method: GET
+    uri: http://192.168.10.100/xled/v1/movies/current
+  response:
+    body: {string: '{"id":0,"unique_id":"00000000-0000-0000-000A-000000000001","name":"green","code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '86'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+version: 1

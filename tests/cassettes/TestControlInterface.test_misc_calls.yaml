@@ -1,0 +1,100 @@
+interactions:
+- request:
+    body: '{"challenge": "H/14jrpswz5ycqxkLrhhRYqdXp755EWq9mWoqyRzgPs="}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.25.1
+    method: POST
+    uri: http://192.168.10.100/xled/v1/login
+  response:
+    body: {string: '{"authentication_token":"n/8v2WKpQ2A=","authentication_token_expires_in":14400,"challenge-response":"c4d7c3269c05bde98235810c71d1a7177d3e95d0","code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '155'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: '{"challenge_response": "c4d7c3269c05bde98235810c71d1a7177d3e95d0"}'
+    headers:
+      Content-Length:
+      - '66'
+      Content-Type:
+      - application/json
+      X-Auth-Token:
+      - n/8v2WKpQ2A=
+    method: POST
+    uri: http://192.168.10.100/xled/v1/verify
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - n/8v2WKpQ2A=
+    method: GET
+    uri: http://192.168.10.100/xled/v1/status
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - 'gzip, deflate'
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+      X-Auth-Token:
+      - n/8v2WKpQ2A=
+    method: GET
+    uri: http://192.168.10.100/xled/v1/led/reset
+  response:
+    body: {string: '{"code":1000}'}
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '13'
+      Content-Type:
+      - application/json
+    status: {code: 200, message: OK}
+version: 1
