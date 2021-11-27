@@ -2,6 +2,80 @@
 History
 =======
 
+0.7.0 (2021-11-28)
+------------------
+* Major changes:
+
+  * Add realtime UDP protocol including unit tests
+  * Add several missing rest calls in ControlInterface
+  * Unit test all methods in ControlInterface
+
+* Other bugfixes and improvements:
+
+  * Provide a short guide how to install packages from PyPI
+  * Provide `python_requires` in setup.py
+  * Add project URLs to metadata
+  * Corrected import of security, and removed some old comments
+  * Make encrypt_wifi_password work also with python3
+  * More flexible parameters to set_mqtt_config
+  * Enable options in set_network_mode_ap and _station
+  * Enable relative values in set_brightness
+  * Make firmware_update compatible with Generation II
+  * Fix error in `python setup.py install` (fix #82)
+  * Use generic Exception in discover module
+  * On Python 2.7 ignore VCR deprecation warning
+  * On Python 2.7 ignore cryptography deprecation warning
+  * Fix dependencies for python 2.7
+  * Don't debug log reapped devices
+  * Time format as hardcoded value instead of locale specific
+  * Raise an exception with a error message firmware update failed
+  * Get MAC address from gestalt API call
+  * Always UTF-8 decode response from JOINED event in discovery
+  * Log instead of print in discovery interface and return on unknown event
+  * If hw_address wasn't possible to resolve don't use None as a peer
+  * Configure all loggers used by CLI with cli_log.basic_config()
+  * Make response assertions less strict
+  * Reformat setup py so tox tests pass
+
+* Documentation updates:
+
+  * Update example in README to use reflect change in API
+  * Add Gitter badge
+  * Update of xled and xled-docs should be done hand in hand
+  * Remove Enhancement section from Contributing as there is no such thing
+  * Write down support for OS, devices, python and guide to CLI
+  * Rewrite README file
+  * Fix documentation for set_led_movie_config
+
+* Changes in CI/CD:
+
+  * Run linters as GitHub action
+  * Use generic python3 in black pre-commit config
+  * Configure pytest to collect tests only from tests/
+  * Use GitHub action for PyPI publish
+  * Update URL for CI from Travis to GitHub actions
+  * One more place to update supported python versions
+  * Make Travis environment python again
+  * Remove non-deploy section from travis.yml
+  * Fix typo in travis.yml dep install
+  * Ignore Flake8 error on Sphinx configuration file
+  * Run pytest directly from Tox
+  * Add bug report template for GitHub issues and reference it
+  * Switch to token authentication for deployment to pypi through Travis
+
+* Changes in dependencies and python versions:
+
+  * Add 3.10 to supported Python versions
+  * Update coverage from 4.4.2 to 5.5
+  * Update pip from 20.2.3 to 21.1
+  * Update travis.yaml: remove python 3.5 and add 3.8 and 3.9
+  * Add 3.9 to supported Python versions
+  * Drop Python 3.5 support
+  * Drop compatibility code for Python version 3.4
+  * Add Python 3.8 as a supported language
+  * Update pip from 19.0.3 to 20.2.3
+  * Update sphinx from 1.6.5 to 3.0.4
+
 0.6.1 (2020-01-17)
 ------------------
 * Make tests with tox pass again so release can be automatically deployed:
