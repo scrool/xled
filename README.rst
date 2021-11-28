@@ -24,13 +24,13 @@ Installation
 
 Both library and CLI tool are supported on Linux, primarily Fedora.
 
-1. First make sure that you have `pip installed`_. E.g. for Fedora:
+#. First make sure that you have `pip installed`_. E.g. for Fedora:
 
 .. code-block::
 
     $ sudo dnf install python3-pip python3-wheel
 
-2. You might want to `create and activate a virtual environment`_. E.g.:
+#. You might want to `create and activate a virtual environment`_. E.g.:
 
 .. code-block::
 
@@ -38,7 +38,7 @@ Both library and CLI tool are supported on Linux, primarily Fedora.
     $ python3 -m venv ~/.virtualenvs/xled
     $ source ~/.virtualenvs/xled/bin/activate
 
-3. Install `xled from PyPI`_:
+#. Install `xled from PyPI`_:
 
 .. code-block::
 
