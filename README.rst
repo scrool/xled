@@ -132,6 +132,7 @@ There are other projects that might be more suitable for your needs:
 * `homebridge-twinkly` - unofficial Homebridge plugin
 * `TwinklyWPF`_ - .net 5 GUI and API library
 * `ioBroker.twinkly`_ - twinkly adapter for ioBroker to communicate with the Twinkly lights
+* `Twinkly Twinkly Little Star` - ttls helps you to make async requests to Twinkly LEDs. Includes CLI and some examples how to create both loadable movies and realtime sequences.
 * `Twinkly.vb for HomeSeer`_
 * `thingzi-logic-twinkly`_ - Twinkly lights integration for node red
 * Python class to interact with generation I device and IDA Pro loader of firmware binary in `Twinkly Twinkly Little Star by F-Secure LABS`_.
@@ -157,6 +158,7 @@ This package was created with Cookiecutter_ and the
 .. _`TwinklyWPF`: https://github.com/MarkAlanJones/TwinklyWPF
 .. _`Twinkly integration in Home Assistant`: https://www.home-assistant.io/integrations/twinkly/
 .. _`ioBroker.twinkly`: https://www.npmjs.com/package/iobroker.twinkly
+.. _`Twinkly Twinkly Little Star`: https://github.com/jschlyter/ttls
 .. _`Twinkly.vb for HomeSeer`: https://forums.homeseer.com/forum/developer-support/scripts-plug-ins-development-and-libraries/script-plug-in-library/1348314-twinkly-vb-christmas-tree-lights-with-predefined-and-custom-animations
 .. _`TwinklyTree Binding`: https://github.com/mvanhulsentop/openhab-addons/tree/twinklytree/bundles/org.openhab.binding.twinklytree
 .. _`Twinkly Twinkly Little Star by F-Secure LABS`: https://labs.f-secure.com/blog/twinkly-twinkly-little-star/
