@@ -18,7 +18,40 @@ Generation I.
 
 Library and CLI are free software available under MIT license.
 
-Documentation for the library can be found on https://xled.readthedocs.io.
+
+Installation
+------------
+
+Both library and CLI tool are supported on Linux, primarily Fedora.
+
+1. First make sure that you have `pip installed`_. E.g. for Fedora:
+
+.. code-block::
+
+    $ sudo dnf install python3-pip python3-wheel
+
+2. You might want to `create and activate a virtual environment`_. E.g.:
+
+.. code-block::
+
+    $ mkdir -p ~/.virtualenvs
+    $ python3 -m venv ~/.virtualenvs/xled
+    $ source ~/.virtualenvs/xled/bin/activate
+
+3. Install `xled from PyPI`_:
+
+.. code-block::
+
+   $ python3 -m pip install --upgrade xled
+
+Usage
+-----
+
+If you have installed the project into virtual environment, activate it first. E.g.
+
+.. code-block::
+
+    $ source ~/.virtualenvs/xled/bin/activate
 
 Use of the library:
 
@@ -36,6 +69,8 @@ Use of the library:
     >>> control.get_device_info()['number_of_led']
     210
 
+`Documentation for the library can be found online`_.
+
 Use of the CLI:
 
 .. code-block:: console
@@ -45,7 +80,7 @@ Use of the CLI:
     Working on device: Twinkly_33AAFF
     Turned on.
 
-Unofficial documentation of private protocol and API is `available online`_.
+For more commands and options see `xled --help`.
 
 
 Why?
@@ -81,6 +116,8 @@ availability of manufacturer's servers.
 
 References
 ----------
+
+Unofficial documentation of private protocol and API is `available online`_.
 
 There are other projects that might be more suitable for your needs:
 
@@ -124,6 +161,10 @@ This package was created with Cookiecutter_ and the
 .. _`Twinkly integration in SmartThings by StevenJonSmith`: https://github.com/StevenJonSmith/SmartThings
 .. _`Twinkly integration in SmartThings by Dameon87`: https://github.com/Dameon87/SmartThings
 .. _`thingzi-logic-twinkly`: https://www.npmjs.com/package/thingzi-logic-twinkly
+.. _`pip installed`: https://packaging.python.org/guides/installing-using-linux-tools/
+.. _`create and activate a virtual environment`: https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments
+.. _`xled from PyPI`: https://pypi.org/project/xled/
+.. _`Documentation for the library can be found online`: https://xled.readthedocs.io
 
 .. image:: https://badges.gitter.im/xled-community/chat.svg
    :alt: Join the chat at https://gitter.im/xled-community/chat
