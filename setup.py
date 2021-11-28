@@ -69,6 +69,7 @@ setup(
     extras_require={
         "tests": tests_requirements,
     },  # noqa: E231
+    python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2,!=3.3,!=3.4,!=3.5",
     license="MIT license",
     zip_safe=False,
     keywords="xled,twinkly",
