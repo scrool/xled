@@ -129,6 +129,7 @@ There are other projects that might be more suitable for your needs:
 
 * `TwinklyTree Binding`_ for openHAB
 * `Twinkly HomeKit Hub for Mongoose OS`_ using `Twinkly library for Mongoose OS`_
+* `homebridge-twinkly` - unofficial Homebridge plugin
 * `TwinklyWPF`_ - .net 5 GUI and API library
 * `ioBroker.twinkly`_ - twinkly adapter for ioBroker to communicate with the Twinkly lights
 * `Twinkly.vb for HomeSeer`_
@@ -152,6 +153,7 @@ This package was created with Cookiecutter_ and the
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
 .. _`Twinkly library for Mongoose OS`: https://github.com/d4rkmen/twinkly
 .. _`Twinkly HomeKit Hub for Mongoose OS`: https://github.com/d4rkmen/twinkly-homekit
+.. _`homebridge-twinkly`: https://github.com/nschum/homebridge-twinkly
 .. _`TwinklyWPF`: https://github.com/MarkAlanJones/TwinklyWPF
 .. _`Twinkly integration in Home Assistant`: https://www.home-assistant.io/integrations/twinkly/
 .. _`ioBroker.twinkly`: https://www.npmjs.com/package/iobroker.twinkly
