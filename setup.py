@@ -91,7 +91,7 @@ setup(
     project_urls={
         "Documentation": "https://xled.readthedocs.io/",
         "Source": "https://github.com/scrool/xled",
-        "Chanelog": "https://xled.readthedocs.io/en/latest/history.html",
+        "Changelog": "https://xled.readthedocs.io/en/latest/history.html",
     },
     test_suite="tests",
 )
