@@ -114,8 +114,8 @@ second device - Twinkly 210 RGB+W Wall I keep improving this library and CLI
 documentation to be able to operate my devices locally and not rely on
 availability of manufacturer's servers.
 
-References
-----------
+Related projects
+----------------
 
 Unofficial documentation of private protocol and API is `available online`_.
 
