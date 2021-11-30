@@ -134,6 +134,7 @@ There are other projects that might be more suitable for your needs:
 * `ioBroker.twinkly`_ - twinkly adapter for ioBroker to communicate with the Twinkly lights
 * `Twinkly Twinkly Little Star` - ttls helps you to make async requests to Twinkly LEDs. Includes CLI and some examples how to create both loadable movies and realtime sequences.
 * `Twinkly.vb for HomeSeer`_
+* `bpx`_ - BiblioPixel driver for the xled library
 * `thingzi-logic-twinkly`_ - Twinkly lights integration for node red
 * `twinkly-animator`_ - Drawing and animation tools for Twinkly LED lights
 * Python class to interact with generation I device and IDA Pro loader of firmware binary in `Twinkly Twinkly Little Star by F-Secure LABS`_.
@@ -167,6 +168,7 @@ This package was created with Cookiecutter_ and the
 .. _`Twinkly integration in SmartThings by Dameon87`: https://github.com/Dameon87/SmartThings
 .. _`thingzi-logic-twinkly`: https://www.npmjs.com/package/thingzi-logic-twinkly
 .. _`twinkly-animator`: https://github.com/sluggoman/twinkly-animator
+.. _`bpx`: https://github.com/rec/bpx
 .. _`pip installed`: https://packaging.python.org/guides/installing-using-linux-tools/
 .. _`create and activate a virtual environment`: https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments
 .. _`xled from PyPI`: https://pypi.org/project/xled/
