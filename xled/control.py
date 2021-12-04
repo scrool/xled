@@ -234,6 +234,28 @@ class ControlInterface(object):
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
+    def get_led_color(self):
+        """
+        Gets the color used in color mode
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        url = urljoin(self.base_url, "led/color")
+        response = self.session.get(url)
+        app_response = ApplicationResponse(response)
+        required_keys = [
+            u"code",
+            u"hue",
+            u"saturation",
+            u"value",
+            u"red",
+            u"green",
+            u"blue",
+        ]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
     def get_led_config(self):
         """
         Gets the structural configuration of the leds in term of strings
@@ -518,6 +540,42 @@ class ControlInterface(object):
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
+    def set_led_color_hsv(self, h, s, v):
+        """
+        Sets the color used in color mode, given as HSV (hue, saturation, value)
+
+        :param int h: hue component [0, 360]
+        :param int s: saturation component [0, 255]
+        :param int v: value component [0, 255]
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        json_payload = {"hue": h, "saturation": s, "value": v}
+        url = urljoin(self.base_url, "led/color")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def set_led_color_rgb(self, r, g, b):
+        """
+        Sets the color used in color mode, given as RGB
+
+        :param int r: red component
+        :param int g: green component
+        :param int b: blue component
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        json_payload = {"red": r, "green": g, "blue": b}
+        url = urljoin(self.base_url, "led/color")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
     def set_led_effects_current(self, effect_id):
         """
         Sets the current effect of effect mode
@@ -596,11 +654,11 @@ class ControlInterface(object):
         """
         Sets new LED operation mode.
 
-        :param str mode: Mode to set. One of 'movie', 'playlist', 'rt', 'demo', 'effect' or 'off'.
+        :param str mode: Mode to set. One of 'movie', 'playlist', 'rt', 'demo', 'effect', 'color' or 'off'.
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        assert mode in ("movie", "playlist", "rt", "demo", "effect", "off")
+        assert mode in ("movie", "playlist", "rt", "demo", "effect", "color", "off")
         json_payload = {"mode": mode}
         response = self.session.post("led/mode", json=json_payload)
         app_response = ApplicationResponse(response)
