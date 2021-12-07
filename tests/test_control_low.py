@@ -39,7 +39,7 @@ class TestControlInterface(unittest.TestCase):
     """
 
     def setUp(self):
-        self.host = "192.168.10.101"
+        self.host = "192.168.10.100"
         self.numleds = 250
         self.ledbytes = 3
         self.isrecording = False
