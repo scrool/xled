@@ -77,7 +77,7 @@ interactions:
       - application/json
     status: {code: 200, message: OK}
 - request:
-    body: '{"red": 128, "green": 128, "blue": 0}'
+    body: '{"red": 250, "green": 250, "blue": 125}'
     headers:
       Accept:
       - '*/*'
@@ -121,7 +121,7 @@ interactions:
     method: GET
     uri: http://192.168.10.100/xled/v1/led/color
   response:
-    body: {string: '{"hue":60,"saturation":255,"value":128,"red":128,"green":128,"blue":0,"code":1000}'}
+    body: {string: '{"hue":60,"saturation":127,"value":250,"red":250,"green":250,"blue":125,"code":1000}'}
     headers:
       Connection:
       - close
@@ -131,7 +131,7 @@ interactions:
       - application/json
     status: {code: 200, message: OK}
 - request:
-    body: '{"hue": 180, "saturation": 255, "value": 255}'
+    body: '{"hue": 180, "saturation": 255, "value": 127}'
     headers:
       Accept:
       - '*/*'
@@ -175,7 +175,7 @@ interactions:
     method: GET
     uri: http://192.168.10.100/xled/v1/led/mode
   response:
-    body: {string: '{"mode":"color","shop_mode":0,"color_config":{"hue":180,"saturation":255,"value":255,"red":0,"green":255,"blue":255},"code":1000}'}
+    body: {string: '{"mode":"color","shop_mode":0,"color_config":{"hue":180,"saturation":255,"value":127,"red":0,"green":127,"blue":127},"code":1000}'}
     headers:
       Connection:
       - close

@@ -39,7 +39,7 @@ class TestControlInterface(unittest.TestCase):
     """
 
     def setUp(self):
-        self.host = "192.168.10.100"
+        self.host = "192.168.10.101"
         self.numleds = 250
         self.ledbytes = 3
         self.isrecording = False
@@ -218,7 +218,7 @@ class TestControlInterface(unittest.TestCase):
         else:
             self.assertEqual(res, {"code": 1000})
 
-        res = ctr.set_led_color_rgb(128, 128, 0)._data
+        res = ctr.set_led_color_rgb(250, 250, 125)._data
         if self.isrecording:
             print("set_led_color_rgb:", res)
         else:
@@ -232,16 +232,16 @@ class TestControlInterface(unittest.TestCase):
                 res,
                 {
                     "hue": 60,
-                    "saturation": 255,
-                    "value": 128,
-                    "red": 128,
-                    "green": 128,
-                    "blue": 0,
+                    "saturation": 127,
+                    "value": 250,
+                    "red": 250,
+                    "green": 250,
+                    "blue": 125,
                     "code": 1000,
                 },
             )
 
-        res = ctr.set_led_color_hsv(180, 255, 255)._data
+        res = ctr.set_led_color_hsv(180, 255, 127)._data
         if self.isrecording:
             print("set_led_color_hsv:", res)
         else:
@@ -259,10 +259,10 @@ class TestControlInterface(unittest.TestCase):
                     "color_config": {
                         "hue": 180,
                         "saturation": 255,
-                        "value": 255,
+                        "value": 127,
                         "red": 0,
-                        "green": 255,
-                        "blue": 255,
+                        "green": 127,
+                        "blue": 127,
                     },
                     "code": 1000,
                 },
