@@ -15,7 +15,6 @@ Python 3
 
 Following versions of python 3 are supported:
 
-- 3.6
 - 3.7
 - 3.8
 - 3.9
