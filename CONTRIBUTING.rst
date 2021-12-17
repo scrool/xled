@@ -105,5 +105,4 @@ Tips
 
 To run a subset of tests::
 
-
-    $ python -m unittest tests.test_xled
+    $ pytest tests/test_security.py -k test_identity
