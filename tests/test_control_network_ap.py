@@ -5,6 +5,7 @@
 
 from __future__ import absolute_import
 
+import os
 import unittest
 import warnings
 
@@ -25,10 +26,12 @@ class TestControlInterfaceNetworkAP(unittest.TestCase):
     """
 
     def setUp(self):
-        self.host = "192.168.10.100"
-        self.numleds = 250
-        self.ledbytes = 3
-        self.isrecording = False
+        self.host = os.getenv("XLED_TEST_HOST", "192.168.10.100")
+        self.numleds = int(os.getenv("XLED_TEST_NUMBER_OF_LED", "250"))
+        self.ledbytes = int(os.getenv("XLED_TEST_BYTES_PER_LED", "3"))
+        self.isrecording = os.getenv(
+            "XLED_TEST_IS_RECORDING", "False"
+        ).lower() in frozenset(("true", "1"))
 
     def assertEqualSubdict(self, values, subdict):
         for key in subdict:

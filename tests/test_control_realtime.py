@@ -5,6 +5,7 @@
 
 from __future__ import absolute_import
 
+import os
 import unittest
 import warnings
 import io
@@ -54,41 +55,44 @@ class TestControlInterfaceRealtime(unittest.TestCase):
     the transfered data so it can be compared to the expected traffic.
     """
 
+    def setUp(self):
+        self.host = os.getenv("XLED_TEST_HOST", "192.168.10.100")
+        self.numleds = int(os.getenv("XLED_TEST_NUMBER_OF_LED", "250"))
+
     def redirect_xled_socket_to_fake_client(self, ctr):
         self.fakeclient = FakeUDPclient()
         ctr._udpclient = self.fakeclient
 
     @vcr.use_cassette("tests/cassettes/TestControlInterface.test_realtime.yaml")
     def test_realtime_protocols(self):
-        num_leds = 250
-        ctr = ControlInterface("192.168.10.100")
+        ctr = ControlInterface(self.host)
         ctr.set_mode("rt")
 
         # Restful realtime protocol
-        ctr.set_rt_frame_rest(make_solid_movie(num_leds, 0, 255, 0))
+        ctr.set_rt_frame_rest(make_solid_movie(self.numleds, 0, 255, 0))
 
         # Must be here (not in setUp), since it needs ctr
         self.redirect_xled_socket_to_fake_client(ctr)
 
         # Version 1 socket realtime protocol
         ctr.set_rt_frame_socket(
-            make_solid_movie(num_leds, 230, 170, 0), 1, min(255, num_leds)
+            make_solid_movie(self.numleds, 230, 170, 0), 1, min(255, self.numleds)
         )
         self.assertEqual(
             self.fakeclient.retrieve_data(),
-            b'\x010"\x06\x04]j&X\xfa' + b"\xe6\xaa\x00" * num_leds,
+            b'\x010"\x06\x04]j&X\xfa' + b"\xe6\xaa\x00" * self.numleds,
         )
 
         # Version 2 socket realtime protocol
-        ctr.set_rt_frame_socket(make_solid_movie(num_leds, 100, 255, 0), 2)
+        ctr.set_rt_frame_socket(make_solid_movie(self.numleds, 100, 255, 0), 2)
         self.assertEqual(
             self.fakeclient.retrieve_data(),
-            b'\x020"\x06\x04]j&X\x00' + b"d\xff\x00" * num_leds,
+            b'\x020"\x06\x04]j&X\x00' + b"d\xff\x00" * self.numleds,
         )
 
         # Version 3 socket realtime protocol
-        ctr.set_rt_frame_socket(make_solid_movie(num_leds, 230, 85, 0), 3)
+        ctr.set_rt_frame_socket(make_solid_movie(self.numleds, 230, 85, 0), 3)
         self.assertEqual(
             self.fakeclient.retrieve_data(),
-            b'\x030"\x06\x04]j&X\x00\x00\x00' + b"\xe6U\x00" * num_leds,
+            b'\x030"\x06\x04]j&X\x00\x00\x00' + b"\xe6U\x00" * self.numleds,
         )

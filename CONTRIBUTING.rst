@@ -106,3 +106,11 @@ Tips
 To run a subset of tests::
 
     $ pytest tests/test_security.py -k test_identity
+
+To verify test against your device first remove existing Cassette, e.g.::
+
+    $ rm tests/cassettes/TestControlInterface.test_timer.yaml
+
+and then pass IP address of your device with a flag to record::
+
+    $ env XLED_TEST_HOST=192.168.1.123 XLED_TEST_IS_RECORDING=True pytest -v tests/test_control_low.py -k test_timer
