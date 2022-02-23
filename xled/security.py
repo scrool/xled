@@ -17,25 +17,12 @@ import os
 import base64
 import hashlib
 import itertools
-import warnings
 
 import netaddr
 
 from xled.compat import zip, is_py2
 
-if is_py2:
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        # This import would raise UserWarning on its own
-        from cryptography.utils import CryptographyDeprecationWarning
-
-with warnings.catch_warnings():
-    if is_py2:
-        # Make sure we ignore only CryptographyDeprecationWarning
-        warnings.simplefilter("ignore", category=CryptographyDeprecationWarning)
-
-    from cryptography.hazmat.backends import default_backend
-    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms
+from arc4 import ARC4
 
 
 #: Default key to encrypt challenge in login phase
@@ -88,15 +75,14 @@ def derive_key(shared_key, mac_address):
 def rc4(message, key):
     """
     Simple wrapper for RC4 cipher that encrypts message with key
+
     :param str message: input to encrypt
     :param str key: encryption key
     :return: ciphertext
     :rtype: str
     """
-    algorithm = algorithms.ARC4(key)
-    cipher = Cipher(algorithm, mode=None, backend=default_backend())
-    encryptor = cipher.encryptor()
-    return encryptor.update(message)
+    arc4 = ARC4(key)
+    return arc4.encrypt(message)
 
 
 def generate_challenge():
