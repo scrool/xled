@@ -15,8 +15,8 @@ with open("HISTORY.rst") as history_file:
 
 #: Common requirements
 requirements = [
+    "arc4",
     "click-log",
-    "cryptography",
     "requests-toolbelt",
     "requests",
 ]
