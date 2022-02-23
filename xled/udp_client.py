@@ -42,7 +42,6 @@ class UDPClient(object):
         else:
             raise ValueError("Destination host cannot be None if broadcast is not set.")
 
-        self._own_addresses = None
         self._handle = None
 
     @property
@@ -63,23 +62,6 @@ class UDPClient(object):
             assert self._handle is not None
         return self._handle
 
-    @property
-    def own_addresses(self):
-        """
-        List of own addresses
-
-        Used by :py:func:`recv`.
-        """
-        if self._own_addresses is None:
-            local_addrs = socket.gethostbyname_ex(socket.gethostname())[-1]
-            own_addresses = []
-            for address in local_addrs:
-                if not address.startswith("127"):
-                    own_addresses.append(address)
-            self._own_addresses = own_addresses
-            assert self._own_addresses is not None
-        return self._own_addresses
-
     def close(self):
         """Closes socket handler"""
         self.handle.close()
@@ -98,9 +80,6 @@ class UDPClient(object):
         """
         Blocks until message is received
 
-        Skips messages received from any address stored in
-        :py:attr:`own_addresses`.
-
         :param int bufsize: the maximum amount of data to be received at once
         :return: received message, sender address
         :rtype: tuple
@@ -113,10 +92,5 @@ class UDPClient(object):
                 continue
             assert len(addrinfo) == 2
             host, port = addrinfo
-            if host in self.own_addresses:
-                # print("Received message from myself %s:%d" % addrinfo)
-                continue
-            if host not in self.own_addresses:
-                # print("Found peer %s:%d" % addrinfo)
-                break
+            break
         return buf, host
