@@ -56,7 +56,7 @@ class UDPClient(object):
             )
             if self.broadcast:
                 _handle.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-            _handle.bind(("", self.port))
+            _handle.bind(("", 0))
             if self.receive_timeout:
                 _handle.settimeout(self.receive_timeout)
             self._handle = _handle
