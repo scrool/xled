@@ -5,6 +5,10 @@ import unittest
 from xled import security
 
 
+#: Test MAC address from xled-doc
+MAC_ADDRESS_TEST = "5C:CF:7F:33:AA:FF"
+
+
 class TestXorStrings(unittest.TestCase):
     """Tests for `xled.security` module."""
 
@@ -42,3 +46,35 @@ class TestXorStrings(unittest.TestCase):
     def test_invalid_both_none(self):
         with self.assertRaises(TypeError):
             security.xor_strings(None, None)
+
+
+class TestEncryptWiFiPassword(unittest.TestCase):
+    """Tests for encrypt_wifi_password() from `xled.security` module."""
+
+    def test_valid(self):
+        expected_cipher = (
+            b"e4XXiiUhg4J1FnJEfUQ0BhIji2HGVk1NHU5vGCHfyclF"
+            b"dX6R8Nd9BSXVKS5nj2FXGU6SWv9CIzztfAvGgTGLUw=="
+        )
+        str_password = "Twinkly"
+        cipher = security.encrypt_wifi_password(str_password, MAC_ADDRESS_TEST)
+        assert expected_cipher == cipher
+        bytes_password = b"Twinkly"
+        cipher = security.encrypt_wifi_password(bytes_password, MAC_ADDRESS_TEST)
+        assert expected_cipher == cipher
+
+
+class TestDeriveKey(unittest.TestCase):
+    """Tests for derive_key() from `xled.security` module."""
+
+    def test_challenge_key(self):
+        expected_secret_key = b"9\xb9\x1a]\xc7\x90.\xaa\x0cV\xc9\x8d9\xbb^\x12"
+        assert expected_secret_key == security.derive_key(
+            security.SHARED_KEY_CHALLANGE, MAC_ADDRESS_TEST
+        )
+
+    def test_wifi_key(self):
+        expected_secret_key = b"/\xba\x0fV\xd8\x8c9\xac\rV\xde\x949\xb6^\x12"
+        assert expected_secret_key == security.derive_key(
+            security.SHARED_KEY_WIFI, MAC_ADDRESS_TEST
+        )
