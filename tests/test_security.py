@@ -64,6 +64,43 @@ class TestEncryptWiFiPassword(unittest.TestCase):
         assert expected_cipher == cipher
 
 
+class TestEncryptWiFiCredentials(unittest.TestCase):
+    """Tests for encrypt_wifi_credentials() from `xled.security` module."""
+
+    def test_valid_legacy_key(self):
+        expected_cipher = (
+            b"e4XXiiUhg4J1FnJEfUQ0BhIji2HGVk1NHU5vGCHfyclF"
+            b"dX6R8Nd9BSXVKS5nj2FXGU6SWv9CIzztfAvGgTGLUw=="
+        )
+
+        str_password = "Twinkly"
+        cipher = security.encrypt_wifi_credentials(
+            str_password, MAC_ADDRESS_TEST, security.SHARED_KEY_WIFI
+        )
+        assert expected_cipher == cipher
+        bytes_password = b"Twinkly"
+        cipher = security.encrypt_wifi_credentials(
+            bytes_password, MAC_ADDRESS_TEST, security.SHARED_KEY_WIFI
+        )
+        assert expected_cipher == cipher
+
+    def test_valid_v2_key(self):
+        expected_cipher = (
+            b"R8/Wb0N52RLRU9HAqutebsmJZrNwdMJPOzmXLk4+0cjU"
+            b"TgXS/J+nZ9icDcTNb5P2Kb6TZP2TCNxpQGtnjetMrg=="
+        )
+        str_password = "Twinkly"
+        cipher = security.encrypt_wifi_credentials(
+            str_password, MAC_ADDRESS_TEST, security.SHARED_KEY_WIFI_V2
+        )
+        assert expected_cipher == cipher
+        bytes_password = b"Twinkly"
+        cipher = security.encrypt_wifi_credentials(
+            bytes_password, MAC_ADDRESS_TEST, security.SHARED_KEY_WIFI_V2
+        )
+        assert expected_cipher == cipher
+
+
 class TestDeriveKey(unittest.TestCase):
     """Tests for derive_key() from `xled.security` module."""
 
