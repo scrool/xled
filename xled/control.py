@@ -778,7 +778,7 @@ class ControlInterface(object):
 
     def set_network_mode_station(self, ssid=None, password=None):
         """
-        Sets network mode to Station
+        Sets network mode to Station for firmware up until 2.4.22
 
         The first time you need to provide an ssid and password for
         the WIFI to connect to.
@@ -795,6 +795,41 @@ class ControlInterface(object):
             json_payload["station"] = {
                 "dhcp": 1,
                 "ssid": ssid,
+                "encpassword": encpassword,
+            }
+        else:
+            assert not ssid and not password
+        url = urljoin(self.base_url, "network/status")
+        response = self.session.post(url, json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def set_network_mode_station_v2(self, ssid=None, password=None):
+        """
+        Sets network mode to Station since firmware version 2.4.30
+
+        The first time you need to provide an ssid and password for
+        the WIFI to connect to.
+
+        :param str ssid: SSID of the access point to connect to
+        :param str password: password to use
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        json_payload = {"mode": 1}
+        if ssid and password:
+            assert self.hw_address
+            encpassword = xled.security.encrypt_wifi_credentials(
+                password, self.hw_address, xled.security.SHARED_KEY_WIFI_V2
+            )
+            encssid = xled.security.encrypt_wifi_credentials(
+                ssid, self.hw_address, xled.security.SHARED_KEY_WIFI_V2
+            )
+            json_payload["station"] = {
+                "dhcp": 1,
+                "encssid": encssid,
                 "encpassword": encpassword,
             }
         else:
