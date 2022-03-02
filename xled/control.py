@@ -1148,8 +1148,18 @@ class HighControlInterface(ControlInterface):
     def turn_on(self):
         """
         Turns on the device.
+
+        In the order tries to set mode to: playlist or movie. Once the device's
+        response is ok, it stops trying.
+
+        :raises HighInterfaceError: if none of mode sets returned ok response
+        :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        return self.set_mode("movie")
+        for mode in ("playlist", "movie", "effect"):
+            response = self.set_mode(mode)
+            if response.ok:
+                return response
+        raise HighInterfaceError("No device mode returned ok")
 
     def turn_off(self):
         """

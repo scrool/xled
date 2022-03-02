@@ -104,8 +104,12 @@ def get_mode(ctx):
 def turn_on(ctx):
     control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Turning on...")
-    control_interface.turn_on()
-    click.echo("Turned on.")
+    try:
+        control_interface.turn_on()
+    except xled.exceptions.HighInterfaceError as hci_err:
+        click.echo("Failed: {}.".format(hci_err), err=True)
+    else:
+        click.echo("Turned on.")
 
 
 @main.command(name="off", help="Turns device off.")
