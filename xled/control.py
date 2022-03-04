@@ -186,7 +186,7 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        response = self.session.get("fw/version")
+        response = self.session.get("fw/version", withhold_token=True)
         app_response = ApplicationResponse(response)
         required_keys = [u"version", u"code"]
         assert all(key in app_response.keys() for key in required_keys)
@@ -212,7 +212,7 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        response = self.session.get("gestalt")
+        response = self.session.get("gestalt", withhold_token=True)
         app_response = ApplicationResponse(response)
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)

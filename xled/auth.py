@@ -334,6 +334,12 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
                 method, url, headers=headers, **kwargs
             )
             if response.status_code == 401:
+                if withhold_token:
+                    log.warning(
+                        "Unexpected HTTP status code 401 to request without added token. Maybe a token is needed for this endpoint?"
+                    )
+                    # Try again, if this was transient issue
+                    continue
                 log.warning(
                     "Unexpected HTTP status code 401 to request with added token."
                 )
