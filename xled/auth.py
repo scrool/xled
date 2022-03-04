@@ -209,7 +209,6 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
         :param str hw_address: Hardware address of server. Used to validation during
                                login phase.
         :param client: Object with :class:`ClientApplication` interface.
-                       login phase.
         :param bool auto_refresh_token: (optional) if token is found expired
                                         automatically request new one.
         :param kwargs: Arguments to pass to the BaseUrlSession initializer.
