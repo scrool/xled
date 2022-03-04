@@ -219,7 +219,7 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
                        Most useful is `base_url`.
         """
         self.hw_address = hw_address
-        self.client = client or ClientApplication()
+        self.client = client or ClientApplicationValidating()
         self.auto_refresh_token = auto_refresh_token
         super(BaseUrlChallengeResponseAuthSession, self).__init__(**kwargs)
 
@@ -416,7 +416,8 @@ class ValidatingClientMixin(object):
         return True
 
 
-class ClientApplication(ValidatingClientMixin):
+
+class ClientApplication(object):
     def __init__(self, challenge=None):
         self.authentication_token = None
         self.expires_at = None
@@ -547,3 +548,7 @@ class ClientApplication(ValidatingClientMixin):
         self.authentication_token = self._authentication_token
         self._authentication_token = None
         return response
+
+
+class ClientApplicationValidating(ValidatingClientMixin, ClientApplication):
+    pass
