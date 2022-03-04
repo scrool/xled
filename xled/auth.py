@@ -423,7 +423,7 @@ class ClientApplication(ValidatingClientMixin):
         """Generates a challenge string to be used in authorizations."""
         try:
             self._challenge = self.challenge()
-            log.debug("Generated new state %r.", self._challenge)
+            log.debug("Generated new challenge %r.", self._challenge)
         except TypeError:
             self._challenge = self.challenge
             log.debug("Re-using previously supplied challenge %s.", self._challenge)
@@ -460,7 +460,6 @@ class ClientApplication(ValidatingClientMixin):
         self._authentication_token = None
         self._challenge_response = None
         self._expires_in = None
-        log.debug("ClientApplication(): Challenge: %s", repr(challenge))
         b64_challenge = base64.b64encode(challenge).decode("utf-8")
         request.prepare_body(None, None, json={"challenge": b64_challenge})
         return request
@@ -493,15 +492,11 @@ class ClientApplication(ValidatingClientMixin):
         try:
             app_response.raise_for_status()
         except ApplicationError:
-            log.error(
-                "receive_authentication_token(): login failed: %r" % app_response.data
-            )
+            log.error("Login failed: %r" % app_response.data)
             raise AuthenticationError()
 
         self.populate_token_attributes(app_response)
-        log.debug(
-            "receive_authentication_token(): got token: %s", self._authentication_token
-        )
+        log.debug("Got token: %s", self._authentication_token)
         return response
 
     def prepare_request_verify(self, request):
@@ -535,7 +530,7 @@ class ClientApplication(ValidatingClientMixin):
         try:
             app_response.raise_for_status()
         except ApplicationError:
-            log.error("receive_authentication_token(): verify failed")
+            log.error("Verify failed")
             return AuthenticationError()
 
         self._challenge_response = None
