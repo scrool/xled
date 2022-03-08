@@ -218,8 +218,7 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
         :param kwargs: Arguments to pass to the BaseUrlSession initializer.
                        Most useful is `base_url`.
         """
-        self.hw_address = hw_address
-        self.client = client or ClientApplicationValidating()
+        self.client = client or ClientApplicationValidating(hw_address)
         self.auto_refresh_token = auto_refresh_token
         super(BaseUrlChallengeResponseAuthSession, self).__init__(**kwargs)
 
@@ -272,7 +271,6 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
         prepared = self.prepare_request_challenge()
         response = self.send(prepared)
         self.client.parse_response_challenge(response)
-        self.client.challenge_response_valid(self.hw_address)
 
         prepared = self.prepare_request_verify()
         response = self.send(prepared)
@@ -385,7 +383,26 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
 class ValidatingClientMixin(object):
     """Mixin adds functionality to :class:`ClientApplication` to authenticate server"""
 
-    def challenge_response_valid(self, hw_address=None):
+    def __init__(self, hw_address=None, **kwargs):
+        self.hw_address = hw_address
+        super(ValidatingClientMixin, self).__init__(**kwargs)
+
+    def challenge_response_valid(self):
+        expected = xled.security.make_challenge_response(
+            self._challenge, self.hw_address
+        )
+        if expected != self._challenge_response:
+            msg = (
+                "challenge-response invalid. "
+                "Received challenge-response: %r but %r was expected."
+            )
+            log.error(msg, self._challenge_response, expected)
+            raise ValidationError()
+
+        msg = "challenge-response is correct."
+        log.debug(msg)
+
+    def parse_response_challenge(self, response):
         """Verifies server with hardware address returned correct challenge response
 
         Creates challenge-response for server's hardware address, challenge and
@@ -397,24 +414,16 @@ class ValidatingClientMixin(object):
         :rtype: bool or None
         :raises ValidationError: if chalenge-response is invalid
         """
-        if not hw_address:
-            msg = "Can not validate challenge-response without hw_address."
-            log.debug(msg)
-            return None
+        response = super(ValidatingClientMixin, self).parse_response_challenge(response)
 
-        expected = xled.security.make_challenge_response(self._challenge, hw_address)
-        if expected != self._challenge_response:
-            msg = (
-                "challenge-response invalid. "
-                "Received challenge-response: %r but %r was expected."
-            )
-            log.error(msg, self._challenge_response, expected)
-            raise ValidationError()
+        if not self.hw_address:
+            msg = "Can not validate challenge-response without hw_address %r."
+            log.debug(msg, self.hw_address)
+            return response
 
-        msg = "challenge-response is correct."
-        log.debug(msg)
-        return True
+        self.challenge_response_valid()
 
+        return response
 
 
 class ClientApplication(object):
@@ -429,6 +438,8 @@ class ClientApplication(object):
         self._authentication_token = None
         self._challenge_response = None
         self._expires_in = None
+
+        self._hw_address = None
 
     def new_challenge(self):
         """Generates a challenge string to be used in authorizations."""
