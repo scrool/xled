@@ -380,6 +380,77 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
         return headers
 
 
+class BaseUrlChallengeResponseAuthHwAddressFetchingSession(
+    BaseUrlChallengeResponseAuthSession
+):
+    def __init__(self, hw_address=None, client=None, auto_refresh_token=True, **kwargs):
+        """Construct a new client session.
+
+        :param str hw_address: Hardware address of server. Used to validation during
+                               login phase.
+        :param client: Object with :class:`ClientApplication` interface.
+        :param bool auto_refresh_token: (optional) if token is found expired
+                                        automatically request new one.
+        :param kwargs: Arguments to pass to the BaseUrlSession initializer.
+                       Most useful is `base_url`.
+        """
+        self.client = client or ClientApplicationHwAddressFetchingValidating(hw_address)
+        self.auto_refresh_token = auto_refresh_token
+        super(BaseUrlChallengeResponseAuthHwAddressFetchingSession, self).__init__(
+            client=self.client, **kwargs
+        )
+
+    @property
+    def device_info_url(self):
+        """Full URL of device_info (gestalt) endpoint
+
+        :return: Full URL.
+        :rtype: str
+        """
+        return self.create_url("gestalt")
+
+    def prepare_request_device_info(self):
+        """Creates prepared request to send device_info (gestalt)
+
+        :return: prepared request
+        :rtype: requests.PreparedRequest
+        """
+        request = Request("GET", self.device_info_url)
+        return request.prepare()
+
+    def fetch_token(self):
+        if self.client.hw_address is None:
+            log.debug("Requesting device_info (gestalt) for hw_address (mac).")
+            prepared = self.prepare_request_device_info()
+            response = self.send(prepared)
+            self.client.parse_response_device_info(response)
+        return super(
+            BaseUrlChallengeResponseAuthHwAddressFetchingSession, self
+        ).fetch_token()
+
+
+class HwAddressFetchingClientMixin(object):
+    def populate_device_info_attributes(self, response):
+        """Fetches mac address from application response
+
+        :param: app_response response Response from login endpoint.
+        :type: application_response :class:`~xled.response.ApplicationResponse`
+        """
+        if "mac" in response:
+            self.hw_address = response.get("mac")
+
+    def parse_response_device_info(self, response):
+        app_response = ApplicationResponse(response)
+        try:
+            app_response.raise_for_status()
+        except ApplicationError:
+            log.error("Get device info failed: %r", app_response.data)
+            raise AuthenticationError()
+
+        self.populate_device_info_attributes(app_response)
+        log.debug("Device has fw_address (mac): %s", self.hw_address)
+
+
 class ValidatingClientMixin(object):
     """Mixin adds functionality to :class:`ClientApplication` to authenticate server"""
 
@@ -562,4 +633,10 @@ class ClientApplication(object):
 
 
 class ClientApplicationValidating(ValidatingClientMixin, ClientApplication):
+    pass
+
+
+class ClientApplicationHwAddressFetchingValidating(
+    ValidatingClientMixin, HwAddressFetchingClientMixin, ClientApplication
+):
     pass
