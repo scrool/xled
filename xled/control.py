@@ -27,10 +27,14 @@ from operator import xor
 import xled.util
 import xled.security
 from xled.udp_client import UDPClient
-from xled.auth import BaseUrlChallengeResponseAuthSession
+from xled.auth import (
+    BaseUrlChallengeResponseAuthSession,
+    BaseUrlChallengeResponseAuthHwAddressFetchingSession,
+)
 from xled.compat import xrange
 from xled.exceptions import HighInterfaceError
 from xled.response import ApplicationResponse
+
 
 log = logging.getLogger(__name__)
 
@@ -953,6 +957,22 @@ class HighControlInterface(ControlInterface):
     """
     High level interface to control specific device
     """
+
+    @property
+    def session(self):
+        """
+        Session object to operate on
+
+        :return: session object with auth
+            :py:class:`~.auth.BaseUrlChallengeResponseAuthHwAddressFetchingSession()`.
+        :rtype: requests.Session
+        """
+        if not self._session:
+            self._session = BaseUrlChallengeResponseAuthHwAddressFetchingSession(
+                hw_address=self.hw_address, base_url=self.base_url
+            )
+            assert self._session
+        return self._session
 
     def update_firmware(self, stage0, stage1):
         """
