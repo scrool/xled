@@ -157,7 +157,9 @@ class Device(Mapping):
         return len(self.ATTRS)
 
     def __repr__(self):
-        return "<TwinklyDevice [%s]>" % self.id
+        return "<{class_name} [{id}]>".format(
+            class_name=self.__class__.__name__, id=self.id
+        )
 
     def turn_on(self):
         return self._control.turn_on()
