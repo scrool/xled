@@ -58,7 +58,7 @@ class ControlInterface(object):
     @property
     def base_url(self):
         if not self._base_url:
-            self._base_url = "http://{}/xled/v1/".format(self.host)
+            self._base_url = "http://{host}/xled/v1/".format(host=self.host)
             assert self._base_url
         return self._base_url
 
@@ -972,7 +972,9 @@ class HighControlInterface(ControlInterface):
                 fw_stage_sums[stage] = xled.security.sha1sum(stage1)
             log.debug("Firmware stage %d SHA1SUM: %r", stage, fw_stage_sums[stage])
             if not fw_stage_sums[stage]:
-                msg = "Failed to compute SHA1SUM for firmware stage %d." % (stage)
+                msg = "Failed to compute SHA1SUM for firmware stage {stage}.".format(
+                    stage=stage
+                )
                 raise HighInterfaceError(msg)
                 assert False
 
@@ -988,8 +990,8 @@ class HighControlInterface(ControlInterface):
                 response = self.firmware_1_update(stage1)
             log.debug("Firmware stage %d uploaded.", stage)
             if not response.ok:
-                msg = "Failed to upload stage {}: {}".format(
-                    stage, response.status_code
+                msg = "Failed to upload stage {stage}: {status_code}".format(
+                    stage=stage, status_code=response.status_code
                 )
                 raise HighInterfaceError(msg)
                 assert False
@@ -999,7 +1001,9 @@ class HighControlInterface(ControlInterface):
                 "Uploaded stage %d SHA1SUM: %r", stage, uploaded_stage_sums[stage]
             )
             if not uploaded_stage_sums[stage]:
-                msg = "Device didn't return SHA1SUM for stage {}.".format(stage)
+                msg = "Device didn't return SHA1SUM for stage {stage}.".format(
+                    stage=stage
+                )
                 raise HighInterfaceError(msg)
                 assert False
 
@@ -1013,7 +1017,9 @@ class HighControlInterface(ControlInterface):
 
         response = self.firmware_update(fw_stage_sums[0], fw_stage_sums[1])
         if not response.ok:
-            msg = "Failed to update firmware: {}.".format(response.status_code)
+            msg = "Failed to update firmware: {status_code}.".format(
+                status_code=response.status_code
+            )
             raise HighInterfaceError(msg)
             assert False
 

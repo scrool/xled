@@ -122,7 +122,9 @@ class Device(Mapping):
         hw_id = info["hw_id"].upper()
         if hw_id.startswith("00"):
             hw_id = hw_id[2:]
-        return u"{}_{}".format(info["product_name"], hw_id)
+        return u"{product_name}_{hw_id}".format(
+            product_name=info["product_name"], hw_id=hw_id
+        )
 
     @property
     def network_mode(self):
