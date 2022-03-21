@@ -303,8 +303,10 @@ class Peer(object):
         self.is_alive()
 
     def __repr__(self):
-        return "Peer({hw_address!r}) device_id({device_id!r})".format(
-            hw_address=self.hw_address, device_id=self.device_id
+        return "{class_name}({hw_address!r}) device_id({device_id!r})".format(
+            class_name=self.__class__.__name__,
+            hw_address=self.hw_address,
+            device_id=self.device_id,
         )
 
     def is_alive(self):

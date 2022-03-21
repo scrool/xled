@@ -117,7 +117,9 @@ class ApplicationResponse(Mapping):
             status = None
         else:
             status = self.status_code
-        return "<ApplicationResponse [{status}]>".format(status=status)
+        return "<{class_name} [{status}]>".format(
+            class_name=self.__class__.__name__, status=status
+        )
 
 
 def build_response(response):
