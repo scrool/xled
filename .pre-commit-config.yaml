@@ -1,7 +1,11 @@
 ---
 repos:
   - repo: https://github.com/ambv/black
-    rev: 20.8b1
+    # This warns:
+    # DEPRECATION: Python 2 support will be removed in the first stable release
+    # expected in January 2022.
+    # And indeed 22.1.0 dropped support for py27
+    rev: 21.12b0
     hooks:
       - id: black
         language_version: python3
