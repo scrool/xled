@@ -13,6 +13,9 @@ repos:
     rev: v2.0.0
     hooks:
       - id: flake8
+        additional_dependencies: [
+          flake8-logging-format,
+        ]
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.26.3
     hooks:
