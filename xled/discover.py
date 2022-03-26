@@ -94,20 +94,15 @@ def xdiscover(find_id=None, destination_host=None, timeout=None):
                         return
                 else:
                     log.debug(
-                        "Device id {device_id} ({hw_address}) joined: {ip_address}".format(
-                            device_id=device_id,
-                            hw_address=hw_address,
-                            ip_address=ip_address,
-                        )
+                        "Device id %s (%s) joined: %s",
+                        device_id,
+                        hw_address,
+                        ip_address,
                     )
                 if timeout and (monotonic() - start) > timeout:
                     raise DiscoverTimeout()
             elif event == b"ERROR":
-                log.error(
-                    "Received error from discovery. Parameters: {response}".format(
-                        response=response
-                    )
-                )
+                log.error("Received error from discovery. Parameters: %s", response)
                 raise Exception("Error")
             elif event == b"RECEIVE_TIMEOUT":
                 assert timeout
@@ -119,8 +114,8 @@ def xdiscover(find_id=None, destination_host=None, timeout=None):
                 if timeout and (monotonic() - start) > timeout:
                     raise DiscoverTimeout()
             else:
-                log.error("Unknown event: {event}".format(event=event))
-                log.error("Parameters: {response}".format(response=response))
+                log.error("Unknown event: %s", event)
+                log.error("Parameters: %s", response)
                 raise Exception("Unknown event")
 
 
@@ -215,7 +210,7 @@ def decode_discovery_response(data):
     """
     Decodes response for discovery
     """
-    log.debug("Received {data!r}".format(data=data))
+    log.debug("Received %r", data)
     if is_py3:
         if isinstance(data, bytes):
             data = bytearray(data)
@@ -435,7 +430,10 @@ class InterfaceAgent(object):
         try:
             self.pipe.send_multipart(msg_parts)
         except TypeError as err:
-            log.error("Failed to send multipart message to pipe: %s", err)
+            log.error(
+                "Failed to send multipart message to pipe: %s",
+                getattr(err, "message", repr(err)),
+            )
             self.pipe.send_multipart(
                 [b"ERROR", b"Failed to send a message to main thread."]
             )
@@ -465,9 +463,7 @@ class InterfaceAgent(object):
         r = requests.get(base_url)
         if r.status_code != 200:
             log.error(
-                "Failure getting MAC address from device at {ip}. Not a Twinkly?".format(
-                    ip=ip
-                )
+                "Failure getting MAC address from device at %s. Not a Twinkly?", ip
             )
             return None
 
