@@ -241,8 +241,7 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        url = urljoin(self.base_url, "led/color")
-        response = self.session.get(url)
+        response = self.session.get("led/color")
         app_response = ApplicationResponse(response)
         required_keys = [
             u"code",
@@ -551,8 +550,7 @@ class ControlInterface(object):
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
         json_payload = {"hue": h, "saturation": s, "value": v}
-        url = urljoin(self.base_url, "led/color")
-        response = self.session.post(url, json=json_payload)
+        response = self.session.post("led/color", json=json_payload)
         app_response = ApplicationResponse(response)
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
@@ -569,8 +567,7 @@ class ControlInterface(object):
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
         json_payload = {"red": r, "green": g, "blue": b}
-        url = urljoin(self.base_url, "led/color")
-        response = self.session.post(url, json=json_payload)
+        response = self.session.post("led/color", json=json_payload)
         app_response = ApplicationResponse(response)
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
