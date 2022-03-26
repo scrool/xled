@@ -502,7 +502,7 @@ class ClientApplication(ValidatingClientMixin):
         try:
             app_response.raise_for_status()
         except ApplicationError:
-            log.error("Login failed: %r" % app_response.data)
+            log.error("Login failed: %r", app_response.data)
             raise AuthenticationError()
 
         self.populate_token_attributes(app_response)
