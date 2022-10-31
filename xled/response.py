@@ -66,7 +66,9 @@ class ApplicationResponse(Mapping):
                 try:
                     json_data = self.response.json()
                 except JSONDecodeError:
-                    msg = "Failed to decode application data: %r" % self.response.text
+                    msg = "Failed to decode application data: {text}".format(
+                        text=self.response.text
+                    )
                     raise ApplicationError(msg, response=self.response)
                 self._data = dict(json_data)
 
@@ -94,7 +96,9 @@ class ApplicationResponse(Mapping):
         if self.status_code == 1000:
             return
         elif isinstance(self.status_code, int):
-            msg = "Application error code: {}".format(self.status_code)
+            msg = "Application error code: {status_code}".format(
+                status_code=self.status_code
+            )
             raise ApplicationError(msg, response=self.response)
 
     def __getitem__(self, key):
@@ -113,7 +117,9 @@ class ApplicationResponse(Mapping):
             status = None
         else:
             status = self.status_code
-        return "<ApplicationResponse [%s]>" % status
+        return "<{class_name} [{status}]>".format(
+            class_name=self.__class__.__name__, status=status
+        )
 
 
 def build_response(response):

@@ -73,7 +73,9 @@ class ChallengeResponseAuth(AuthBase):
     def send_challenge(self, response, challenge):
         host = urlparse(response.url).hostname
         schema = urlparse(response.url).scheme
-        url = "%s://%s%s" % (schema, host, self.login_url)
+        url = "{schema}://{host}{login_url}".format(
+            schema=schema, host=host, login_url=self.login_url
+        )
         b64_challenge = base64.b64encode(challenge).decode("utf-8")
         body = {"challenge": b64_challenge}
         r2 = requests.Request(method="POST", url=url, json=body)
@@ -95,7 +97,9 @@ class ChallengeResponseAuth(AuthBase):
     def send_challenge_response(self, response):
         host = urlparse(response.url).hostname
         schema = urlparse(response.url).scheme
-        url = "%s://%s%s" % (schema, host, self.verify_url)
+        url = "{schema}://{host}{verify_url}".format(
+            schema=schema, host=host, verify_url=self.verify_url
+        )
         headers = {"X-Auth-Token": self.authentication_token}
         body = {u"challenge-response": self.challenge_response}
         r2 = requests.Request(method="POST", url=url, headers=headers, json=body)
@@ -334,6 +338,12 @@ class BaseUrlChallengeResponseAuthSession(BaseUrlSession):
                 method, url, headers=headers, **kwargs
             )
             if response.status_code == 401:
+                if withhold_token:
+                    log.warning(
+                        "Unexpected HTTP status code 401 to request without added token. Maybe a token is needed for this endpoint?"
+                    )
+                    # Try again, if this was transient issue
+                    continue
                 log.warning(
                     "Unexpected HTTP status code 401 to request with added token."
                 )
@@ -492,7 +502,7 @@ class ClientApplication(ValidatingClientMixin):
         try:
             app_response.raise_for_status()
         except ApplicationError:
-            log.error("Login failed: %r" % app_response.data)
+            log.error("Login failed: %r", app_response.data)
             raise AuthenticationError()
 
         self.populate_token_attributes(app_response)

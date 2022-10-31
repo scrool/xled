@@ -58,7 +58,7 @@ class ControlInterface(object):
     @property
     def base_url(self):
         if not self._base_url:
-            self._base_url = "http://{}/xled/v1/".format(self.host)
+            self._base_url = "http://{host}/xled/v1/".format(host=self.host)
             assert self._base_url
         return self._base_url
 
@@ -186,7 +186,7 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        response = self.session.get("fw/version")
+        response = self.session.get("fw/version", withhold_token=True)
         app_response = ApplicationResponse(response)
         required_keys = [u"version", u"code"]
         assert all(key in app_response.keys() for key in required_keys)
@@ -212,7 +212,7 @@ class ControlInterface(object):
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        response = self.session.get("gestalt")
+        response = self.session.get("gestalt", withhold_token=True)
         app_response = ApplicationResponse(response)
         required_keys = [u"code"]
         assert all(key in app_response.keys() for key in required_keys)
@@ -231,6 +231,27 @@ class ControlInterface(object):
         response = self.session.get("device_name")
         app_response = ApplicationResponse(response)
         required_keys = [u"code", u"name"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def get_led_color(self):
+        """
+        Gets the color used in color mode
+
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        response = self.session.get("led/color")
+        app_response = ApplicationResponse(response)
+        required_keys = [
+            u"code",
+            u"hue",
+            u"saturation",
+            u"value",
+            u"red",
+            u"green",
+            u"blue",
+        ]
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
@@ -518,6 +539,40 @@ class ControlInterface(object):
         assert all(key in app_response.keys() for key in required_keys)
         return app_response
 
+    def set_led_color_hsv(self, h, s, v):
+        """
+        Sets the color used in color mode, given as HSV (hue, saturation, value)
+
+        :param int h: hue component [0, 360]
+        :param int s: saturation component [0, 255]
+        :param int v: value component [0, 255]
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        json_payload = {"hue": h, "saturation": s, "value": v}
+        response = self.session.post("led/color", json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
+    def set_led_color_rgb(self, r, g, b):
+        """
+        Sets the color used in color mode, given as RGB
+
+        :param int r: red component
+        :param int g: green component
+        :param int b: blue component
+        :raises ApplicationError: on application error
+        :rtype: :class:`~xled.response.ApplicationResponse`
+        """
+        json_payload = {"red": r, "green": g, "blue": b}
+        response = self.session.post("led/color", json=json_payload)
+        app_response = ApplicationResponse(response)
+        required_keys = [u"code"]
+        assert all(key in app_response.keys() for key in required_keys)
+        return app_response
+
     def set_led_effects_current(self, effect_id):
         """
         Sets the current effect of effect mode
@@ -596,11 +651,11 @@ class ControlInterface(object):
         """
         Sets new LED operation mode.
 
-        :param str mode: Mode to set. One of 'movie', 'playlist', 'rt', 'demo', 'effect' or 'off'.
+        :param str mode: Mode to set. One of 'movie', 'playlist', 'rt', 'demo', 'effect', 'color' or 'off'.
         :raises ApplicationError: on application error
         :rtype: :class:`~xled.response.ApplicationResponse`
         """
-        assert mode in ("movie", "playlist", "rt", "demo", "effect", "off")
+        assert mode in ("movie", "playlist", "rt", "demo", "effect", "color", "off")
         json_payload = {"mode": mode}
         response = self.session.post("led/mode", json=json_payload)
         app_response = ApplicationResponse(response)
@@ -972,7 +1027,9 @@ class HighControlInterface(ControlInterface):
                 fw_stage_sums[stage] = xled.security.sha1sum(stage1)
             log.debug("Firmware stage %d SHA1SUM: %r", stage, fw_stage_sums[stage])
             if not fw_stage_sums[stage]:
-                msg = "Failed to compute SHA1SUM for firmware stage %d." % (stage)
+                msg = "Failed to compute SHA1SUM for firmware stage {stage}.".format(
+                    stage=stage
+                )
                 raise HighInterfaceError(msg)
                 assert False
 
@@ -988,8 +1045,8 @@ class HighControlInterface(ControlInterface):
                 response = self.firmware_1_update(stage1)
             log.debug("Firmware stage %d uploaded.", stage)
             if not response.ok:
-                msg = "Failed to upload stage {}: {}".format(
-                    stage, response.status_code
+                msg = "Failed to upload stage {stage}: {status_code}".format(
+                    stage=stage, status_code=response.status_code
                 )
                 raise HighInterfaceError(msg)
                 assert False
@@ -999,7 +1056,9 @@ class HighControlInterface(ControlInterface):
                 "Uploaded stage %d SHA1SUM: %r", stage, uploaded_stage_sums[stage]
             )
             if not uploaded_stage_sums[stage]:
-                msg = "Device didn't return SHA1SUM for stage {}.".format(stage)
+                msg = "Device didn't return SHA1SUM for stage {stage}.".format(
+                    stage=stage
+                )
                 raise HighInterfaceError(msg)
                 assert False
 
@@ -1013,7 +1072,9 @@ class HighControlInterface(ControlInterface):
 
         response = self.firmware_update(fw_stage_sums[0], fw_stage_sums[1])
         if not response.ok:
-            msg = "Failed to update firmware: {}.".format(response.status_code)
+            msg = "Failed to update firmware: {status_code}.".format(
+                status_code=response.status_code
+            )
             raise HighInterfaceError(msg)
             assert False
 

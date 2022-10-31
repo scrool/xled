@@ -94,16 +94,15 @@ def xdiscover(find_id=None, destination_host=None, timeout=None):
                         return
                 else:
                     log.debug(
-                        "Device id {} ({}) joined: {}".format(
-                            device_id, hw_address, ip_address
-                        )
+                        "Device id %s (%s) joined: %s",
+                        device_id,
+                        hw_address,
+                        ip_address,
                     )
                 if timeout and (monotonic() - start) > timeout:
                     raise DiscoverTimeout()
             elif event == b"ERROR":
-                log.error(
-                    "Received error from discovery. Parameters: {}".format(response)
-                )
+                log.error("Received error from discovery. Parameters: %s", response)
                 raise Exception("Error")
             elif event == b"RECEIVE_TIMEOUT":
                 assert timeout
@@ -115,8 +114,8 @@ def xdiscover(find_id=None, destination_host=None, timeout=None):
                 if timeout and (monotonic() - start) > timeout:
                     raise DiscoverTimeout()
             else:
-                log.error("Unknown event: {}".format(event))
-                log.error("Parameters: {}".format(response))
+                log.error("Unknown event: %s", event)
+                log.error("Parameters: %s", response)
                 raise Exception("Unknown event")
 
 
@@ -139,7 +138,7 @@ def pipe(ctx):
     """
     parent_socket = ctx.socket(zmq.PAIR)
     child_socket = ctx.socket(zmq.PAIR)
-    url = "inproc://%s" % uuid.uuid1()
+    url = "inproc://{uuid}".format(uuid=uuid.uuid1())
     parent_socket.bind(url)
     child_socket.connect(url)
     return parent_socket, child_socket
@@ -211,23 +210,31 @@ def decode_discovery_response(data):
     """
     Decodes response for discovery
     """
-    log.debug("Received {0!r}".format(data))
+    log.debug("Received %r", data)
     if is_py3:
         if isinstance(data, bytes):
             data = bytearray(data)
         if not isinstance(data, bytearray):
-            msg = "Data must be bytearray. Was {} instead".format(type(data))
+            msg = "Data must be bytearray. Was {type_of_data} instead".format(
+                type_of_data=type(data)
+            )
             raise TypeError(msg)
     else:
         if not isinstance(data, basestring):
-            msg = "Data must be string. Was {} instead".format(type(data))
+            msg = "Data must be string. Was {type_of_data} instead".format(
+                type_of_data=type(data)
+            )
             raise TypeError(msg)
     if len(data) < 7:
-        msg = "Data must be longer than 7 bytes. Was {} instead.".format(len(data))
+        msg = "Data must be longer than 7 bytes. Was {len_of_data} instead.".format(
+            len_of_data=len(data)
+        )
         raise ValueError(msg)
     if data[4:6] != b"OK":
-        msg = "Expected 'OK' in status of data message. Was {0!r} instead.".format(
-            data[4:6]
+        msg = (
+            "Expected 'OK' in status of data message. Was {data_4_6!r} instead.".format(
+                data_4_6=data[4:6]
+            )
         )
         raise ValueError(msg)
     if is_py3:
@@ -237,7 +244,7 @@ def decode_discovery_response(data):
     if data[-1] != tail:
         msg = (
             "Expected zero character on the end of message. "
-            "Was {0!r} instead.".format(data[-1])
+            "Was {data_last_char!r} instead.".format(data_last_char=data[-1])
         )
         raise ValueError(msg)
 
@@ -291,7 +298,11 @@ class Peer(object):
         self.is_alive()
 
     def __repr__(self):
-        return "Peer({0!r}) device_id({1!r})".format(self.hw_address, self.device_id)
+        return "{class_name}({hw_address!r}) device_id({device_id!r})".format(
+            class_name=self.__class__.__name__,
+            hw_address=self.hw_address,
+            device_id=self.device_id,
+        )
 
     def is_alive(self):
         """
@@ -419,7 +430,10 @@ class InterfaceAgent(object):
         try:
             self.pipe.send_multipart(msg_parts)
         except TypeError as err:
-            log.error("Failed to send multipart message to pipe: %s", err)
+            log.error(
+                "Failed to send multipart message to pipe: %s",
+                getattr(err, "message", repr(err)),
+            )
             self.pipe.send_multipart(
                 [b"ERROR", b"Failed to send a message to main thread."]
             )
@@ -445,13 +459,11 @@ class InterfaceAgent(object):
         """
         ip = ip_address.decode("utf-8")
 
-        base_url = "http://{}/xled/v1/gestalt".format(ip)
+        base_url = "http://{ip}/xled/v1/gestalt".format(ip=ip)
         r = requests.get(base_url)
         if r.status_code != 200:
             log.error(
-                "Failure getting MAC address from device at {}. Not a Twinkly?".format(
-                    ip
-                )
+                "Failure getting MAC address from device at %s. Not a Twinkly?", ip
             )
             return None
 
@@ -487,7 +499,7 @@ class InterfaceAgent(object):
         log.debug("Received a beacon from %s.", host)
         ip_address, device_id = decode_discovery_response(data)
         # if host != ip_address:
-        # print("Host {} != ip_address {}".format(host, ip_address))
+        # print("Host {host} != ip_address {ip_address}".format(host=host, ip_address=ip_address))
         log.debug("Getting hardware address of %s.", ip_address)
         hw_address = self.get_mac_address(ip_address)
         if hw_address is None:
@@ -498,7 +510,7 @@ class InterfaceAgent(object):
             except Exception:
                 return
             return
-        # print("Host {} has MAC address {}".format(ip_address, hw_address))
+        # print("Host {ip_address} has MAC address {hw_address}".format(ip_address=ip_address, hw_address=hw_address))
         if hw_address in self.peers:
             log.debug("Peer %s seen before.", hw_address)
             return self.process_seen_peer(hw_address, device_id, ip_address)

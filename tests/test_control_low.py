@@ -210,6 +210,67 @@ class TestControlInterface(unittest.TestCase):
             oldmqtt["keep_alive_interval"],
         )
 
+    # Available from fw version 2.7.1
+    @vcr.use_cassette("tests/cassettes/TestControlInterface.test_color.yaml")
+    def test_color(self):
+        ctr = ControlInterface(self.host)
+
+        res = ctr.set_mode("color")._data
+        if self.isrecording:
+            print("set_mode:", res)
+        else:
+            self.assertEqual(res, {"code": 1000})
+
+        res = ctr.set_led_color_rgb(250, 250, 125)._data
+        if self.isrecording:
+            print("set_led_color_rgb:", res)
+        else:
+            self.assertEqual(res, {"code": 1000})
+
+        res = ctr.get_led_color()._data
+        if self.isrecording:
+            print("get_led_color:", res)
+        else:
+            self.assertEqual(
+                res,
+                {
+                    "hue": 60,
+                    "saturation": 127,
+                    "value": 250,
+                    "red": 250,
+                    "green": 250,
+                    "blue": 125,
+                    "code": 1000,
+                },
+            )
+
+        res = ctr.set_led_color_hsv(180, 255, 127)._data
+        if self.isrecording:
+            print("set_led_color_hsv:", res)
+        else:
+            self.assertEqual(res, {"code": 1000})
+
+        res = ctr.get_mode()._data
+        if self.isrecording:
+            print("get_mode:", res)
+        else:
+            self.assertEqual(
+                res,
+                {
+                    "mode": "color",
+                    "shop_mode": 0,
+                    "color_config": {
+                        "hue": 180,
+                        "saturation": 255,
+                        "value": 127,
+                        "red": 0,
+                        "green": 127,
+                        "blue": 127,
+                    },
+                    "code": 1000,
+                },
+            )
+
     @vcr.use_cassette("tests/cassettes/TestControlInterface.test_effect.yaml")
     def test_effect(self):
         ctr = ControlInterface(self.host)

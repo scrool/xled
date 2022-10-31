@@ -24,9 +24,13 @@ LOGGERS = (log, xled.discover.log, xled.auth.log, xled.control.log)
 
 def common_preamble(name=None, host_address=None):
     if name:
-        click.echo("Looking for a device with name: {}...".format(name))
+        click.echo("Looking for a device with name: {name}...".format(name=name))
     elif host_address:
-        click.echo("Looking for device with address: {}...".format(host_address))
+        click.echo(
+            "Looking for device with address: {host_address}...".format(
+                host_address=host_address
+            )
+        )
     else:
         click.echo("Looking for any device...")
     hw_address, device_name, ip_address = xled.discover.discover(
@@ -35,7 +39,7 @@ def common_preamble(name=None, host_address=None):
     if name:
         click.echo("Working on requested device.")
     else:
-        click.echo("Working on device: {}".format(device_name))
+        click.echo("Working on device: {device_name}".format(device_name=device_name))
     log.debug("HW address = %s", hw_address)
     log.debug("IP address = %s", ip_address)
 
@@ -96,7 +100,7 @@ def main(ctx, name, hostname):
 def get_mode(ctx):
     control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     mode = control_interface.get_mode()
-    click.echo("Device in mode {}.".format(mode["mode"]))
+    click.echo("Device in mode {mode}.".format(mode=mode["mode"]))
 
 
 @main.command(name="on", help="Turns device on and starts last used movie.")
@@ -107,7 +111,7 @@ def turn_on(ctx):
     try:
         control_interface.turn_on()
     except xled.exceptions.HighInterfaceError as hci_err:
-        click.echo("Failed: {}.".format(hci_err), err=True)
+        click.echo("Failed: {hci_err}.".format(hci_err=hci_err), err=True)
     else:
         click.echo("Turned on.")
 
@@ -127,15 +131,15 @@ def get_timer(ctx):
     control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Getting timer...")
     timer = control_interface.get_formatted_timer()
-    click.echo("Time now: {}.".format(timer.now))
+    click.echo("Time now: {timer_now}.".format(timer_now=timer.now))
     if timer.on is False:
         click.echo("Time to turn on not set.")
     else:
-        click.echo("Turn on {}.".format(timer.on))
+        click.echo("Turn on {timer_on}.".format(timer_on=timer.on))
     if timer.off is False:
         click.echo("Time to turn off not set.")
     else:
-        click.echo("Turn off {}.".format(timer.off))
+        click.echo("Turn off {timer_off}.".format(timer_off=timer.off))
 
 
 @main.command(name="set-timer", help="Sets timer.")
@@ -166,7 +170,7 @@ def get_device_name(ctx):
     control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Getting device name...")
     name = control_interface.get_device_name()
-    click.echo("Device name: {}".format(name["name"]))
+    click.echo("Device name: {name}".format(name=name["name"]))
 
 
 @main.command(name="set-device-name", help="Sets device name.")
@@ -176,7 +180,7 @@ def set_device_name(ctx, name):
     control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Setting device name...")
     control_interface.set_device_name(name)
-    click.echo("Set new name to {}".format(name))
+    click.echo("Set new name to {name}".format(name=name))
 
 
 @main.command(name="upload-movie", help="Uploads movie.")
@@ -186,7 +190,11 @@ def upload_movie(ctx, movie):
     control_interface = common_preamble(ctx.obj.get("name"), ctx.obj.get("hostname"))
     log.debug("Uploading movie...")
     response = control_interface.set_led_movie_full(movie)
-    click.echo("Uploaded {} frames.".format(response["frames_number"]))
+    click.echo(
+        "Uploaded {frames_number} frames.".format(
+            frames_number=response["frames_number"]
+        )
+    )
 
 
 @main.command(name="set-color", help="Sets static color.")

@@ -122,7 +122,9 @@ class Device(Mapping):
         hw_id = info["hw_id"].upper()
         if hw_id.startswith("00"):
             hw_id = hw_id[2:]
-        return u"{}_{}".format(info["product_name"], hw_id)
+        return u"{product_name}_{hw_id}".format(
+            product_name=info["product_name"], hw_id=hw_id
+        )
 
     @property
     def network_mode(self):
@@ -155,7 +157,9 @@ class Device(Mapping):
         return len(self.ATTRS)
 
     def __repr__(self):
-        return "<TwinklyDevice [%s]>" % self.id
+        return "<{class_name} [{id}]>".format(
+            class_name=self.__class__.__name__, id=self.id
+        )
 
     def turn_on(self):
         return self._control.turn_on()
