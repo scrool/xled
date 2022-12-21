@@ -161,7 +161,10 @@ class DiscoveryInterface(object):
         self.ctx = zmq.Context()
         p0, p1 = pipe(self.ctx)
         self.agent = InterfaceAgent(
-            self.ctx, p1, destination_host, receive_timeout=receive_timeout
+            self.ctx,
+            p1,
+            destination_host=destination_host,
+            receive_timeout=receive_timeout,
         )
         self.agent_thread = Thread(target=self.agent.start)
         self.agent_thread.start()
@@ -332,6 +335,7 @@ class InterfaceAgent(object):
         if loop is None:
             loop = IOLoop.instance()
         self.loop = loop
+        log.debug(f"InterfaceAgent destination_host={destination_host}.")
         if destination_host:
             udp = udp_client.UDPClient(
                 PING_PORT_NUMBER,
