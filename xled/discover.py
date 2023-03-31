@@ -335,7 +335,7 @@ class InterfaceAgent(object):
         if loop is None:
             loop = IOLoop.instance()
         self.loop = loop
-        log.debug(f"InterfaceAgent destination_host={destination_host}.")
+        log.debug("InterfaceAgent destination_host=%s.", destination_host)
         if destination_host:
             udp = udp_client.UDPClient(
                 PING_PORT_NUMBER,
