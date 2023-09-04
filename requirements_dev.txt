@@ -4,6 +4,6 @@ bumpversion==0.5.3
 wheel==0.38.4
 watchdog==0.8.3
 flake8==3.5.0
-tox==2.9.1
+tox==4.11.1
 coverage==5.5
 Sphinx==3.0.4
