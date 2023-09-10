@@ -689,7 +689,7 @@ class ControlInterface(object):
         .. seealso:: :py:meth:`get_movies()` :py:meth:`delete_movies()` :py:meth:`set_movies_full()`
 
         :param str name: name of new movie
-        :param str uid: unique id of new movie
+        :param str uid: unique id of new movie, must be a UUID
         :param str dtype: descriptor_type, one of rgb_raw, rgbw_raw, or aww_raw
         :param int nleds: number of leds
         :param int nframes: number of frames
