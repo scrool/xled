@@ -29,8 +29,16 @@ Command Line Interface
    cli_guide
 
 
-Python API Documentation / Guide
---------------------------------
+Python API Guide
+----------------
+
+.. toctree::
+   :maxdepth: 2
+
+   auth
+
+Python API Documentation
+------------------------
 
 .. toctree::
    :maxdepth: 2
